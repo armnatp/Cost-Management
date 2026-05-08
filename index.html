@@ -19,13 +19,9 @@
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Sarabun',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.6;}
-
-/* ── HEADER ── */
-header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:300;}
-.logo{display:flex;align-items:center;gap:9px;font-weight:700;font-size:15px;cursor:pointer;}
+header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:200;}
+.logo{display:flex;align-items:center;gap:9px;font-weight:700;font-size:15px;}
 .logo-sq{width:30px;height:30px;background:var(--blue);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:700;}
-.header-center{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text2);}
-.proj-crumb{font-weight:600;color:var(--text);max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .header-right{display:flex;align-items:center;gap:8px;}
 .mode-pill{font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;cursor:pointer;user-select:none;border:1.5px solid;transition:all .2s;}
 .mode-pill.team{background:var(--amber-bg);color:var(--amber);border-color:var(--amber);}
@@ -35,41 +31,10 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 .btn-primary{background:var(--blue);color:#fff;border-color:var(--blue);}
 .btn-primary:hover{background:#1447c0;}
 .btn-danger{background:var(--red-bg);color:var(--red);border-color:var(--red-bg);}
-.btn-danger:hover{background:#fecaca;}
 .btn-ghost{background:none;border-color:transparent;color:var(--text3);}
 .btn-ghost:hover{background:var(--surface2);color:var(--text);}
-.btn-green{background:var(--green-bg);color:var(--green);border-color:var(--green-bg);}
 .btn-sm{padding:4px 10px;font-size:11px;}
 .btn-icon{padding:5px;border-radius:7px;width:30px;height:30px;justify-content:center;}
-
-/* ── PROJECT LIST (HOME) ── */
-#screen-home{min-height:calc(100vh - 56px);padding:2rem 2rem 4rem;}
-.home-header{max-width:900px;margin:0 auto 2rem;display:flex;align-items:center;justify-content:space-between;}
-.home-title{font-size:22px;font-weight:700;}
-.home-sub{font-size:13px;color:var(--text3);margin-top:2px;}
-.proj-grid{max-width:900px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;}
-.proj-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:1.25rem 1.5rem;cursor:pointer;transition:all .18s;position:relative;}
-.proj-card:hover{border-color:var(--blue);box-shadow:0 4px 16px rgba(26,86,219,.08);}
-.proj-card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;}
-.proj-avatar{width:38px;height:38px;border-radius:10px;background:var(--blue-bg);color:var(--blue);font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.proj-card-actions{display:flex;gap:4px;opacity:0;transition:opacity .15s;}
-.proj-card:hover .proj-card-actions{opacity:1;}
-.proj-card-name{font-size:14px;font-weight:700;line-height:1.4;margin-bottom:4px;color:var(--text);}
-.proj-card-client{font-size:12px;color:var(--text3);margin-bottom:10px;}
-.proj-card-meta{display:flex;gap:12px;flex-wrap:wrap;}
-.proj-meta-item{font-size:11px;color:var(--text2);}
-.proj-meta-val{font-weight:700;color:var(--text);font-family:'IBM Plex Mono',monospace;}
-.proj-card-footer{margin-top:12px;padding-top:10px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
-.proj-author{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text3);}
-.author-avatar{width:20px;height:20px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--text2);}
-.proj-date{font-size:11px;color:var(--text3);}
-.new-proj-card{background:none;border:1.5px dashed var(--border-md);border-radius:var(--r-lg);padding:1.25rem 1.5rem;cursor:pointer;transition:all .18s;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:160px;color:var(--text3);}
-.new-proj-card:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-bg);}
-.new-proj-card svg{width:24px;height:24px;}
-.new-proj-card span{font-size:13px;font-weight:600;}
-
-/* ── APP (PROJECT DETAIL) ── */
-#screen-app{display:none;}
 .app{display:flex;min-height:calc(100vh - 56px);}
 .sidebar{width:210px;background:var(--surface);border-right:1px solid var(--border);padding:.75rem 0;flex-shrink:0;position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto;}
 .nav-group{padding:4px 12px 2px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-top:10px;}
@@ -80,20 +45,14 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 .nav-item.active svg{opacity:1;}
 .content{flex:1;padding:1.5rem;min-width:0;}
 .page{display:none;}.page.active{display:block;}
-
-/* ── CARDS ── */
 .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:1.25rem 1.5rem;margin-bottom:1rem;}
 .card-hd{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;gap:8px;}
-
-/* ── KPI ── */
 .kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1rem;}
 .kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1rem 1.25rem;position:relative;overflow:hidden;}
 .kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--kc,var(--blue));}
 .kpi-lbl{font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px;}
 .kpi-val{font-size:20px;font-weight:700;font-family:'IBM Plex Mono',monospace;letter-spacing:-.02em;}
 .kpi-sub{font-size:11px;color:var(--text3);margin-top:2px;}
-
-/* ── TABLES ── */
 .tbl-wrap{overflow-x:auto;}
 table{width:100%;border-collapse:collapse;font-size:12.5px;}
 table th{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;text-align:left;padding:7px 10px;border-bottom:1px solid var(--border);background:var(--surface2);white-space:nowrap;}
@@ -106,351 +65,367 @@ table tr.sec-head td{background:var(--surface2);color:var(--text2);font-size:10p
 table tr.total-row td{background:var(--blue-bg);color:var(--blue);font-weight:700;font-family:'IBM Plex Mono',monospace;font-size:12px;border-top:1px solid rgba(26,86,219,.2);}
 table tr.profit-row td{background:var(--green-bg);color:var(--green);font-weight:700;font-family:'IBM Plex Mono',monospace;font-size:12px;}
 table tr.grand-row td{background:var(--surface2);font-weight:700;font-size:12px;}
-
-/* ── BADGE ── */
-.badge{display:inline-block;font-size:10px;font-weight:700;padding:1px 6px;border-radius:4px;font-family:'IBM Plex Mono',monospace;letter-spacing:.02em;}
+.badge{display:inline-block;font-size:10px;font-weight:700;padding:1px 6px;border-radius:4px;font-family:'IBM Plex Mono',monospace;}
 .b-usd{background:#dbeafe;color:#1e40af;}.b-thb{background:var(--green-bg);color:var(--green);}
 .b-eur{background:#ede9fe;color:#5b21b6;}.b-jpy{background:#fef9c3;color:#854d0e;}
-.b-gbp{background:#fce7f3;color:#9d174d;}.b-cny{background:#fee2e2;color:#991b1b;}
-.b-other{background:var(--surface2);color:var(--text2);}
-
-/* ── TABS ── */
+.b-gbp{background:#fce7f3;color:#9d174d;}.b-other{background:var(--surface2);color:var(--text2);}
 .tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:1.25rem;}
 .tab-btn{padding:8px 15px;font-size:12px;font-weight:600;font-family:'Sarabun',sans-serif;color:var(--text3);background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;cursor:pointer;}
 .tab-btn.active{color:var(--blue);border-bottom-color:var(--blue);}
 .tab-pane{display:none;}.tab-pane.active{display:block;}
-
-/* ── FORMS ── */
 .field{display:flex;flex-direction:column;gap:4px;}
 .field label{font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;}
-.field input,.field select,.field textarea{padding:7px 10px;border:1px solid var(--border-md);border-radius:8px;font-size:13px;font-family:'Sarabun',sans-serif;color:var(--text);background:var(--surface);outline:none;transition:border .15s;}
+.field input,.field select{padding:7px 10px;border:1px solid var(--border-md);border-radius:8px;font-size:13px;font-family:'Sarabun',sans-serif;color:var(--text);background:var(--surface);outline:none;transition:border .15s;}
 .field input:focus,.field select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,86,219,.08);}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
-
-/* ── SEARCH DROPDOWN ── */
 .search-wrap{position:relative;}
-.search-dropdown{position:absolute;top:100%;left:0;right:0;background:var(--surface);border:1px solid var(--border-md);border-radius:10px;z-index:400;max-height:240px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,.12);display:none;}
+.search-dropdown{position:absolute;top:100%;left:0;right:0;background:var(--surface);border:1px solid var(--border-md);border-radius:10px;z-index:300;max-height:240px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,.12);display:none;}
 .search-dropdown.open{display:block;}
-.search-item{padding:9px 12px;cursor:pointer;border-bottom:1px solid var(--border);transition:background .1s;}
-.search-item:last-child{border-bottom:none;}
+.search-item{padding:9px 12px;cursor:pointer;border-bottom:1px solid var(--border);}
 .search-item:hover{background:var(--blue-bg);}
 .search-item-name{font-size:13px;font-weight:600;color:var(--text);}
 .search-item-meta{font-size:11px;color:var(--text3);display:flex;gap:8px;margin-top:1px;}
 .search-empty{padding:12px;text-align:center;color:var(--text3);font-size:13px;}
-
-/* ── INLINE EDIT ── */
-.inline-num{width:78px;padding:4px 7px;border:1px solid transparent;border-radius:6px;font-size:12px;font-family:'IBM Plex Mono',monospace;background:transparent;color:var(--text);text-align:right;}
+.inline-num{width:80px;padding:4px 7px;border:1px solid transparent;border-radius:6px;font-size:12px;font-family:'IBM Plex Mono',monospace;background:transparent;color:var(--text);text-align:right;}
 .inline-num:focus{border-color:var(--blue);background:var(--surface);outline:none;}
 .inline-num:hover{border-color:var(--border-md);}
-
-/* ── MODAL ── */
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;display:none;align-items:center;justify-content:center;padding:1rem;}
-.overlay.open{display:flex;}
-.modal{background:var(--surface);border-radius:var(--r-lg);width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.2);}
-.modal-hd{padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
-.modal-hd h3{font-size:15px;font-weight:700;}
-.modal-body{padding:1.5rem;display:flex;flex-direction:column;gap:14px;}
-.modal-ft{padding:1rem 1.5rem;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;}
+/* ── Modal & Overlay ── */
+.overlay{position:fixed;inset:0;background:rgba(15,15,20,.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);z-index:500;display:none;align-items:center;justify-content:center;padding:1rem;}
+.overlay.open{display:flex;animation:fadeIn .18s ease;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.modal{background:var(--surface);border-radius:20px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 32px 80px rgba(0,0,0,.22),0 0 0 1px rgba(0,0,0,.06);animation:slideUp .22s cubic-bezier(.34,1.26,.64,1);}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px) scale(.97);}to{opacity:1;transform:translateY(0) scale(1);}}
+.modal-hd{padding:1.5rem 1.75rem 1rem;display:flex;align-items:center;justify-content:space-between;}
+.modal-hd h3{font-size:16px;font-weight:700;letter-spacing:-.01em;}
+.modal-body{padding:0 1.75rem 1rem;display:flex;flex-direction:column;gap:14px;}
+.modal-ft{padding:1rem 1.75rem 1.5rem;display:flex;justify-content:flex-end;gap:8px;}
+/* ── Field labels improved ── */
+.field label{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px;}
+.field input,.field select{padding:9px 12px;border:1.5px solid var(--border-md);border-radius:10px;font-size:13px;}
+.field input:focus,.field select:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(26,86,219,.1);}
+/* ── Buttons improved ── */
+.btn{border-radius:10px;padding:7px 15px;font-size:12.5px;}
+.btn-primary{box-shadow:0 1px 3px rgba(26,86,219,.3);}
+.btn-primary:hover{box-shadow:0 3px 8px rgba(26,86,219,.35);}
+/* ── Close button ── */
+.btn-icon{border-radius:8px;background:var(--surface2);border-color:transparent;color:var(--text3);}
+.btn-icon:hover{background:var(--border-md);color:var(--text);}
 .preview-pill{background:var(--blue-bg);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--blue);font-family:'IBM Plex Mono',monospace;line-height:1.8;}
-
-/* ── BUDGET BAR ── */
 .bbar-track{height:10px;background:var(--surface2);border-radius:5px;overflow:hidden;position:relative;margin:8px 0;}
 .bbar-cost{height:100%;background:var(--blue-mid);border-radius:5px;transition:width .8s ease;}
 .bbar-profit{position:absolute;top:0;right:0;height:100%;background:#34d399;border-radius:5px;}
 .legend-row{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--text2);}
 .legend-dot{width:9px;height:9px;border-radius:2px;flex-shrink:0;}
-
-/* ── FORMULA ── */
 .formula-box{background:#1c1c1c;border-radius:var(--r);padding:1rem 1.25rem;font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#a8c4ff;line-height:2.1;}
 .fc{color:#6b7280;}.fv{color:#86efac;}.fl{color:#fbbf24;}
-
-/* ── FX TABLE ── */
 .fx-inp{width:110px;padding:5px 8px;border:1px solid var(--border-md);border-radius:7px;font-size:13px;font-family:'IBM Plex Mono',monospace;color:var(--text);outline:none;}
 .fx-inp:focus{border-color:var(--blue);}
-
-/* ── TOAST ── */
+/* PROJECT CARDS */
+.proj-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.25rem 1.5rem;cursor:pointer;transition:border-color .18s,box-shadow .18s;}
+.proj-card:hover{border-color:var(--blue);box-shadow:0 4px 16px rgba(26,86,219,.08);}
 #toast{position:fixed;bottom:24px;right:24px;z-index:999;background:#1a1a18;color:#fff;padding:10px 18px;border-radius:10px;font-size:13px;font-weight:500;opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none;}
 #toast.show{opacity:1;transform:translateY(0);}
-
-/* ── STATUS BADGE ── */
-.status-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;}
-.status-active{background:var(--green-bg);color:var(--green);}
-.status-draft{background:var(--surface2);color:var(--text3);}
-.status-done{background:var(--blue-bg);color:var(--blue);}
-
 @media(max-width:900px){.sidebar{display:none;}.kpi-grid{grid-template-columns:1fr 1fr;}}
 @media print{header,.sidebar,.no-print{display:none!important;}.content{padding:0;}}
+
+/* ── Auto-save ── */
+#autosave-indicator{position:fixed;top:66px;right:18px;font-size:11px;font-weight:600;padding:4px 12px;border-radius:8px;background:var(--green-bg);color:var(--green);border:1px solid rgba(13,122,78,.15);opacity:0;transition:opacity .4s;pointer-events:none;z-index:199;}
+#autosave-indicator.show{opacity:1;}
+/* ── Sidebar bottom ── */
+.sidebar-bottom{padding:10px;border-top:1px solid var(--border);margin-top:8px;}
+.sidebar-save-btn{display:flex;justify-content:center;width:100%;background:var(--blue);color:#fff;border-color:var(--blue);font-size:12px;margin-bottom:6px;}
+.sidebar-save-btn:hover{background:#1447c0;}
+/* ── Nav count badge ── */
+.nav-count{margin-left:auto;background:var(--surface2);color:var(--text3);font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;}
+/* ── Quick-fill banner ── */
+.quickfill-banner{background:var(--amber-bg);border:1px solid rgba(180,83,9,.2);border-radius:var(--r);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:1rem;font-size:13px;color:var(--amber);}
+/* ── Improved tabs ── */
+.tabs{background:var(--surface2);border-radius:10px;padding:4px;border:none;gap:2px;}
+.tab-btn{border-radius:7px;border-bottom:none!important;}
+.tab-btn.active{background:var(--surface);color:var(--blue);box-shadow:0 1px 4px rgba(0,0,0,.08);}
+/* ── Modal ── */
+.modal{border-radius:20px;}
+/* ── Proj card ── */
+.proj-card-bar{height:4px;margin:-1.25rem -1.5rem 1rem;border-radius:13px 13px 0 0;}
+
 </style>
 </head>
 <body>
-
-<!-- ════════════════════════════════
-     HEADER
-════════════════════════════════ -->
 <header>
-  <div class="logo" onclick="goHome()">
-    <div class="logo-sq">G</div>
-    Geo Cost Management
-  </div>
-  <div class="header-center" id="header-crumb" style="display:none;">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
-    <span class="proj-crumb" id="crumb-name"></span>
-    <span style="font-size:11px;color:var(--text3);" id="crumb-author"></span>
-  </div>
+  <div class="logo"><div class="logo-sq">G</div>Geo Cost Management</div>
   <div class="header-right">
     <span id="mode-pill" class="mode-pill team" onclick="toggleMode()">ทีมงาน</span>
-    <button class="btn btn-sm no-print" onclick="exportPDF()" id="btn-pdf" style="display:none;">⬇ PDF</button>
-    <button class="btn btn-sm btn-green no-print" onclick="exportExcel()" id="btn-excel" style="display:none;">⬇ Excel</button>
+    <button class="btn btn-sm no-print" onclick="exportPDF()">⬇ PDF</button>
+    <button class="btn btn-sm no-print" style="background:var(--green-bg);color:var(--green);border-color:var(--green-bg);" onclick="exportExcel()">⬇ Excel</button>
   </div>
 </header>
 
-<!-- ════════════════════════════════
-     SCREEN HOME — รายการโปรเจค
-════════════════════════════════ -->
-<div id="screen-home">
-  <div class="home-header">
-    <div>
-      <div class="home-title">โปรเจคทั้งหมด</div>
-      <div class="home-sub" id="home-sub">กำลังโหลด...</div>
-    </div>
-    <button class="btn btn-primary" onclick="openNewProjModal()">+ สร้างโปรเจคใหม่</button>
-  </div>
-  <div class="proj-grid" id="proj-grid"></div>
-</div>
-
-<!-- ════════════════════════════════
-     SCREEN APP — รายละเอียดโปรเจค
-════════════════════════════════ -->
-<div id="screen-app">
 <div class="app">
-  <aside class="sidebar no-print">
-    <!-- 🟢 หมวดหมู่สำหรับทีมงาน (แสดงเสมอ) -->
-    <div class="nav-group">สำหรับทีมงาน</div>
-    <div class="nav-item active" onclick="goPage('dashboard')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-      Dashboard
+<aside class="sidebar no-print">
+  <div class="nav-group">โปรเจค</div>
+  <div class="nav-item" id="nav-projects" onclick="goPage('projects')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>
+    โปรเจคทั้งหมด
+    <span class="nav-count" id="nav-proj-count">0</span>
+  </div>
+  <div class="nav-group">โครงการนี้</div>
+  <div class="nav-item" id="nav-dashboard" onclick="goPage('dashboard')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+    Dashboard
+  </div>
+  <div class="nav-group">โครงการ</div>
+  <div class="nav-item" id="nav-project" onclick="goPage('project')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="2"/></svg>
+    รายการโครงการ
+  </div>
+  <div class="nav-item" id="nav-admin" style="display:none;" onclick="goPage('admin')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+    Admin — คลังสินค้า
+  </div>
+  <div class="nav-item" id="nav-attachments" onclick="goPage('attachments')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>
+    ไฟล์แนบ <span id="attach-badge" style="display:none;margin-left:auto;background:var(--blue);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;"></span>
+  </div>
+  <div class="nav-group">ตั้งค่า</div>
+  <div class="nav-item" id="nav-settings" onclick="goPage('settings')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+    ตั้งค่าโครงการ
+  </div>
+  <div class="sidebar-bottom">
+    <button class="btn sidebar-save-btn no-print" onclick="saveAsNewProject()">💾 บันทึกโปรเจค</button>
+    <button class="btn btn-sm no-print" style="width:100%;justify-content:center;" onclick="goPage('projects')">☰ โปรเจคทั้งหมด</button>
+  </div>
+</aside>
+
+<main class="content">
+
+<!-- PROJECTS LIST — หน้าแรก -->
+<div id="page-projects" class="page">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:10px;">
+    <div>
+      <div style="font-size:18px;font-weight:700;">โปรเจคทั้งหมด</div>
+      <div style="font-size:12px;color:var(--text3);margin-top:2px;" id="proj-list-sub">0 โปรเจค</div>
     </div>
-    <div class="nav-item" onclick="goPage('project')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="2"/></svg>
-      รายการสินค้า
+    <div style="display:flex;gap:8px;">
+      <button class="btn" onclick="openNewProjModal()">✚ สร้างโปรเจคใหม่</button>
+      <button class="btn btn-primary" onclick="saveAsNewProject()">💾 บันทึกโปรเจคปัจจุบัน</button>
     </div>
-    <div class="nav-item" onclick="goPage('settings')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
-      ตั้งค่าโปรเจค
-    </div>
-
-    <!-- 🔴 หมวดหมู่สำหรับแอดมิน (จะซ่อนไว้จนกว่าจะกดโหมดแอดมิน) -->
-    <div id="sidebar-admin-section" style="display: none; margin-top: 10px;">
-      <div class="nav-group" style="color: var(--amber);">สำหรับแอดมิน</div>
-      <div class="nav-item" onclick="goPage('admin')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-        คลังสินค้า (Catalog)
-      </div>
-    </div>
-
-    <div style="padding:1rem 16px;margin-top:auto;">
-      <button class="btn btn-sm" style="width:100%;justify-content:center;" onclick="goHome()">← กลับหน้าหลัก</button>
-    </div>
-  </aside>
-  <main class="content">
-
-    <!-- DASHBOARD -->
-    <div id="page-dashboard" class="page active">
-      <div style="margin-bottom:1rem;">
-        <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">โปรเจค</div>
-        <div id="d-proj-name" style="font-size:17px;font-weight:700;line-height:1.4;margin-bottom:6px;"></div>
-        <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin-bottom:4px;">
-          <div id="d-proj-meta" style="font-size:12px;color:var(--text2);display:flex;gap:14px;flex-wrap:wrap;"></div>
-        </div>
-        <div id="d-author-row" style="display:flex;align-items:center;gap:8px;margin-top:6px;"></div>
-      </div>
-      <div class="kpi-grid">
-        <div class="kpi" style="--kc:#4285f4"><div class="kpi-lbl">งบประมาณ</div><div class="kpi-val" id="k-budget">—</div><div class="kpi-sub">บาท</div></div>
-        <div class="kpi" style="--kc:#f59e0b"><div class="kpi-lbl">ต้นทุนรวม</div><div class="kpi-val" id="k-cost">—</div><div class="kpi-sub" id="k-cost-pct">—</div></div>
-        <div class="kpi" style="--kc:#10b981"><div class="kpi-lbl">กำไรสุทธิ์</div><div class="kpi-val" id="k-profit">—</div><div class="kpi-sub">บาท</div></div>
-        <div class="kpi" style="--kc:#8b5cf6"><div class="kpi-lbl">อัตรากำไร</div><div class="kpi-val" id="k-margin">—</div><div class="kpi-sub">ของงบประมาณ</div></div>
-      </div>
-      <div class="card">
-        <div class="card-hd">การใช้งบประมาณ</div>
-        <div class="bbar-track"><div class="bbar-cost" id="bbar-cost" style="width:0%"></div><div class="bbar-profit" id="bbar-profit" style="width:0%"></div></div>
-        <div class="legend-row" id="d-legend"></div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem;">
-        <div class="card" style="margin-bottom:0;">
-          <div class="card-hd">โครงสร้างต้นทุน</div>
-          <div class="legend-row" id="pie-legend" style="margin-bottom:10px;"></div>
-          <div style="position:relative;height:190px;"><canvas id="pieChart" role="img" aria-label="สัดส่วนต้นทุน"></canvas></div>
-        </div>
-        <div class="card" style="margin-bottom:0;">
-          <div class="card-hd">งบ vs ต้นทุน vs กำไร</div>
-          <div class="legend-row" style="margin-bottom:10px;">
-            <span style="display:flex;align-items:center;gap:4px;"><span class="legend-dot" style="background:#bfdbfe;"></span>งบ</span>
-            <span style="display:flex;align-items:center;gap:4px;"><span class="legend-dot" style="background:#4285f4;"></span>ต้นทุน</span>
-            <span style="display:flex;align-items:center;gap:4px;"><span class="legend-dot" style="background:#34d399;"></span>กำไร</span>
-          </div>
-          <div style="position:relative;height:190px;"><canvas id="barChart" role="img" aria-label="เปรียบเทียบงบและต้นทุน"></canvas></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- PROJECT ITEMS -->
-    <div id="page-project" class="page">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;" class="no-print">
-        <div style="font-size:15px;font-weight:700;">รายการสินค้าในโปรเจค</div>
-        <button class="btn btn-primary" onclick="openAddItemModal()">+ เพิ่มรายการ</button>
-      </div>
-      
-      <!-- บัตรที่ 1: ส่วนของ Tabs และตาราง -->
-      <div class="card">
-        <div class="tabs">
-          <button class="tab-btn active" onclick="switchTab('all')">ทั้งหมด</button>
-          <button class="tab-btn" onclick="switchTab('foreign')">ต่างประเทศ</button>
-          <button class="tab-btn" onclick="switchTab('local')">ในประเทศ</button>
-          <button class="tab-btn" onclick="switchTab('summary')">สรุปงบ</button>
-        </div>
-        <div id="ptab-all" class="tab-pane active"><div class="tbl-wrap" id="ptbl-all"></div></div>
-        <div id="ptab-foreign" class="tab-pane"><div class="tbl-wrap" id="ptbl-foreign"></div></div>
-        <div id="ptab-local" class="tab-pane"><div class="tbl-wrap" id="ptbl-local"></div></div>
-        <div id="ptab-summary" class="tab-pane">
-          <div class="tbl-wrap" id="ptbl-summary"></div>
-          <div class="formula-box" style="margin-top:1rem;">
-            <span class="fc">// สูตรคำนวณ</span><br>
-            <span class="fl">Dealer_Price</span> = <span class="fv">Unit_Price × (1 − Discount%)</span><br>
-            <span class="fl">Cost/หน่วย THB</span> = <span class="fv">Dealer × (1+VAT%) × อัตราแลกเปลี่ยน</span><br>
-            <span class="fl">Cost_รวม THB</span>  = <span class="fv">Cost/หน่วย × Qty</span><br>
-            <span class="fl">Commission</span>    = <span class="fv">งบประมาณ × Commission%</span><br>
-            <span class="fl">Profit</span>        = <span class="fv">งบประมาณ − ต้นทุนสินค้า − Commission − VAT</span>
-          </div>
-        </div>
-      </div> <!-- ปิดส่วนของบัตรตาราง -->
-
-      <!-- บัตรที่ 2: แนบไฟล์ต้นทุน (ย้ายมาวางตรงนี้แทนครับ) -->
-      <div class="card no-print" style="margin-top: 1rem;">
-        <div class="card-hd">ไฟล์แนบราคาต้นทุน (สูงสุด 10 ไฟล์)</div>
-        <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 1rem;">
-          <input type="file" id="file-upload" multiple accept=".pdf,.png,.jpg,.jpeg,.xlsx" style="font-size: 13px;">
-          <button class="btn btn-primary" onclick="uploadFiles()" id="btn-upload">อัปโหลดไฟล์</button>
-        </div>
-        <div id="upload-status" style="font-size: 12px; color: var(--text3); margin-bottom: 10px;"></div>
-        <div id="attachment-list" style="display: flex; flex-direction: column; gap: 8px;"></div>
-      </div> <!-- ปิดส่วนแนบไฟล์ -->
-
-    </div> <!-- ปิดหน้า page-project -->
-
-    <!-- ADMIN CATALOG -->
-    <div id="page-admin" class="page">
-      <div id="admin-guard"></div>
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
-        <div style="font-size:15px;font-weight:700;">Admin — คลังสินค้า (Master Catalog)</div>
-        <button class="btn btn-primary" onclick="openCatalogModal()">+ เพิ่มสินค้าใหม่</button>
-      </div>
-      <div class="card">
-        <div class="card-hd">
-          รายการสินค้า (<span id="catalog-count">0</span>)
-          <input type="text" placeholder="ค้นหา..." id="catalog-search"
-            style="padding:5px 10px;border:1px solid var(--border-md);border-radius:7px;font-size:12px;width:200px;"
-            oninput="renderCatalog()">
-        </div>
-        <div class="tbl-wrap" id="catalog-table"></div>
-      </div>
-    </div>
-
-    <!-- SETTINGS -->
-    <div id="page-settings" class="page">
-      <div style="font-size:15px;font-weight:700;margin-bottom:1rem;">ตั้งค่าโปรเจค</div>
-      <div class="card" style="max-width:620px;">
-        <div class="card-hd">ข้อมูลโปรเจค</div>
-        <div style="display:flex;flex-direction:column;gap:12px;">
-          <div class="field"><label>ชื่อโปรเจค *</label><input type="text" id="s-name"></div>
-          <div class="g2">
-            <div class="field"><label>หน่วยงาน / ลูกค้า</label><input type="text" id="s-client"></div>
-            <div class="field"><label>โมเดล / รุ่น</label><input type="text" id="s-model"></div>
-          </div>
-          <div class="g2">
-            <div class="field"><label>ผู้จัดทำ</label><input type="text" id="s-author" placeholder="ชื่อผู้จัดทำ"></div>
-            <div class="field"><label>สถานะ</label>
-              <select id="s-status">
-                <option value="draft">Draft — ร่าง</option>
-                <option value="active">Active — ดำเนินการ</option>
-                <option value="done">Done — เสร็จสิ้น</option>
-              </select>
-            </div>
-          </div>
-          <div class="g3">
-            <div class="field"><label>งบประมาณ (THB)</label><input type="number" id="s-budget" min="0"></div>
-            <div class="field"><label>Commission (%)</label><input type="number" id="s-comm" min="0" max="100" step="0.1"></div>
-            <div class="field"><label>VAT (%)</label><input type="number" id="s-vat" min="0" max="100" step="0.1"></div>
-          </div>
-          <button class="btn btn-primary" style="align-self:flex-start;" onclick="saveSettings()">บันทึก</button>
-        </div>
-      </div>
-      <div class="card" style="max-width:620px;">
-        <div class="card-hd">อัตราแลกเปลี่ยน (→ THB)</div>
-        <table id="fx-table" style="font-size:13px;margin-bottom:1rem;"></table>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px;">
-          <select id="new-cur" style="padding:6px 10px;border:1px solid var(--border-md);border-radius:8px;font-size:13px;font-family:'Sarabun',sans-serif;">
-            <option value="USD">USD</option><option value="EUR">EUR</option><option value="JPY">JPY</option>
-            <option value="GBP">GBP</option><option value="CNY">CNY</option><option value="SGD">SGD</option>
-            <option value="AUD">AUD</option><option value="CHF">CHF</option><option value="KRW">KRW</option>
-          </select>
-          <input type="number" id="new-rate" placeholder="อัตราแลกเปลี่ยน" step="0.01" min="0"
-            style="width:160px;padding:6px 10px;border:1px solid var(--border-md);border-radius:8px;font-size:13px;">
-          <button class="btn btn-primary" onclick="addCurrency()">+ เพิ่มสกุลเงิน</button>
-        </div>
-      </div>
-      <div class="card" style="max-width:620px;border-color:var(--red-bg);">
-        <div class="card-hd" style="color:var(--red);">Danger Zone</div>
-        <button class="btn btn-danger" onclick="deleteCurrentProject()">ลบโปรเจคนี้ออกจากระบบ</button>
-      </div>
-    </div>
-
-  </main>
-</div>
+  </div>
+  <div id="proj-list-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;"></div>
 </div>
 
-<!-- ════ MODAL: สร้างโปรเจคใหม่ ════ -->
-<div id="new-proj-modal" class="overlay">
-  <div class="modal">
-    <div class="modal-hd"><h3 id="np-title">สร้างโปรเจคใหม่</h3><button class="btn btn-ghost btn-icon" onclick="closeModal('new-proj-modal')">✕</button></div>
-    <div class="modal-body">
-      <div class="field"><label>ชื่อโปรเจค *</label><input type="text" id="np-name" placeholder="เช่น โครงการ MASW สำรวจชั้นดิน"></div>
-      <div class="g2">
-        <div class="field"><label>หน่วยงาน / ลูกค้า</label><input type="text" id="np-client" placeholder="เช่น EGAT"></div>
-        <div class="field"><label>โมเดล / รุ่น</label><input type="text" id="np-model" placeholder="เช่น Terraloc Pro2"></div>
+<!-- DASHBOARD -->
+<div id="page-dashboard" class="page">
+  <div style="margin-bottom:1rem;">
+    <div style="font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">โครงการ</div>
+    <div id="d-quickfill" class="quickfill-banner" style="display:none;">
+      ⚡ ยังไม่ได้กรอกข้อมูลโปรเจค
+      <button class="btn btn-sm" onclick="goPage('settings')" style="background:var(--amber);color:#fff;border-color:var(--amber);flex-shrink:0;">กรอกข้อมูล →</button>
+    </div>
+    <div id="d-proj-name" style="font-size:17px;font-weight:700;line-height:1.4;margin-bottom:4px;"></div>
+    <div id="d-proj-meta" style="font-size:12px;color:var(--text2);display:flex;gap:14px;flex-wrap:wrap;"></div>
+    <div id="d-author-row" style="display:flex;align-items:center;gap:8px;margin-top:6px;"></div>
+  </div>
+  <div class="kpi-grid">
+    <div class="kpi" style="--kc:#4285f4"><div class="kpi-lbl">งบประมาณ</div><div class="kpi-val" id="k-budget">—</div><div class="kpi-sub">บาท</div></div>
+    <div class="kpi" style="--kc:#f59e0b"><div class="kpi-lbl">ต้นทุนรวม</div><div class="kpi-val" id="k-cost">—</div><div class="kpi-sub" id="k-cost-pct">—</div></div>
+    <div class="kpi" style="--kc:#10b981"><div class="kpi-lbl">กำไรสุทธิ์</div><div class="kpi-val" id="k-profit">—</div><div class="kpi-sub">บาท</div></div>
+    <div class="kpi" style="--kc:#8b5cf6"><div class="kpi-lbl">อัตรากำไร</div><div class="kpi-val" id="k-margin">—</div><div class="kpi-sub">ของงบประมาณ</div></div>
+  </div>
+  <div class="card">
+    <div class="card-hd">การใช้งบประมาณ</div>
+    <div class="bbar-track"><div class="bbar-cost" id="bbar-cost" style="width:0%"></div><div class="bbar-profit" id="bbar-profit" style="width:0%"></div></div>
+    <div class="legend-row" id="d-legend"></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem;">
+    <div class="card" style="margin-bottom:0;">
+      <div class="card-hd">โครงสร้างต้นทุน</div>
+      <div class="legend-row" id="pie-legend" style="margin-bottom:10px;"></div>
+      <div style="position:relative;height:190px;"><canvas id="pieChart"></canvas></div>
+    </div>
+    <div class="card" style="margin-bottom:0;">
+      <div class="card-hd">งบ vs ต้นทุน vs กำไร</div>
+      <div class="legend-row" style="margin-bottom:10px;">
+        <span style="display:flex;align-items:center;gap:4px;"><span class="legend-dot" style="background:#bfdbfe;"></span>งบ</span>
+        <span style="display:flex;align-items:center;gap:4px;"><span class="legend-dot" style="background:#4285f4;"></span>ต้นทุน</span>
+        <span style="display:flex;align-items:center;gap:4px;"><span class="legend-dot" style="background:#34d399;"></span>กำไร</span>
       </div>
+      <div style="position:relative;height:190px;"><canvas id="barChart"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- PROJECT ITEMS -->
+<div id="page-project" class="page">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;" class="no-print">
+    <div style="font-size:15px;font-weight:700;">รายการโครงการ</div>
+    <button class="btn btn-primary" onclick="openAddItemModal()">+ เพิ่มรายการ</button>
+  </div>
+  <div class="card">
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('all')">ทั้งหมด</button>
+      <button class="tab-btn" onclick="switchTab('foreign')">ต่างประเทศ</button>
+      <button class="tab-btn" onclick="switchTab('local')">ในประเทศ</button>
+      <button class="tab-btn" onclick="switchTab('summary')">สรุปงบ</button>
+    </div>
+    <div id="ptab-all" class="tab-pane active"><div class="tbl-wrap" id="ptbl-all"></div></div>
+    <div id="ptab-foreign" class="tab-pane"><div class="tbl-wrap" id="ptbl-foreign"></div></div>
+    <div id="ptab-local" class="tab-pane"><div class="tbl-wrap" id="ptbl-local"></div></div>
+    <div id="ptab-summary" class="tab-pane">
+      <div class="tbl-wrap" id="ptbl-summary"></div>
+      <div class="formula-box" style="margin-top:1rem;">
+        <span class="fc">// สูตรคำนวณ</span><br>
+        <span class="fl">Dealer_Price</span> = <span class="fv">Unit_Price × (1 − Discount%)</span><br>
+        <span class="fl">TAX_Price</span>    = <span class="fv">Dealer_Price × (1 + VAT%)</span><br>
+        <span class="fl">Cost_THB</span>     = <span class="fv">TAX_Price × Qty × อัตราแลกเปลี่ยน</span><br>
+        <span class="fl">Commission</span>   = <span class="fv">งบประมาณ × Commission%</span><br>
+        <span class="fl">Profit</span>       = <span class="fv">งบประมาณ − ต้นทุนรวม − Commission − VAT</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div id="page-admin" class="page">
+  <div id="admin-access-check"></div>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+    <div style="font-size:15px;font-weight:700;">Admin — คลังสินค้า</div>
+    <button class="btn btn-primary" onclick="openCatalogModal()">+ เพิ่มสินค้าใหม่</button>
+  </div>
+  <div class="card">
+    <div class="card-hd">
+      รายการสินค้าในคลัง (<span id="catalog-count">0</span> รายการ)
+      <input type="text" placeholder="ค้นหา..." id="catalog-search" style="padding:5px 10px;border:1px solid var(--border-md);border-radius:7px;font-size:12px;width:200px;" oninput="renderCatalog()">
+    </div>
+    <div class="tbl-wrap" id="catalog-table"></div>
+  </div>
+</div>
+
+<!-- SETTINGS -->
+<div id="page-settings" class="page">
+  <div style="font-size:15px;font-weight:700;margin-bottom:1rem;">ตั้งค่าโครงการ</div>
+  <div class="card" style="max-width:600px;">
+    <div class="card-hd">ข้อมูลโครงการ</div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div class="field"><label>ชื่อโครงการ</label><input type="text" id="s-name" placeholder="ชื่อโครงการ"></div>
       <div class="g2">
-        <div class="field"><label>ผู้จัดทำ *</label><input type="text" id="np-author" placeholder="ชื่อ-นามสกุล หรือชื่อเล่น"></div>
-        <div class="field"><label>สถานะเริ่มต้น</label>
-          <select id="np-status">
-            <option value="draft">Draft — ร่าง</option>
-            <option value="active">Active — ดำเนินการ</option>
-          </select>
-        </div>
+        <div class="field"><label>หน่วยงาน / ลูกค้า</label><input type="text" id="s-client"></div>
+        <div class="field"><label>โมเดล / รุ่น</label><input type="text" id="s-model"></div>
       </div>
       <div class="g3">
-        <div class="field"><label>งบประมาณ (THB)</label><input type="number" id="np-budget" min="0" value="0"></div>
-        <div class="field"><label>Commission (%)</label><input type="number" id="np-comm" min="0" max="100" step="0.1" value="10"></div>
-        <div class="field"><label>VAT (%)</label><input type="number" id="np-vat" min="0" max="100" step="0.1" value="7"></div>
+        <div class="field"><label>งบประมาณ (THB)</label><input type="number" id="s-budget" min="0"></div>
+        <div class="field"><label>Commission (%)</label><input type="number" id="s-comm" min="0" max="100" step="0.1"></div>
+        <div class="field"><label>VAT (%)</label><input type="number" id="s-vat" min="0" max="100" step="0.1"></div>
       </div>
+      <div class="g2">
+        <div class="field"><label>ผู้จัดทำ</label><input type="text" id="s-author" placeholder="ชื่อ-นามสกุล หรือชื่อเล่น"></div>
+        <div class="field"><label>สถานะ</label>
+          <select id="s-status">
+            <option value="draft">Draft — ร่าง</option>
+            <option value="active">Active — ดำเนินการ</option>
+            <option value="done">Done — เสร็จสิ้น</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn btn-primary" style="align-self:flex-start;" onclick="saveSettings()">บันทึก</button>
     </div>
-    <div class="modal-ft">
-      <button class="btn" onclick="closeModal('new-proj-modal')">ยกเลิก</button>
-      <button class="btn btn-primary" onclick="saveNewProject()">สร้างโปรเจค</button>
+  </div>
+  <div class="card" style="max-width:600px;">
+    <div class="card-hd">อัตราแลกเปลี่ยน (→ THB)</div>
+    <table id="fx-table" style="font-size:13px;margin-bottom:1rem;"></table>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px;">
+      <select id="new-cur" style="padding:6px 10px;border:1px solid var(--border-md);border-radius:8px;font-size:13px;font-family:'Sarabun',sans-serif;">
+        <option value="USD">USD</option><option value="EUR">EUR</option><option value="JPY">JPY</option>
+        <option value="GBP">GBP</option><option value="CNY">CNY</option><option value="SGD">SGD</option>
+        <option value="AUD">AUD</option><option value="CHF">CHF</option><option value="KRW">KRW</option>
+      </select>
+      <input type="number" id="new-rate" placeholder="อัตราแลกเปลี่ยน" step="0.01" min="0" style="width:160px;padding:6px 10px;border:1px solid var(--border-md);border-radius:8px;font-size:13px;">
+      <button class="btn btn-primary" onclick="addCurrency()">+ เพิ่มสกุลเงิน</button>
     </div>
   </div>
 </div>
 
-<!-- ════ MODAL: เพิ่ม/แก้ไขรายการ ════ -->
+<!-- ATTACHMENTS -->
+<div id="page-attachments" class="page">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+    <div>
+      <div style="font-size:15px;font-weight:700;">📎 ไฟล์แนบ — ราคาต้นทุนจากผู้ผลิต</div>
+      <div style="font-size:12px;color:var(--text3);margin-top:2px;">เก็บไว้บน Google Drive · สูงสุด 10 ไฟล์</div>
+    </div>
+    <span id="attach-counter" style="font-size:12px;font-weight:700;background:var(--blue-bg);color:var(--blue);padding:4px 14px;border-radius:12px;">0 / 10</span>
+  </div>
+  <div id="attach-dropzone" class="card" style="border:2px dashed var(--border-md);text-align:center;padding:2.5rem;cursor:pointer;transition:all .2s;margin-bottom:0;"
+    onclick="document.getElementById('file-upload-attach').click()"
+    ondragover="event.preventDefault();this.style.borderColor='var(--blue)';this.style.background='var(--blue-bg)';"
+    ondragleave="this.style.borderColor='';this.style.background='';"
+    ondrop="onAttachDrop(event)">
+    <div style="font-size:36px;margin-bottom:8px;">☁️</div>
+    <div style="font-size:14px;font-weight:600;color:var(--text2);">ลากไฟล์มาวางที่นี่ หรือคลิกเพื่อเลือก</div>
+    <div style="font-size:12px;color:var(--text3);margin-top:6px;">PDF, Excel, Word, รูปภาพ · ไม่เกิน 50MB</div>
+  </div>
+  <input type="file" id="file-upload-attach" multiple accept=".pdf,.png,.jpg,.jpeg,.xlsx,.xls,.doc,.docx" style="display:none;" onchange="doUpload(this.files)">
+  <div id="upload-prog-wrap" style="display:none;" class="card">
+    <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+      <span id="upload-prog-label" style="font-size:13px;color:var(--text2);">กำลังอัปโหลด...</span>
+      <span id="upload-prog-pct" style="font-size:13px;font-weight:700;color:var(--blue);">0%</span>
+    </div>
+    <div style="height:8px;background:var(--surface2);border-radius:4px;overflow:hidden;">
+      <div id="upload-prog-bar" style="height:100%;background:var(--blue);border-radius:4px;transition:width .3s;width:0%;"></div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:0;">
+    <div class="card-hd">
+      รายการไฟล์
+      <button class="btn btn-sm btn-primary" id="btn-add-attach" onclick="document.getElementById('file-upload-attach').click()">+ เพิ่มไฟล์</button>
+    </div>
+    <div id="attach-list"><div style="text-align:center;padding:1.5rem;color:var(--text3);font-size:13px;">ยังไม่มีไฟล์แนบ</div></div>
+  </div>
+</div>
+
+</main>
+</div>
+
+<!-- MODAL: สร้างโปรเจคใหม่ -->
+<div id="new-proj-modal" class="overlay">
+  <div class="modal" style="max-width:460px;">
+    <div class="modal-hd" style="border-bottom:none;padding-bottom:0;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:40px;height:40px;border-radius:12px;background:var(--blue-bg);color:var(--blue);display:flex;align-items:center;justify-content:center;font-size:18px;">📁</div>
+        <div>
+          <h3 style="margin-bottom:2px;">สร้างโปรเจคใหม่</h3>
+          <div style="font-size:12px;color:var(--text3);">กรอกข้อมูลเบื้องต้นของโปรเจค</div>
+        </div>
+      </div>
+      <button class="btn btn-icon" onclick="closeModal('new-proj-modal')">✕</button>
+    </div>
+    <div class="modal-body" style="padding-top:1.25rem;">
+      <div class="field"><label>ชื่อโปรเจค *</label><input type="text" id="np-name" placeholder="เช่น โครงการ MASW สำรวจชั้นดิน" onkeydown="if(event.key==='Enter')confirmNewProject()"></div>
+      <div class="field"><label>หน่วยงาน / ลูกค้า</label><input type="text" id="np-client" placeholder="เช่น การไฟฟ้าฝ่ายผลิตแห่งประเทศไทย"></div>
+      <div class="field"><label>ผู้จัดทำ</label><input type="text" id="np-author" placeholder="ชื่อ-นามสกุล หรือชื่อเล่น"></div>
+    </div>
+    <div class="modal-ft" style="gap:10px;">
+      <button class="btn" onclick="closeModal('new-proj-modal')" style="flex:1;justify-content:center;">ยกเลิก</button>
+      <button class="btn btn-primary" onclick="confirmNewProject()" style="flex:2;justify-content:center;">สร้างโปรเจค →</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: เพิ่ม/แก้ไขรายการ -->
 <div id="item-modal" class="overlay">
   <div class="modal">
-    <div class="modal-hd"><h3 id="item-modal-title">เพิ่มรายการในโปรเจค</h3><button class="btn btn-ghost btn-icon" onclick="closeModal('item-modal')">✕</button></div>
+    <div class="modal-hd" style="border-bottom:1px solid var(--border);">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:34px;height:34px;border-radius:10px;background:var(--blue-bg);color:var(--blue);display:flex;align-items:center;justify-content:center;font-size:15px;">📦</div>
+        <h3 id="item-modal-title">เพิ่มรายการในโครงการ</h3>
+      </div>
+      <button class="btn btn-icon" onclick="closeModal('item-modal')">✕</button>
+    </div>
     <div class="modal-body">
       <div class="field">
         <label>ค้นหาสินค้า (พิมพ์ชื่อหรือ Model No.)</label>
         <div class="search-wrap">
-          <input type="text" id="item-search" placeholder="เช่น Terraloc หรือ 21-337..." autocomplete="off"
-            oninput="onItemSearch()" onfocus="onItemSearch()">
+          <input type="text" id="item-search" placeholder="เช่น Terraloc หรือ 21-337..." autocomplete="off" oninput="onItemSearch()" onfocus="onItemSearch()">
           <div id="search-dropdown" class="search-dropdown"></div>
         </div>
       </div>
@@ -462,23 +437,27 @@ table tr.grand-row td{background:var(--surface2);font-weight:700;font-size:12px;
       <div class="g3">
         <div class="field"><label>จำนวน</label><input type="number" id="item-qty" min="1" value="1" oninput="updateItemPreview()"></div>
         <div class="field"><label>Discount (%)</label><input type="number" id="item-disc" min="0" max="100" step="0.1" value="0" oninput="updateItemPreview()"></div>
-        <div class="field"><label>หมวดหมู่</label>
-          <select id="item-cat"><option value="foreign">ต่างประเทศ</option><option value="local">ในประเทศ</option></select>
-        </div>
+        <div class="field"><label>หมวดหมู่</label><select id="item-cat"><option value="foreign">ต่างประเทศ</option><option value="local">ในประเทศ</option></select></div>
       </div>
       <div id="item-preview" class="preview-pill" style="display:none;"></div>
     </div>
-    <div class="modal-ft">
-      <button class="btn" onclick="closeModal('item-modal')">ยกเลิก</button>
-      <button class="btn btn-primary" id="item-save-btn" onclick="saveProjectItem()">เพิ่มในโปรเจค</button>
+    <div class="modal-ft" style="gap:10px;">
+      <button class="btn" onclick="closeModal('item-modal')" style="flex:1;justify-content:center;">ยกเลิก</button>
+      <button class="btn btn-primary" id="item-save-btn" onclick="saveProjectItem()" style="flex:2;justify-content:center;">เพิ่มในโครงการ</button>
     </div>
   </div>
 </div>
 
-<!-- ════ MODAL: Admin Catalog ════ -->
+<!-- MODAL: Admin Catalog -->
 <div id="catalog-modal" class="overlay">
   <div class="modal">
-    <div class="modal-hd"><h3 id="catalog-modal-title">เพิ่มสินค้าในคลัง</h3><button class="btn btn-ghost btn-icon" onclick="closeModal('catalog-modal')">✕</button></div>
+    <div class="modal-hd" style="border-bottom:1px solid var(--border);">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:34px;height:34px;border-radius:10px;background:var(--amber-bg);color:var(--amber);display:flex;align-items:center;justify-content:center;font-size:15px;">⭐</div>
+        <h3 id="catalog-modal-title">เพิ่มสินค้าในคลัง</h3>
+      </div>
+      <button class="btn btn-icon" onclick="closeModal('catalog-modal')">✕</button>
+    </div>
     <div class="modal-body">
       <div class="field"><label>ชื่อสินค้า / บริการ *</label><input type="text" id="c-name" placeholder="ชื่อสินค้า"></div>
       <div class="g2">
@@ -488,808 +467,647 @@ table tr.grand-row td{background:var(--surface2);font-weight:700;font-size:12px;
       <div class="field"><label>ราคาต่อหน่วย *</label><input type="number" id="c-price" min="0" step="0.01" placeholder="0.00" oninput="updateCatalogPreview()"></div>
       <div id="c-preview" class="preview-pill" style="display:none;"></div>
     </div>
-    <div class="modal-ft">
-      <button class="btn" onclick="closeModal('catalog-modal')">ยกเลิก</button>
-      <button class="btn btn-primary" onclick="saveCatalogItem()">บันทึก</button>
+    <div class="modal-ft" style="gap:10px;">
+      <button class="btn" onclick="closeModal('catalog-modal')" style="flex:1;justify-content:center;">ยกเลิก</button>
+      <button class="btn btn-primary" onclick="saveCatalogItem()" style="flex:2;justify-content:center;">💾 บันทึก</button>
     </div>
   </div>
 </div>
 
+<div id="autosave-indicator">✓ บันทึกแล้ว</div>
 <div id="toast"></div>
 
 <script>
-// ══════════════════════════════════════════
-//  GLOBAL STATE
-// ══════════════════════════════════════════
-let isAdmin = false;
-let currentProjId = null;   // which project is open
-let editingCatalogId = null;
-let editingProjectItemId = null;
-let selectedCatalogItem = null;
-let pieChart = null, barChart = null;
+// ═══ STATE ═══
+let isAdmin=false, editingCatalogId=null, editingProjectId=null, selectedCatalogItem=null;
+let pieChart=null, barChart=null;
 
-// ── DEFAULT CATALOG (shared across all projects) ──
-const DEFAULT_CATALOG = [
-  {id:101,name:"Terraloc Pro 2, 24 ch seismograph unit",model:"21-33720024",currency:"USD",unitPrice:29500},
-  {id:102,name:"Seismic cable with 24 tko, 5m spacing, 15m lead in",model:"CUSTOMIZED",currency:"USD",unitPrice:5000},
-  {id:103,name:"Landstreamer 24-ch + Geophones 4.5Hz vertical",model:"SPECIAL",currency:"USD",unitPrice:20112},
-  {id:104,name:"Geophone, 4.5 Hz horizontal",model:"23-39100063",currency:"USD",unitPrice:125},
-  {id:105,name:"Trigger switch (hammer switch), Mueller Clips, 5m",model:"23-39100001",currency:"USD",unitPrice:400},
-  {id:106,name:"Adapter cable 2×NK-27 to KPT55",model:"23-39100064",currency:"USD",unitPrice:1450},
-  {id:107,name:"Geogiga Surface Plus — lifetime license",model:"SURFACE_PLUS",currency:"USD",unitPrice:4900},
-  {id:108,name:"Geogiga Surface 3D — lifetime license",model:"SURFACE_3D",currency:"USD",unitPrice:1500},
-  {id:109,name:"Geogiga Front End — lifetime license",model:"18-006217",currency:"USD",unitPrice:690},
-  {id:110,name:"Standard shot plate",model:"40-33001018",currency:"USD",unitPrice:440},
-  {id:111,name:"Smart Battery 10.8V (RRC 2040-2)",model:"30-49500026",currency:"USD",unitPrice:480},
-  {id:112,name:"Dual Li-ion battery charger",model:"30-002180",currency:"USD",unitPrice:640},
-  {id:113,name:"Airfreight — CIP Bangkok International Airport",model:"AIRFREIGHT",currency:"USD",unitPrice:1500},
-  {id:114,name:"Freight Insurance",model:"INSURANCE",currency:"USD",unitPrice:1000},
-  {id:115,name:"PEG-40Kg Propelled Energy Generator",model:"PEG-40",currency:"USD",unitPrice:16500},
-  {id:116,name:"5 days training in Stockholm",model:"TRAINING",currency:"USD",unitPrice:4000},
-  {id:201,name:"แบตเตอรี่ภายนอกและที่ชาร์จ deep cycle",model:"",currency:"THB",unitPrice:15000},
-  {id:202,name:"Sledgehammer 12 ปอนด์",model:"",currency:"THB",unitPrice:4000},
-  {id:203,name:"Sledgehammer 20 ปอนด์",model:"",currency:"THB",unitPrice:9000},
-  {id:204,name:"GETAC S410",model:"",currency:"THB",unitPrice:100000},
-  {id:205,name:"Iron plate 12×12 นิ้ว หนา 1.0",model:"",currency:"THB",unitPrice:1000},
-  {id:206,name:"PLBC Aluminium Plate 5083 12×12 นิ้ว",model:"",currency:"THB",unitPrice:3630},
-  {id:207,name:"ค่าดำเนินการ",model:"",currency:"THB",unitPrice:400000},
-];
+const APPS_SCRIPT_URL="https://script.google.com/macros/s/AKfycbxkJQrKrQxeG7jiORDcrX2Dk-4-Y01u6tYh9Cv8fnKC5S-NfrPVawJdAh3PqlMOO-6k-Q/exec";
 
-// ── APP DATA STRUCTURE ──
-// { catalog: [...], projects: [{id, name, client, model, author, status, budget, commission, vat, currencies, items, createdAt, updatedAt}] }
-let APP = { catalog: [], projects: [] };
+const DEFAULT={
+  project:{name:"",client:"",model:"",budget:0,commission:10,vat:7,author:"",status:"draft"},
+  currencies:{THB:1,USD:33.5,EUR:37.2,JPY:0.23,GBP:43.5},
+  attachments:[],
+  catalog:[
+    {id:101,name:"Terraloc Pro 2, 24 ch seismograph unit",model:"21-33720024",currency:"USD",unitPrice:29500},
+    {id:102,name:"Seismic cable with 24 tko, 5m spacing, 15m lead in",model:"CUSTOMIZED",currency:"USD",unitPrice:5000},
+    {id:103,name:"Landstreamer 24-ch + Geophones 4.5Hz vertical",model:"SPECIAL",currency:"USD",unitPrice:20112},
+    {id:104,name:"Geophone, 4.5 Hz horizontal",model:"23-39100063",currency:"USD",unitPrice:125},
+    {id:105,name:"Trigger switch (hammer switch), Mueller Clips, 5m",model:"23-39100001",currency:"USD",unitPrice:400},
+    {id:106,name:"Adapter cable 2×NK-27 to KPT55",model:"23-39100064",currency:"USD",unitPrice:1450},
+    {id:107,name:"Geogiga Surface Plus — lifetime license",model:"SURFACE_PLUS",currency:"USD",unitPrice:4900},
+    {id:108,name:"Geogiga Surface 3D — lifetime license",model:"SURFACE_3D",currency:"USD",unitPrice:1500},
+    {id:109,name:"Geogiga Front End — lifetime license",model:"18-006217",currency:"USD",unitPrice:690},
+    {id:110,name:"Standard shot plate",model:"40-33001018",currency:"USD",unitPrice:440},
+    {id:111,name:"Smart Battery 10.8V (RRC 2040-2)",model:"30-49500026",currency:"USD",unitPrice:480},
+    {id:112,name:"Dual Li-ion battery charger",model:"30-002180",currency:"USD",unitPrice:640},
+    {id:113,name:"Airfreight — CIP Bangkok International Airport",model:"AIRFREIGHT",currency:"USD",unitPrice:1500},
+    {id:114,name:"Freight Insurance",model:"INSURANCE",currency:"USD",unitPrice:1000},
+    {id:115,name:"PEG-40Kg Propelled Energy Generator",model:"PEG-40",currency:"USD",unitPrice:16500},
+    {id:116,name:"5 days training in Stockholm",model:"TRAINING",currency:"USD",unitPrice:4000},
+    {id:201,name:"แบตเตอรี่ภายนอกและที่ชาร์จ deep cycle",model:"",currency:"THB",unitPrice:15000},
+    {id:202,name:"Sledgehammer 12 ปอนด์",model:"",currency:"THB",unitPrice:4000},
+    {id:203,name:"Sledgehammer 20 ปอนด์",model:"",currency:"THB",unitPrice:9000},
+    {id:204,name:"GETAC S410",model:"",currency:"THB",unitPrice:100000},
+    {id:205,name:"Iron plate 12×12 นิ้ว หนา 1.0",model:"",currency:"THB",unitPrice:1000},
+    {id:206,name:"PLBC Aluminium Plate 5083 12×12 นิ้ว",model:"",currency:"THB",unitPrice:3630},
+    {id:207,name:"ค่าดำเนินการ",model:"",currency:"THB",unitPrice:400000},
+  ],
+  items:[]
+};
 
-function loadApp(){
+let S=JSON.parse(JSON.stringify(DEFAULT));
+let PROJECTS=[];
+
+// ═══ STORAGE ═══
+function load(){
   try{
-    const d = localStorage.getItem('geo_cost_v1');
-    if(d){ APP = JSON.parse(d); }
-    else { APP = { catalog: JSON.parse(JSON.stringify(DEFAULT_CATALOG)), projects: [] }; }
-    // migrate: ensure catalog exists
-    if(!APP.catalog || !APP.catalog.length) APP.catalog = JSON.parse(JSON.stringify(DEFAULT_CATALOG));
-  }catch(e){ APP = { catalog: JSON.parse(JSON.stringify(DEFAULT_CATALOG)), projects: [] }; }
+    const d=localStorage.getItem('geo_s_v1');
+    if(d) S=JSON.parse(d);
+    else S=JSON.parse(JSON.stringify(DEFAULT));
+    if(!S.attachments) S.attachments=[];
+    if(!S.project.author) S.project.author='';
+    if(!S.project.status) S.project.status='draft';
+    const pd=localStorage.getItem('geo_projects_v1');
+    if(pd) PROJECTS=JSON.parse(pd);
+  }catch(e){ S=JSON.parse(JSON.stringify(DEFAULT)); }
 }
-function saveApp(){ try{ localStorage.setItem('geo_cost_v1', JSON.stringify(APP)); }catch(e){} }
+function save(){
+  try{
+    localStorage.setItem('geo_s_v1',JSON.stringify(S));
+    const el=document.getElementById('autosave-indicator');
+    if(el){ el.classList.add('show'); clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove('show'),1800); }
+  }catch(e){}
+}
+function saveProjects(){ try{ localStorage.setItem('geo_projects_v1',JSON.stringify(PROJECTS)); }catch(e){} }
 
-// helper: get current project object
-function proj(){ return APP.projects.find(p=>p.id===currentProjId)||null; }
+// ═══ CALCS ═══
+const fx=cur=>S.currencies[cur]||1;
+const itemCostPerUnit=i=>i.unitPrice*(1-i.discount/100)*(1+S.project.vat/100)*fx(i.currency);
+const itemCost=i=>itemCostPerUnit(i)*i.qty;
+function totals(){
+  const goods=S.items.reduce((s,i)=>s+itemCost(i),0);
+  const b=S.project.budget;
+  const comm=b*S.project.commission/100;
+  const vat=b*S.project.vat/100;
+  const total=goods+comm+vat;
+  const profit=b-total;
+  return{goods,comm,vat,total,profit,margin:b>0?profit/b*100:0,budget:b};
+}
+function calcFromData(data){
+  const rfx=cur=>(data.currencies||{})[cur]||1;
+  const goods=(data.items||[]).reduce((s,i)=>{
+    const d=i.unitPrice*(1-i.discount/100);
+    return s+d*(1+(data.project.vat||7)/100)*i.qty*rfx(i.currency);
+  },0);
+  const b=data.project.budget||0;
+  const comm=b*(data.project.commission||10)/100;
+  const vat=b*(data.project.vat||7)/100;
+  const profit=b-goods-comm-vat;
+  return{goods,profit,margin:b>0?profit/b*100:0,budget:b};
+}
+const fmt=n=>Math.round(n).toLocaleString('th-TH');
+const pct=(a,b)=>b>0?(a/b*100).toFixed(1)+'%':'—';
+const initials=n=>n?n.trim().split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2):'?';
+const statusMap={draft:{bg:'#fef3c7',tc:'#b45309',lbl:'Draft'},active:{bg:'#e6f4ed',tc:'#0d7a4e',lbl:'Active'},done:{bg:'#e8f0fe',tc:'#1a56db',lbl:'Done'}};
 
-// ══════════════════════════════════════════
-//  CALCS
-// ══════════════════════════════════════════
-const fx = (cur, p) => (p||proj()).currencies[cur]||1;
-function itemCost(item, p){
-  const pr = p||proj();
-  const dealer = item.unitPrice*(1-item.discount/100);
-  const withVat = dealer*(1+pr.vat/100);
-  return withVat * item.qty * fx(item.currency, pr);
-}
-function itemCostPerUnit(item, p){
-  const pr = p||proj();
-  const dealer = item.unitPrice*(1-item.discount/100);
-  const withVat = dealer*(1+pr.vat/100);
-  return withVat * fx(item.currency, pr);
-}
-function totals(p){
-  const pr = p||proj();
-  const goods = pr.items.reduce((s,i)=>s+itemCost(i,pr),0);
-  const b = pr.budget;
-  const comm = b*pr.commission/100;
-  const vat  = b*pr.vat/100;
-  const total = goods+comm+vat;
-  const profit = b-total;
-  return { goods, comm, vat, total, profit, margin: b>0?profit/b*100:0, budget:b };
-}
-const fmt = n => Math.round(n).toLocaleString('th-TH');
-const pct = (a,b) => b>0?(a/b*100).toFixed(1)+'%':'—';
-const initials = name => name ? name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2) : '?';
-const statusMap = { draft:{cls:'status-draft',label:'Draft'}, active:{cls:'status-active',label:'Active'}, done:{cls:'status-done',label:'Done'} };
-function statusBadge(s){ const m=statusMap[s]||statusMap.draft; return `<span class="status-badge ${m.cls}">${m.label}</span>`; }
-
-// ══════════════════════════════════════════
-//  HOME — PROJECT LIST
-// ══════════════════════════════════════════
-function goHome(){
-  currentProjId = null;
-  document.getElementById('screen-home').style.display = '';
-  document.getElementById('screen-app').style.display = 'none';
-  document.getElementById('header-crumb').style.display = 'none';
-  document.getElementById('btn-pdf').style.display = 'none';
-  document.getElementById('btn-excel').style.display = 'none';
-  renderHome();
-}
-function renderHome(){
-  const total = APP.projects.length;
-  document.getElementById('home-sub').textContent = `${total} โปรเจค · คลิกเพื่อเปิด`;
-  const grid = document.getElementById('proj-grid');
-  const cards = APP.projects.map(p=>{
-    const t = totals(p);
-    const col = ['#4285f4','#10b981','#f59e0b','#8b5cf6','#ef4444','#06b6d4'][APP.projects.indexOf(p)%6];
-    const date = p.updatedAt ? new Date(p.updatedAt).toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'2-digit'}) : '—';
-    return `<div class="proj-card" onclick="openProject('${p.id}')">
-      <div class="proj-card-top">
-        <div class="proj-avatar" style="background:${col}22;color:${col};">${initials(p.name)}</div>
-        <div class="proj-card-actions">
-          <button class="btn btn-sm btn-ghost btn-icon" onclick="event.stopPropagation();openEditProjModal('${p.id}')" title="แก้ไข">✏</button>
-          <button class="btn btn-sm btn-danger btn-icon" onclick="event.stopPropagation();deleteProjFromHome('${p.id}')" title="ลบ">✕</button>
-        </div>
-      </div>
-      <div class="proj-card-name">${p.name}</div>
-      <div class="proj-card-client">${p.client||'—'}</div>
-      <div class="proj-card-meta">
-        <div class="proj-meta-item">งบ <span class="proj-meta-val">฿${fmt(p.budget)}</span></div>
-        <div class="proj-meta-item">กำไร <span class="proj-meta-val" style="color:${t.profit>=0?'var(--green)':'var(--red)'};">${t.margin.toFixed(1)}%</span></div>
-        <div class="proj-meta-item">รายการ <span class="proj-meta-val">${p.items.length}</span></div>
-      </div>
-      <div class="proj-card-footer">
-        <div class="proj-author">
-          <div class="author-avatar">${initials(p.author||'?')}</div>
-          <span>${p.author||'ไม่ระบุ'}</span>
-          ${statusBadge(p.status||'draft')}
-        </div>
-        <span class="proj-date">${date}</span>
-      </div>
-    </div>`;
-  }).join('');
-  grid.innerHTML = cards + `<div class="new-proj-card" onclick="openNewProjModal()">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-    <span>สร้างโปรเจคใหม่</span>
-  </div>`;
-}
-
-// ══════════════════════════════════════════
-//  NEW / EDIT PROJECT MODAL
-// ══════════════════════════════════════════
-let editingProjId = null;
-function openNewProjModal(){
-  editingProjId = null;
-  document.getElementById('np-title').textContent = 'สร้างโปรเจคใหม่';
-  document.getElementById('np-name').value = '';
-  document.getElementById('np-client').value = '';
-  document.getElementById('np-model').value = '';
-  document.getElementById('np-author').value = '';
-  document.getElementById('np-status').value = 'draft';
-  document.getElementById('np-budget').value = 0;
-  document.getElementById('np-comm').value = 10;
-  document.getElementById('np-vat').value = 7;
-  document.getElementById('new-proj-modal').classList.add('open');
-  setTimeout(()=>document.getElementById('np-name').focus(),100);
-}
-function openEditProjModal(id){
-  const p = APP.projects.find(x=>x.id===id);
-  if(!p) return;
-  editingProjId = id;
-  document.getElementById('np-title').textContent = 'แก้ไขข้อมูลโปรเจค';
-  document.getElementById('np-name').value = p.name;
-  document.getElementById('np-client').value = p.client||'';
-  document.getElementById('np-model').value = p.model||'';
-  document.getElementById('np-author').value = p.author||'';
-  document.getElementById('np-status').value = p.status||'draft';
-  document.getElementById('np-budget').value = p.budget;
-  document.getElementById('np-comm').value = p.commission;
-  document.getElementById('np-vat').value = p.vat;
-  document.getElementById('new-proj-modal').classList.add('open');
-}
-function saveNewProject(){
-  const name = document.getElementById('np-name').value.trim();
-  if(!name){ toast('กรุณาใส่ชื่อโปรเจค'); return; }
-  const now = new Date().toISOString();
-  if(editingProjId){
-    const p = APP.projects.find(x=>x.id===editingProjId);
-    p.name = name;
-    p.client = document.getElementById('np-client').value.trim();
-    p.model = document.getElementById('np-model').value.trim();
-    p.author = document.getElementById('np-author').value.trim();
-    p.status = document.getElementById('np-status').value;
-    p.budget = parseFloat(document.getElementById('np-budget').value)||0;
-    p.commission = parseFloat(document.getElementById('np-comm').value)||0;
-    p.vat = parseFloat(document.getElementById('np-vat').value)||0;
-    p.updatedAt = now;
-    toast('แก้ไขโปรเจคแล้ว ✓');
-  } else {
-    const newProj = {
-      id: 'proj_'+Date.now(),
-      name, client: document.getElementById('np-client').value.trim(),
-      model: document.getElementById('np-model').value.trim(),
-      author: document.getElementById('np-author').value.trim(),
-      status: document.getElementById('np-status').value,
-      budget: parseFloat(document.getElementById('np-budget').value)||0,
-      commission: parseFloat(document.getElementById('np-comm').value)||0,
-      vat: parseFloat(document.getElementById('np-vat').value)||0,
-      currencies: { THB:1, USD:33.5, EUR:37.2, JPY:0.23, GBP:43.5 },
-      items: [],
-      createdAt: now, updatedAt: now
-    };
-    APP.projects.push(newProj);
-    toast('สร้างโปรเจคใหม่แล้ว ✓');
-  }
-  saveApp();
-  closeModal('new-proj-modal');
-  renderHome();
-}
-function deleteProjFromHome(id){
-  const p = APP.projects.find(x=>x.id===id);
-  if(!p || !confirm(`ลบโปรเจค "${p.name}" ?\nการกระทำนี้ไม่สามารถย้อนกลับได้`)) return;
-  APP.projects = APP.projects.filter(x=>x.id!==id);
-  saveApp(); renderHome();
-  toast('ลบโปรเจคแล้ว');
-}
-
-// ══════════════════════════════════════════
-//  OPEN PROJECT
-// ══════════════════════════════════════════
-function openProject(id){
-  const p = APP.projects.find(x=>x.id===id);
-  if(!p) return;
-  currentProjId = id;
-  document.getElementById('screen-home').style.display = 'none';
-  document.getElementById('screen-app').style.display = '';
-  document.getElementById('header-crumb').style.display = 'flex';
-  document.getElementById('crumb-name').textContent = p.name;
-  document.getElementById('crumb-author').textContent = p.author ? '· ' + p.author : '';
-  document.getElementById('btn-pdf').style.display = '';
-  document.getElementById('btn-excel').style.display = '';
-  // reset to dashboard
-  document.querySelectorAll('.page').forEach(pg=>pg.classList.remove('active'));
-  document.getElementById('page-dashboard').classList.add('active');
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  document.querySelectorAll('.nav-item')[0].classList.add('active');
-  renderDash();
-  renderProjectTabs();
-  renderAttachments();
-}
-
-// ══════════════════════════════════════════
-//  MODE
-// ══════════════════════════════════════════
-function toggleMode(){
-  if(!isAdmin){
-    const pw = prompt('รหัสผ่าน Admin (ค่าเริ่มต้น: admin1234):');
-    if(pw !== 'admin1234'){ toast('รหัสผ่านไม่ถูกต้อง'); return; }
-    isAdmin = true;
-    toast('เข้าสู่โหมด Admin แล้ว');
-  } else { 
-    isAdmin = false; 
-    toast('กลับสู่โหมดทีมงาน');
-    // ถ้าปิดโหมดแอดมินตอนที่กำลังดูหน้าคลังสินค้าอยู่ ให้เด้งกลับไปหน้า Dashboard อัตโนมัติ
-    if (document.getElementById('page-admin').classList.contains('active')) {
-      goPage('dashboard');
-    }
-  }
-
-  // เปลี่ยนสีปุ่มด้านบน
-  document.getElementById('mode-pill').textContent = isAdmin ? 'Admin ✓' : 'ทีมงาน';
-  document.getElementById('mode-pill').className = 'mode-pill ' + (isAdmin ? 'admin' : 'team');
-  
-  // เปิด-ปิด แท็บแอดมินด้านข้าง
-  document.getElementById('sidebar-admin-section').style.display = isAdmin ? 'block' : 'none';
-}
-
-// ══════════════════════════════════════════
-//  NAV (inside project)
-// ══════════════════════════════════════════
+// ═══ NAV ═══
 function goPage(name){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  document.getElementById('page-'+name).classList.add('active');
-  document.querySelectorAll('.nav-item').forEach(el=>{
-    if(el.getAttribute('onclick')?.includes("'"+name+"'")) el.classList.add('active');
-  });
+  const page=document.getElementById('page-'+name);
+  if(page) page.classList.add('active');
+  const nav=document.getElementById('nav-'+name);
+  if(nav) nav.classList.add('active');
+  if(name==='projects') renderProjList();
   if(name==='dashboard') renderDash();
   if(name==='project') renderProjectTabs();
-  if(name==='admin'){ document.getElementById('admin-guard').innerHTML = !isAdmin ? `<div style="background:var(--amber-bg);border:1px solid var(--amber);border-radius:var(--r);padding:12px 16px;font-size:13px;color:var(--amber);margin-bottom:1rem;">⚠ หน้านี้สำหรับ Admin เท่านั้น</div>` : ''; renderCatalog(); }
+  if(name==='attachments') renderAttachList();
   if(name==='settings') loadSettings();
+  if(name==='admin'){
+    document.getElementById('admin-access-check').innerHTML=isAdmin?'':'<div style="background:var(--amber-bg);border:1px solid var(--amber);border-radius:var(--r);padding:12px 16px;font-size:13px;color:var(--amber);margin-bottom:1rem;">⚠ หน้านี้สำหรับ Admin เท่านั้น</div>';
+    renderCatalog();
+  }
 }
 
-// ══════════════════════════════════════════
-//  DASHBOARD
-// ══════════════════════════════════════════
+// ═══ MODE ═══
+function toggleMode(){
+  if(!isAdmin){
+    const pw=prompt('รหัสผ่าน Admin:');
+    if(pw!=='admin1234'){toast('รหัสผ่านไม่ถูกต้อง');return;}
+    isAdmin=true;
+  } else { isAdmin=false; }
+  document.getElementById('mode-pill').textContent=isAdmin?'Admin ✓':'ทีมงาน';
+  document.getElementById('mode-pill').className='mode-pill '+(isAdmin?'admin':'team');
+  document.getElementById('nav-admin').style.display=isAdmin?'flex':'none';
+}
+
+// ═══ PROJECTS ═══
+function openNewProjModal(){
+  document.getElementById('np-name').value='';
+  document.getElementById('np-client').value='';
+  document.getElementById('np-author').value='';
+  document.getElementById('new-proj-modal').classList.add('open');
+  setTimeout(()=>document.getElementById('np-name').focus(),100);
+}
+function confirmNewProject(){
+  const name=document.getElementById('np-name').value.trim();
+  if(!name){toast('กรุณาใส่ชื่อโปรเจค');return;}
+  S=JSON.parse(JSON.stringify(DEFAULT));
+  S.project.name=name;
+  S.project.client=document.getElementById('np-client').value.trim();
+  S.project.author=document.getElementById('np-author').value.trim();
+  save();
+  closeModal('new-proj-modal');
+  goPage('dashboard');
+  toast('สร้างโปรเจค "'+name+'" แล้ว ✓');
+}
+function saveAsNewProject(){
+  const name=S.project.name||'ไม่มีชื่อ';
+  if(!S.project.author){toast('กรุณาใส่ชื่อผู้จัดทำในหน้าตั้งค่าก่อน');goPage('settings');return;}
+  const existing=PROJECTS.find(p=>p.name===name);
+  if(!confirm(existing?'อัปเดตโปรเจค "'+name+'"?':'บันทึกโปรเจค "'+name+'"?')) return;
+  const snap=JSON.parse(JSON.stringify(S));
+  if(existing){
+    existing.data=snap; existing.savedAt=new Date().toISOString();
+    existing.author=S.project.author; existing.status=S.project.status||'draft';
+    toast('อัปเดตโปรเจคแล้ว ✓');
+  } else {
+    PROJECTS.push({id:'p_'+Date.now(),name,author:S.project.author,status:S.project.status||'draft',savedAt:new Date().toISOString(),data:snap});
+    toast('บันทึกโปรเจคใหม่แล้ว ✓');
+  }
+  saveProjects(); renderProjList();
+}
+function loadProject(id){
+  const p=PROJECTS.find(x=>x.id===id);
+  if(!p||!confirm('โหลดโปรเจค "'+p.name+'"? ข้อมูลปัจจุบันที่ยังไม่ได้บันทึกจะหายไป')) return;
+  S=JSON.parse(JSON.stringify(p.data));
+  if(!S.attachments) S.attachments=[];
+  save(); goPage('dashboard'); toast('โหลดโปรเจค "'+p.name+'" แล้ว');
+}
+function deleteProject(id){
+  const p=PROJECTS.find(x=>x.id===id);
+  if(!p||!confirm('ลบโปรเจค "'+p.name+'"?')) return;
+  PROJECTS=PROJECTS.filter(x=>x.id!==id);
+  saveProjects(); renderProjList(); toast('ลบโปรเจคแล้ว');
+}
+function renderProjList(){
+  const sub=document.getElementById('proj-list-sub');
+  if(sub) sub.textContent=PROJECTS.length+' โปรเจค';
+  const nc=document.getElementById('nav-proj-count');
+  if(nc) nc.textContent=PROJECTS.length;
+  const grid=document.getElementById('proj-list-grid');
+  if(!grid) return;
+  if(PROJECTS.length===0){
+    grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:3rem;">'
+      +'<div style="font-size:40px;margin-bottom:12px;">📁</div>'
+      +'<div style="font-size:15px;font-weight:600;color:var(--text2);margin-bottom:8px;">ยังไม่มีโปรเจคที่บันทึกไว้</div>'
+      +'<div style="font-size:13px;color:var(--text3);margin-bottom:16px;">กด "สร้างโปรเจคใหม่" เพื่อเริ่มต้น หรือกรอกข้อมูลแล้วกด "บันทึกโปรเจคปัจจุบัน"</div>'
+      +'<button class="btn btn-primary" onclick="openNewProjModal()">✚ สร้างโปรเจคใหม่</button>'
+      +'</div>';
+    return;
+  }
+  const colors=['#4285f4','#10b981','#f59e0b','#8b5cf6','#ef4444','#06b6d4'];
+  grid.innerHTML=PROJECTS.slice().reverse().map((p,i)=>{
+    const t=calcFromData(p.data);
+    const date=new Date(p.savedAt).toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'2-digit'});
+    const col=colors[i%colors.length];
+    const sm=statusMap[p.status||'draft']||statusMap.draft;
+    return '<div class="proj-card" onclick="loadProject(\''+p.id+'\')">'
+      +'<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;">'
+      +'<div style="width:38px;height:38px;border-radius:10px;background:'+col+'22;color:'+col+';font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;">'+initials(p.name)+'</div>'
+      +'<button class="btn btn-sm" onclick="event.stopPropagation();deleteProject(\''+p.id+'\')" style="background:none;border-color:var(--border);color:var(--text3);font-size:11px;" title="ลบโปรเจค">✕</button>'
+      +'</div>'
+      +'<div style="font-size:14px;font-weight:700;margin-bottom:3px;">'+p.name+'</div>'
+      +'<div style="font-size:12px;color:var(--text3);margin-bottom:10px;">'+(p.data.project.client||'—')+'</div>'
+      +'<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:10px;">'
+      +'<div style="font-size:11px;color:var(--text2);">งบ <strong style="font-family:\'IBM Plex Mono\',monospace;">฿'+fmt(t.budget)+'</strong></div>'
+      +'<div style="font-size:11px;color:var(--text2);">กำไร <strong style="color:'+(t.profit>=0?'var(--green)':'var(--red)')+';">'+t.margin.toFixed(1)+'%</strong></div>'
+      +'<div style="font-size:11px;color:var(--text2);">รายการ <strong>'+p.data.items.length+'</strong></div>'
+      +'</div>'
+      +'<div style="display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border);padding-top:10px;">'
+      +'<div style="display:flex;align-items:center;gap:6px;">'
+      +'<div style="width:20px;height:20px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;">'+initials(p.author)+'</div>'
+      +'<span style="font-size:11px;color:var(--text3);">'+(p.author||'ไม่ระบุ')+'</span>'
+      +'<span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:8px;background:'+sm.bg+';color:'+sm.tc+';">'+sm.lbl+'</span>'
+      +'</div>'
+      +'<span style="font-size:11px;color:var(--text3);">'+date+'</span>'
+      +'</div></div>';
+  }).join('');
+}
+
+// ═══ DASHBOARD ═══
 function renderDash(){
-  const p = proj(); if(!p) return;
-  const t = totals(p);
-  document.getElementById('d-proj-name').textContent = p.name;
-  document.getElementById('d-proj-meta').innerHTML =
-    `<span>หน่วยงาน: ${p.client||'—'}</span><span>โมเดล: ${p.model||'—'}</span><span>Commission: ${p.commission}%</span><span>VAT: ${p.vat}%</span>`;
-  document.getElementById('d-author-row').innerHTML = p.author
-    ? `<div style="width:28px;height:28px;border-radius:50%;background:var(--blue-bg);color:var(--blue);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;">${initials(p.author)}</div>
-       <span style="font-size:13px;color:var(--text2);">ผู้จัดทำ: <strong style="color:var(--text);">${p.author}</strong></span>
-       ${statusBadge(p.status||'draft')}`
-    : '';
-  document.getElementById('k-budget').textContent = fmt(t.budget);
-  document.getElementById('k-cost').textContent = fmt(t.total);
-  document.getElementById('k-cost-pct').textContent = pct(t.total,t.budget)+' ของงบ';
-  document.getElementById('k-profit').textContent = fmt(t.profit);
-  document.getElementById('k-margin').textContent = t.margin.toFixed(1)+'%';
-  const cp = Math.min(100, t.total/Math.max(t.budget,1)*100);
-  const pp = Math.max(0, t.profit/Math.max(t.budget,1)*100);
-  document.getElementById('bbar-cost').style.width = cp+'%';
-  document.getElementById('bbar-profit').style.width = pp+'%';
-  document.getElementById('d-legend').innerHTML = [
-    ['#4285f4','ต้นทุนสินค้า ฿'+fmt(t.goods)],
-    ['#60a5fa','Commission ฿'+fmt(t.comm)],
-    ['#93c5fd','VAT ฿'+fmt(t.vat)],
-    ['#34d399','กำไร ฿'+fmt(t.profit)]
-  ].map(([c,l])=>`<span style="display:flex;align-items:center;gap:4px;"><span class="legend-dot" style="background:${c};"></span>${l}</span>`).join('');
-  const pd = [t.goods, t.comm, t.vat];
-  const ptot = pd.reduce((a,b)=>a+b,0)||1;
-  document.getElementById('pie-legend').innerHTML =
+  const t=totals();
+  const hasName=!!(S.project.name||'').trim();
+  document.getElementById('d-proj-name').textContent=hasName?S.project.name:'';
+  const qf=document.getElementById('d-quickfill');
+  if(qf) qf.style.display=hasName?'none':'flex';
+  document.getElementById('d-proj-meta').innerHTML=
+    '<span>หน่วยงาน: '+(S.project.client||'—')+'</span><span>Commission: '+S.project.commission+'%</span><span>VAT: '+S.project.vat+'%</span>';
+  const aEl=document.getElementById('d-author-row');
+  if(aEl){
+    const sm=statusMap[S.project.status||'draft']||statusMap.draft;
+    aEl.innerHTML=S.project.author
+      ?'<div style="width:26px;height:26px;border-radius:50%;background:var(--blue-bg);color:var(--blue);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;">'+initials(S.project.author)+'</div>'
+       +'<span style="font-size:12px;color:var(--text2);">ผู้จัดทำ: <strong style="color:var(--text);">'+S.project.author+'</strong></span>'
+       +'<span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:8px;background:'+sm.bg+';color:'+sm.tc+';">'+sm.lbl+'</span>'
+      :'';
+  }
+  document.getElementById('k-budget').textContent=fmt(t.budget);
+  document.getElementById('k-cost').textContent=fmt(t.total);
+  document.getElementById('k-cost-pct').textContent=pct(t.total,t.budget)+' ของงบ';
+  document.getElementById('k-profit').textContent=fmt(t.profit);
+  document.getElementById('k-margin').textContent=t.margin.toFixed(1)+'%';
+  const cp=t.budget>0?Math.min(100,t.total/t.budget*100):0;
+  const pp=t.budget>0?Math.max(0,t.profit/t.budget*100):0;
+  document.getElementById('bbar-cost').style.width=cp+'%';
+  document.getElementById('bbar-profit').style.width=pp+'%';
+  document.getElementById('d-legend').innerHTML=[
+    ['#4285f4','ต้นทุนสินค้า ฿'+fmt(t.goods)],['#60a5fa','Commission ฿'+fmt(t.comm)],
+    ['#93c5fd','VAT ฿'+fmt(t.vat)],['#34d399','กำไร ฿'+fmt(t.profit)]
+  ].map(([c,l])=>'<span style="display:flex;align-items:center;gap:4px;"><span class="legend-dot" style="background:'+c+';"></span>'+l+'</span>').join('');
+  const pd=[t.goods,t.comm,t.vat];
+  const ptot=pd.reduce((a,b)=>a+b,0)||1;
+  document.getElementById('pie-legend').innerHTML=
     ['ต้นทุนสินค้า','Commission','VAT'].map((l,i)=>{
       const c=['#4285f4','#10b981','#f59e0b'][i];
-      return `<span style="display:flex;align-items:center;gap:4px;"><span class="legend-dot" style="background:${c};"></span>${l} ${(pd[i]/ptot*100).toFixed(1)}%</span>`;
+      return '<span style="display:flex;align-items:center;gap:4px;"><span class="legend-dot" style="background:'+c+';"></span>'+l+' '+(pd[i]/ptot*100).toFixed(1)+'%</span>';
     }).join('');
   if(pieChart) pieChart.destroy();
-  pieChart = new Chart(document.getElementById('pieChart'),{
-    type:'doughnut',
-    data:{labels:['ต้นทุนสินค้า','Commission','VAT'],datasets:[{data:pd,backgroundColor:['#4285f4','#10b981','#f59e0b'],borderWidth:0,hoverOffset:4}]},
+  pieChart=new Chart(document.getElementById('pieChart'),{
+    type:'doughnut',data:{labels:['ต้นทุนสินค้า','Commission','VAT'],datasets:[{data:pd,backgroundColor:['#4285f4','#10b981','#f59e0b'],borderWidth:0,hoverOffset:4}]},
     options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' ฿'+Math.round(c.raw).toLocaleString('th-TH')}}}}
   });
   if(barChart) barChart.destroy();
-  barChart = new Chart(document.getElementById('barChart'),{
-    type:'bar',
-    data:{labels:['งบประมาณ','ต้นทุนรวม','กำไรสุทธิ์'],datasets:[{data:[t.budget,t.total,t.profit],backgroundColor:['#bfdbfe','#4285f4','#34d399'],borderColor:['#60a5fa','#1a56db','#10b981'],borderWidth:1.5,borderRadius:6}]},
+  barChart=new Chart(document.getElementById('barChart'),{
+    type:'bar',data:{labels:['งบประมาณ','ต้นทุนรวม','กำไรสุทธิ์'],datasets:[{data:[t.budget,t.total,t.profit],backgroundColor:['#bfdbfe','#4285f4','#34d399'],borderColor:['#60a5fa','#1a56db','#10b981'],borderWidth:1.5,borderRadius:6}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' ฿'+Math.round(c.raw).toLocaleString('th-TH')}}},scales:{y:{beginAtZero:true,ticks:{callback:v=>'฿'+(v/1e6).toFixed(1)+'M',font:{size:10}},grid:{color:'rgba(0,0,0,0.04)'}},x:{grid:{display:false},ticks:{font:{size:11,family:'Sarabun'}}}}}
   });
 }
 
-// ══════════════════════════════════════════
-//  PROJECT ITEMS TABLE
-// ══════════════════════════════════════════
-const bdg = cur => { const cls={USD:'b-usd',THB:'b-thb',EUR:'b-eur',JPY:'b-jpy',GBP:'b-gbp',CNY:'b-cny'}[cur]||'b-other'; return `<span class="badge ${cls}">${cur}</span>`; };
-
-const projThead = `<thead><tr>
+// ═══ PROJECT TABLES ═══
+function bdg(c){const cls={USD:'b-usd',THB:'b-thb',EUR:'b-eur',JPY:'b-jpy',GBP:'b-gbp'}[c]||'b-other';return '<span class="badge '+cls+'">'+c+'</span>';}
+const projThead=`<thead><tr>
   <th style="width:26px;">#</th><th>รายการ</th><th>Model</th><th>สกุลเงิน</th>
   <th class="r">ราคา/หน่วย</th>
   <th class="r">Qty<br><span style="font-size:9px;font-weight:400;">(แก้ไขได้)</span></th>
   <th class="r">Disc%<br><span style="font-size:9px;font-weight:400;">(แก้ไขได้)</span></th>
   <th class="r">Dealer Price</th><th class="r">+VAT</th>
-  <th class="r" style="color:var(--amber);">ต้นทุน/หน่วย<br><span style="font-size:9px;font-weight:400;">(THB)</span></th>
-  <th class="r" style="color:var(--blue);">ต้นทุนรวม<br><span style="font-size:9px;font-weight:400;">(THB)</span></th>
+  <th class="r" style="color:var(--amber);">ต้นทุน/หน่วย<br><span style="font-size:9px;">(THB)</span></th>
+  <th class="r" style="color:var(--blue);">ต้นทุนรวม<br><span style="font-size:9px;">(THB)</span></th>
   <th class="no-print"></th>
 </tr></thead>`;
-
-function projRow(item, num){
-  const p = proj();
-  const dealer = item.unitPrice*(1-item.discount/100);
-  const withVat = dealer*(1+p.vat/100);
-  const costPU = itemCostPerUnit(item,p);
-  const costTotal = itemCost(item,p);
-  return `<tr>
-    <td class="dim">${num}</td><td>${item.name}</td><td class="dim">${item.model||'—'}</td>
-    <td>${bdg(item.currency)}</td>
-    <td class="r">${fmt(item.unitPrice)}</td>
-    <td class="r"><input class="inline-num" type="number" min="1" value="${item.qty}" onchange="updateProjItem(${item.id},'qty',+this.value)"></td>
-    <td class="r"><input class="inline-num" type="number" min="0" max="100" step="0.1" value="${item.discount}" onchange="updateProjItem(${item.id},'discount',+this.value)"></td>
-    <td class="r">${fmt(dealer)}</td>
-    <td class="r">${fmt(withVat)}</td>
-    <td class="r" style="color:var(--amber);">${fmt(costPU)}</td>
-    <td class="r"><strong>${fmt(costTotal)}</strong></td>
-    <td class="no-print" style="white-space:nowrap;">
-      <button class="btn btn-sm" onclick="openEditItemModal(${item.id})" style="margin-right:3px;">✏</button>
-      <button class="btn btn-sm btn-danger" onclick="deleteProjItem(${item.id})">✕</button>
-    </td>
-  </tr>`;
+function projRow(item,num){
+  const dealer=item.unitPrice*(1-item.discount/100);
+  const withVat=dealer*(1+S.project.vat/100);
+  const cpu=itemCostPerUnit(item);
+  const ctotal=itemCost(item);
+  return '<tr><td class="dim">'+num+'</td><td>'+item.name+'</td><td class="dim">'+(item.model||'—')+'</td>'
+    +'<td>'+bdg(item.currency)+'</td>'
+    +'<td class="r">'+fmt(item.unitPrice)+'</td>'
+    +'<td class="r"><input class="inline-num" type="number" min="1" value="'+item.qty+'" onchange="updateProjectItem('+item.id+',\'qty\',+this.value)"></td>'
+    +'<td class="r"><input class="inline-num" type="number" min="0" max="100" step="0.1" value="'+item.discount+'" onchange="updateProjectItem('+item.id+',\'discount\',+this.value)"></td>'
+    +'<td class="r">'+fmt(dealer)+'</td><td class="r">'+fmt(withVat)+'</td>'
+    +'<td class="r">'+fmt(cpu)+'</td><td class="r"><strong>'+fmt(ctotal)+'</strong></td>'
+    +'<td class="no-print" style="white-space:nowrap;">'
+    +'<button class="btn btn-sm" onclick="openEditItemModal('+item.id+')" style="margin-right:3px;">✏</button>'
+    +'<button class="btn btn-sm btn-danger" onclick="deleteProjectItem('+item.id+')">✕</button>'
+    +'</td></tr>';
 }
-// URL ของ Google Apps Script ที่ได้จากขั้นตอนที่ 1
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxkJQrKrQxeG7jiORDcrX2Dk-4-Y01u6tYh9Cv8fnKC5S-NfrPVawJdAh3PqlMOO-6k-Q/exec";
-
-// แปลงไฟล์เป็น Base64
-function getBase64(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = error => reject(error);
-  });
-}
-
-async function uploadFiles() {
-  const p = proj(); if(!p) return;
-  const fileInput = document.getElementById('file-upload');
-  const files = fileInput.files;
-  
-  // ตรวจสอบ array attachments (ถ้ายังไม่มีให้สร้างใหม่)
-  if (!p.attachments) p.attachments = [];
-  
-  if (files.length === 0) { toast('กรุณาเลือกไฟล์ก่อนอัปโหลด'); return; }
-  if (p.attachments.length + files.length > 10) { toast('แนบไฟล์ได้สูงสุด 10 ไฟล์เท่านั้น'); return; }
-  
-  document.getElementById('btn-upload').disabled = true;
-  document.getElementById('upload-status').textContent = 'กำลังอัปโหลดไฟล์... กรุณารอสักครู่';
-  
-  try {
-    let filesData = [];
-    for (let i = 0; i < files.length; i++) {
-      const base64 = await getBase64(files[i]);
-      filesData.push({
-        name: files[i].name,
-        mimeType: files[i].type,
-        base64: base64
-      });
-    }
-
-    const response = await fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      body: JSON.stringify({ files: filesData })
-    });
-    
-    const result = await response.json();
-    
-    if (result.success) {
-      p.attachments = [...p.attachments, ...result.files];
-      p.updatedAt = new Date().toISOString();
-      saveApp();
-      toast('อัปโหลดไฟล์สำเร็จ ✓');
-      fileInput.value = ''; // ล้างค่า input
-      renderAttachments();
-    } else {
-      toast('เกิดข้อผิดพลาด: ' + result.error);
-    }
-  } catch (error) {
-    toast('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้');
-  } finally {
-    document.getElementById('btn-upload').disabled = false;
-    document.getElementById('upload-status').textContent = '';
-  }
-}
-
-function renderAttachments() {
-  const p = proj(); if(!p) return;
-  const list = document.getElementById('attachment-list');
-  if (!p.attachments || p.attachments.length === 0) {
-    list.innerHTML = '<div style="font-size:12px; color:var(--text3);">ยังไม่มีไฟล์แนบ</div>';
-    return;
-  }
-  
-  list.innerHTML = p.attachments.map((file, i) => `
-    <div style="display: flex; justify-content: space-between; align-items: center; background: var(--surface2); padding: 8px 12px; border-radius: 8px;">
-      <a href="${file.url}" target="_blank" style="font-size: 13px; color: var(--blue); text-decoration: none; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 80%;">📄 ${file.name}</a>
-      <button class="btn btn-sm btn-danger btn-icon" onclick="deleteAttachment(${i})" title="ลบไฟล์">✕</button>
-    </div>
-  `).join('');
-}
-
-function deleteAttachment(index) {
-  const p = proj(); if(!p) return;
-  if (!confirm('ต้องการลบลิงก์ไฟล์แนบนี้ใช่หรือไม่? (ไฟล์ใน Drive จะยังอยู่)')) return;
-  p.attachments.splice(index, 1);
-  p.updatedAt = new Date().toISOString();
-  saveApp();
-  renderAttachments();
-  toast('ลบไฟล์แนบแล้ว');
-}
-
 function renderProjectTabs(){
-  const p = proj(); if(!p) return;
-  const t = totals(p);
-  const foreign = p.items.filter(i=>i.category==='foreign');
-  const local   = p.items.filter(i=>i.category==='local');
-  const totalRow = (colspan, val) => `<tr class="total-row"><td colspan="${colspan}" style="text-align:right;padding-right:12px;font-family:'Sarabun',sans-serif;font-size:12px;">รวมต้นทุนสินค้าทั้งหมด</td><td class="r">฿${fmt(val)}</td><td class="no-print"></td></tr>`;
-
-  document.getElementById('ptbl-all').innerHTML = `<table>${projThead}<tbody>
-    <tr class="sec-head"><td colspan="12">ต่างประเทศ</td></tr>
-    ${foreign.map((it,i)=>projRow(it,i+1)).join('')}
-    <tr class="sec-head"><td colspan="12">ในประเทศ</td></tr>
-    ${local.map((it,i)=>projRow(it,i+1)).join('')}
-    ${totalRow(10, t.goods)}
-  </tbody></table>`;
-
-  const fTotal = foreign.reduce((s,i)=>s+itemCost(i,p),0);
-  document.getElementById('ptbl-foreign').innerHTML = `<table>${projThead}<tbody>
-    ${foreign.map((it,i)=>projRow(it,i+1)).join('')}
-    <tr class="total-row"><td colspan="10" style="text-align:right;padding-right:12px;font-family:'Sarabun',sans-serif;font-size:12px;">รวม (ต่างประเทศ)</td><td class="r">฿${fmt(fTotal)}</td><td class="no-print"></td></tr>
-  </tbody></table>`;
-
-  const lTotal = local.reduce((s,i)=>s+itemCost(i,p),0);
-  document.getElementById('ptbl-local').innerHTML = `<table>${projThead}<tbody>
-    ${local.map((it,i)=>projRow(it,i+1)).join('')}
-    <tr class="profit-row"><td colspan="10" style="text-align:right;padding-right:12px;font-family:'Sarabun',sans-serif;font-size:12px;">รวม (ในประเทศ)</td><td class="r">฿${fmt(lTotal)}</td><td class="no-print"></td></tr>
-  </tbody></table>`;
-
-  document.getElementById('ptbl-summary').innerHTML = `<table>
-    <thead><tr><th>รายการ</th><th class="r">มูลค่า (THB)</th><th class="r">สัดส่วน</th></tr></thead>
-    <tbody>
-      <tr><td>ต้นทุนสินค้า</td><td class="r">฿${fmt(t.goods)}</td><td class="r">${pct(t.goods,t.budget)}</td></tr>
-      <tr><td>Commission (${p.commission}%)</td><td class="r">฿${fmt(t.comm)}</td><td class="r">${pct(t.comm,t.budget)}</td></tr>
-      <tr><td>VAT (${p.vat}%)</td><td class="r">฿${fmt(t.vat)}</td><td class="r">${pct(t.vat,t.budget)}</td></tr>
-      <tr class="total-row"><td>ต้นทุนรวม</td><td class="r">฿${fmt(t.total)}</td><td class="r">${pct(t.total,t.budget)}</td></tr>
-      <tr class="profit-row"><td>กำไรสุทธิ์</td><td class="r">฿${fmt(t.profit)}</td><td class="r">${t.margin.toFixed(1)}%</td></tr>
-      <tr class="grand-row"><td>งบประมาณ</td><td class="r">฿${fmt(t.budget)}</td><td class="r">100%</td></tr>
-    </tbody>
-  </table>`;
+  const t=totals();
+  const foreign=S.items.filter(i=>i.category==='foreign');
+  const local=S.items.filter(i=>i.category==='local');
+  const trow=(n,v)=>'<tr class="total-row"><td colspan="'+n+'" style="text-align:right;padding-right:12px;font-family:\'Sarabun\',sans-serif;font-size:12px;">รวมต้นทุนสินค้าทั้งหมด</td><td class="r">฿'+fmt(v)+'</td><td class="no-print"></td></tr>';
+  document.getElementById('ptbl-all').innerHTML='<table>'+projThead+'<tbody><tr class="sec-head"><td colspan="12">ต่างประเทศ</td></tr>'
+    +foreign.map((it,i)=>projRow(it,i+1)).join('')
+    +'<tr class="sec-head"><td colspan="12">ในประเทศ</td></tr>'
+    +local.map((it,i)=>projRow(it,i+1)).join('')
+    +trow(10,t.goods)+'</tbody></table>';
+  const fT=foreign.reduce((s,i)=>s+itemCost(i),0);
+  document.getElementById('ptbl-foreign').innerHTML='<table>'+projThead+'<tbody>'
+    +foreign.map((it,i)=>projRow(it,i+1)).join('')
+    +'<tr class="total-row"><td colspan="10" style="text-align:right;padding-right:12px;font-family:\'Sarabun\',sans-serif;font-size:12px;">รวม (ต่างประเทศ)</td><td class="r">฿'+fmt(fT)+'</td><td class="no-print"></td></tr>'
+    +'</tbody></table>';
+  const lT=local.reduce((s,i)=>s+itemCost(i),0);
+  document.getElementById('ptbl-local').innerHTML='<table>'+projThead+'<tbody>'
+    +local.map((it,i)=>projRow(it,i+1)).join('')
+    +'<tr class="profit-row"><td colspan="10" style="text-align:right;padding-right:12px;font-family:\'Sarabun\',sans-serif;font-size:12px;">รวม (ในประเทศ)</td><td class="r">฿'+fmt(lT)+'</td><td class="no-print"></td></tr>'
+    +'</tbody></table>';
+  document.getElementById('ptbl-summary').innerHTML='<table><thead><tr><th>รายการ</th><th class="r">มูลค่า (THB)</th><th class="r">สัดส่วน</th></tr></thead><tbody>'
+    +'<tr><td>ต้นทุนสินค้า</td><td class="r">฿'+fmt(t.goods)+'</td><td class="r">'+pct(t.goods,t.budget)+'</td></tr>'
+    +'<tr><td>Commission ('+S.project.commission+'%)</td><td class="r">฿'+fmt(t.comm)+'</td><td class="r">'+pct(t.comm,t.budget)+'</td></tr>'
+    +'<tr><td>VAT ('+S.project.vat+'%)</td><td class="r">฿'+fmt(t.vat)+'</td><td class="r">'+pct(t.vat,t.budget)+'</td></tr>'
+    +'<tr class="total-row"><td>ต้นทุนรวม</td><td class="r">฿'+fmt(t.total)+'</td><td class="r">'+pct(t.total,t.budget)+'</td></tr>'
+    +'<tr class="profit-row"><td>กำไรสุทธิ์</td><td class="r">฿'+fmt(t.profit)+'</td><td class="r">'+t.margin.toFixed(1)+'%</td></tr>'
+    +'<tr class="grand-row"><td>งบประมาณ</td><td class="r">฿'+fmt(t.budget)+'</td><td class="r">100%</td></tr>'
+    +'</tbody></table>';
 }
 function switchTab(name){
   document.querySelectorAll('#page-project .tab-btn').forEach((b,i)=>b.classList.toggle('active',['all','foreign','local','summary'][i]===name));
   document.querySelectorAll('#page-project .tab-pane').forEach(p=>p.classList.remove('active'));
   document.getElementById('ptab-'+name).classList.add('active');
 }
-function updateProjItem(id, field, val){
-  const p = proj(); if(!p) return;
-  const it = p.items.find(i=>i.id===id); if(!it) return;
-  it[field] = val; p.updatedAt = new Date().toISOString();
-  saveApp(); renderProjectTabs(); renderDash(); toast('อัปเดตแล้ว ✓');
+function updateProjectItem(id,field,val){
+  const it=S.items.find(i=>i.id===id); if(!it) return;
+  it[field]=val; save(); renderProjectTabs(); renderDash(); toast('อัปเดตแล้ว ✓');
 }
-function deleteProjItem(id){
-  const p = proj(); if(!p) return;
+function deleteProjectItem(id){
   if(!confirm('ลบรายการนี้?')) return;
-  p.items = p.items.filter(i=>i.id!==id); p.updatedAt = new Date().toISOString();
-  saveApp(); renderProjectTabs(); renderDash(); toast('ลบรายการแล้ว');
+  S.items=S.items.filter(i=>i.id!==id); save(); renderProjectTabs(); renderDash(); toast('ลบแล้ว');
 }
 
-// ══════════════════════════════════════════
-//  MODAL — เพิ่ม/แก้ไขรายการในโปรเจค
-// ══════════════════════════════════════════
+// ═══ ITEM MODAL ═══
 function openAddItemModal(){
-  editingProjectItemId = null; selectedCatalogItem = null;
-  document.getElementById('item-modal-title').textContent = 'เพิ่มรายการในโปรเจค';
-  document.getElementById('item-save-btn').textContent = 'เพิ่มในโปรเจค';
-  document.getElementById('item-search').value = '';
-  document.getElementById('item-qty').value = 1;
-  document.getElementById('item-disc').value = 0;
-  document.getElementById('item-cat').value = 'foreign';
-  document.getElementById('selected-product-info').style.display = 'none';
-  document.getElementById('item-preview').style.display = 'none';
+  editingProjectId=null; selectedCatalogItem=null;
+  document.getElementById('item-modal-title').textContent='เพิ่มรายการในโครงการ';
+  document.getElementById('item-save-btn').textContent='เพิ่มในโครงการ';
+  document.getElementById('item-search').value='';
+  document.getElementById('item-qty').value=1;
+  document.getElementById('item-disc').value=0;
+  document.getElementById('item-cat').value='foreign';
+  document.getElementById('selected-product-info').style.display='none';
+  document.getElementById('item-preview').style.display='none';
   document.getElementById('search-dropdown').classList.remove('open');
   document.getElementById('item-modal').classList.add('open');
   setTimeout(()=>document.getElementById('item-search').focus(),100);
 }
 function openEditItemModal(id){
-  const p = proj(); if(!p) return;
-  const it = p.items.find(i=>i.id===id); if(!it) return;
-  editingProjectItemId = id;
-  selectedCatalogItem = APP.catalog.find(c=>c.id===it.catalogId)||{id:null,name:it.name,model:it.model,currency:it.currency,unitPrice:it.unitPrice};
-  document.getElementById('item-modal-title').textContent = 'แก้ไขรายการ';
-  document.getElementById('item-save-btn').textContent = 'บันทึกการแก้ไข';
-  document.getElementById('item-search').value = it.name;
-  document.getElementById('item-qty').value = it.qty;
-  document.getElementById('item-disc').value = it.discount;
-  document.getElementById('item-cat').value = it.category;
+  const it=S.items.find(i=>i.id===id); if(!it) return;
+  editingProjectId=id;
+  selectedCatalogItem=S.catalog.find(c=>c.id===it.catalogId)||{id:null,name:it.name,model:it.model,currency:it.currency,unitPrice:it.unitPrice};
+  document.getElementById('item-modal-title').textContent='แก้ไขรายการ';
+  document.getElementById('item-save-btn').textContent='บันทึกการแก้ไข';
+  document.getElementById('item-search').value=it.name;
+  document.getElementById('item-qty').value=it.qty;
+  document.getElementById('item-disc').value=it.discount;
+  document.getElementById('item-cat').value=it.category;
   showSelectedProduct(selectedCatalogItem);
   document.getElementById('search-dropdown').classList.remove('open');
   document.getElementById('item-modal').classList.add('open');
 }
 function onItemSearch(){
-  const q = document.getElementById('item-search').value.trim().toLowerCase();
-  const dd = document.getElementById('search-dropdown');
-  if(q.length < 1){ dd.classList.remove('open'); return; }
-  const results = APP.catalog.filter(c=>c.name.toLowerCase().includes(q)||(c.model&&c.model.toLowerCase().includes(q))).slice(0,8);
-  dd.innerHTML = results.length
-    ? results.map(c=>`<div class="search-item" onclick="selectCatalogItem(${c.id})">
-        <div class="search-item-name">${c.name}</div>
-        <div class="search-item-meta"><span>${bdg(c.currency)} ฿${fmt(c.unitPrice)}/หน่วย</span>${c.model?`<span>Model: ${c.model}</span>`:''}</div>
-      </div>`).join('')
-    : `<div class="search-empty">ไม่พบสินค้า "${q}"</div>`;
+  const q=document.getElementById('item-search').value.trim().toLowerCase();
+  const dd=document.getElementById('search-dropdown');
+  if(q.length<1){dd.classList.remove('open');return;}
+  const results=S.catalog.filter(c=>c.name.toLowerCase().includes(q)||(c.model&&c.model.toLowerCase().includes(q))).slice(0,8);
+  dd.innerHTML=results.length
+    ?results.map(c=>'<div class="search-item" onclick="selectCatalogItem('+c.id+')">'
+        +'<div class="search-item-name">'+c.name+'</div>'
+        +'<div class="search-item-meta"><span>'+bdg(c.currency)+' ฿'+fmt(c.unitPrice)+'/หน่วย</span>'+(c.model?'<span>Model: '+c.model+'</span>':'')+'</div>'
+        +'</div>').join('')
+    :'<div class="search-empty">ไม่พบสินค้า "'+q+'"</div>';
   dd.classList.add('open');
 }
 function selectCatalogItem(id){
-  const c = APP.catalog.find(x=>x.id===id); if(!c) return;
-  selectedCatalogItem = c;
-  document.getElementById('item-search').value = c.name;
+  const c=S.catalog.find(x=>x.id===id); if(!c) return;
+  selectedCatalogItem=c;
+  document.getElementById('item-search').value=c.name;
   document.getElementById('search-dropdown').classList.remove('open');
-  document.getElementById('item-cat').value = c.currency==='THB'?'local':'foreign';
+  document.getElementById('item-cat').value=c.currency==='THB'?'local':'foreign';
   showSelectedProduct(c); updateItemPreview();
   document.getElementById('item-qty').focus();
 }
 function showSelectedProduct(c){
-  document.getElementById('sel-name').textContent = c.name;
-  document.getElementById('sel-meta').innerHTML =
-    `<span>${bdg(c.currency)} ราคา/หน่วย: ${fmt(c.unitPrice)}</span>${c.model?`<span>Model: ${c.model}</span>`:''}`;
-  document.getElementById('selected-product-info').style.display = 'block';
+  document.getElementById('sel-name').textContent=c.name;
+  document.getElementById('sel-meta').innerHTML='<span>'+bdg(c.currency)+' ราคา/หน่วย: '+fmt(c.unitPrice)+'</span>'+(c.model?'<span>Model: '+c.model+'</span>':'')+'<span>อัตรา: ×'+fx(c.currency)+' THB</span>';
+  document.getElementById('selected-product-info').style.display='block';
 }
 function updateItemPreview(){
-  if(!selectedCatalogItem){ document.getElementById('item-preview').style.display='none'; return; }
-  const p = proj(); if(!p) return;
-  const qty = parseFloat(document.getElementById('item-qty').value)||1;
-  const disc = parseFloat(document.getElementById('item-disc').value)||0;
-  const c = selectedCatalogItem;
-  const dealer = c.unitPrice*(1-disc/100);
-  const withVat = dealer*(1+p.vat/100);
-  const costPU = withVat*fx(c.currency,p);
-  const costTotal = costPU*qty;
-  const el = document.getElementById('item-preview');
+  if(!selectedCatalogItem){document.getElementById('item-preview').style.display='none';return;}
+  const qty=parseFloat(document.getElementById('item-qty').value)||1;
+  const disc=parseFloat(document.getElementById('item-disc').value)||0;
+  const c=selectedCatalogItem;
+  const dealer=c.unitPrice*(1-disc/100);
+  const withVat=dealer*(1+S.project.vat/100);
+  const costTHB=withVat*qty*fx(c.currency);
+  const el=document.getElementById('item-preview');
   el.style.display='block';
-  el.innerHTML = `Dealer: ${fmt(dealer)} ${c.currency} → +VAT: ${fmt(withVat)} ${c.currency}<br>` +
-    `ต้นทุน/หน่วย: ฿${fmt(costPU)} &nbsp;|&nbsp; ต้นทุนรวม: <strong>฿${fmt(costTotal)}</strong>`;
+  el.innerHTML='ราคา/หน่วย: '+fmt(c.unitPrice)+' '+c.currency+' → Dealer: '+fmt(dealer)+' → +VAT: '+fmt(withVat)+'<br>ต้นทุนรวม: <strong>฿'+fmt(costTHB)+'</strong>';
 }
 function saveProjectItem(){
-  if(!selectedCatalogItem){ toast('กรุณาเลือกสินค้าก่อน'); return; }
-  const p = proj(); if(!p) return;
-  const qty  = parseFloat(document.getElementById('item-qty').value)||1;
-  const disc = parseFloat(document.getElementById('item-disc').value)||0;
-  const cat  = document.getElementById('item-cat').value;
-  const c = selectedCatalogItem;
-  if(editingProjectItemId){
-    const it = p.items.find(i=>i.id===editingProjectItemId);
-    Object.assign(it,{catalogId:c.id,name:c.name,model:c.model||'',currency:c.currency,unitPrice:c.unitPrice,qty,discount:disc,category:cat});
+  if(!selectedCatalogItem){toast('กรุณาเลือกสินค้าก่อน');return;}
+  const qty=parseFloat(document.getElementById('item-qty').value)||1;
+  const disc=parseFloat(document.getElementById('item-disc').value)||0;
+  const cat=document.getElementById('item-cat').value;
+  const c=selectedCatalogItem;
+  if(editingProjectId){
+    const it=S.items.find(i=>i.id===editingProjectId);
+    it.catalogId=c.id;it.name=c.name;it.model=c.model;it.currency=c.currency;it.unitPrice=c.unitPrice;
+    it.qty=qty;it.discount=disc;it.category=cat;
     toast('แก้ไขรายการแล้ว ✓');
   } else {
-    p.items.push({id:Date.now(),catalogId:c.id,name:c.name,model:c.model||'',currency:c.currency,unitPrice:c.unitPrice,qty,discount:disc,category:cat});
+    S.items.push({id:Date.now(),catalogId:c.id,name:c.name,model:c.model||'',currency:c.currency,unitPrice:c.unitPrice,qty,discount:disc,category:cat});
     toast('เพิ่มรายการแล้ว ✓');
   }
-  p.updatedAt = new Date().toISOString();
-  saveApp(); closeModal('item-modal'); renderProjectTabs(); renderDash();
+  save(); closeModal('item-modal'); renderProjectTabs(); renderDash();
 }
 
-// ══════════════════════════════════════════
-//  ADMIN CATALOG
-// ══════════════════════════════════════════
+// ═══ CATALOG ═══
 function renderCatalog(){
-  const q = (document.getElementById('catalog-search')?.value||'').toLowerCase();
-  const list = q ? APP.catalog.filter(c=>c.name.toLowerCase().includes(q)||(c.model&&c.model.toLowerCase().includes(q))) : APP.catalog;
-  document.getElementById('catalog-count').textContent = APP.catalog.length;
-  document.getElementById('catalog-table').innerHTML = `<table>
-    <thead><tr><th>#</th><th>ชื่อสินค้า</th><th>Model</th><th>สกุลเงิน</th><th class="r">ราคาต่อหน่วย</th><th class="no-print"></th></tr></thead>
-    <tbody>${list.map((c,i)=>`<tr>
-      <td class="dim">${i+1}</td><td>${c.name}</td><td class="dim">${c.model||'—'}</td>
-      <td>${bdg(c.currency)}</td><td class="r"><strong>${fmt(c.unitPrice)}</strong> ${c.currency}</td>
-      <td class="no-print" style="white-space:nowrap;">
-        ${isAdmin?`<button class="btn btn-sm" onclick="openCatalogModal(${c.id})" style="margin-right:3px;">✏</button>
-        <button class="btn btn-sm btn-danger" onclick="deleteCatalogItem(${c.id})">✕</button>`:''}
-      </td>
-    </tr>`).join('')}</tbody>
-  </table>`;
+  const q=(document.getElementById('catalog-search')?.value||'').toLowerCase();
+  const list=q?S.catalog.filter(c=>c.name.toLowerCase().includes(q)||(c.model&&c.model.toLowerCase().includes(q))):S.catalog;
+  document.getElementById('catalog-count').textContent=S.catalog.length;
+  document.getElementById('catalog-table').innerHTML='<table><thead><tr><th>#</th><th>ชื่อสินค้า</th><th>Model</th><th>สกุลเงิน</th><th class="r">ราคา/หน่วย</th><th class="no-print"></th></tr></thead><tbody>'
+    +list.map((c,i)=>'<tr><td class="dim">'+(i+1)+'</td><td>'+c.name+'</td><td class="dim">'+(c.model||'—')+'</td><td>'+bdg(c.currency)+'</td><td class="r"><strong>'+fmt(c.unitPrice)+'</strong> '+c.currency+'</td>'
+      +'<td class="no-print" style="white-space:nowrap;">'+(isAdmin?'<button class="btn btn-sm" onclick="openCatalogModal('+c.id+')" style="margin-right:3px;">✏</button><button class="btn btn-sm btn-danger" onclick="deleteCatalogItem('+c.id+')">✕</button>':'')+'</td></tr>').join('')
+    +'</tbody></table>';
 }
 function openCatalogModal(id){
-  editingCatalogId = id||null;
-  const c = id ? APP.catalog.find(x=>x.id===id) : null;
-  document.getElementById('catalog-modal-title').textContent = c ? 'แก้ไขสินค้าในคลัง' : 'เพิ่มสินค้าใหม่';
-  document.getElementById('c-name').value = c?.name||'';
-  document.getElementById('c-model').value = c?.model||'';
-  document.getElementById('c-price').value = c?.unitPrice||'';
-  const p = proj();
-  const curs = p ? Object.keys(p.currencies) : ['THB','USD','EUR','JPY','GBP'];
-  document.getElementById('c-currency').innerHTML = curs.map(cur=>`<option value="${cur}" ${c?.currency===cur?'selected':''}>${cur}</option>`).join('');
+  editingCatalogId=id||null;
+  const c=id?S.catalog.find(x=>x.id===id):null;
+  document.getElementById('catalog-modal-title').textContent=c?'แก้ไขสินค้าในคลัง':'เพิ่มสินค้าใหม่';
+  document.getElementById('c-name').value=c?.name||'';
+  document.getElementById('c-model').value=c?.model||'';
+  document.getElementById('c-price').value=c?.unitPrice||'';
+  document.getElementById('c-currency').innerHTML=Object.keys(S.currencies).map(cur=>'<option value="'+cur+'"'+(c?.currency===cur?' selected':'')+'>'+cur+' (×'+S.currencies[cur]+')</option>').join('');
   updateCatalogPreview();
   document.getElementById('catalog-modal').classList.add('open');
   setTimeout(()=>document.getElementById('c-name').focus(),100);
 }
 function updateCatalogPreview(){
-  const price = parseFloat(document.getElementById('c-price')?.value)||0;
-  const cur = document.getElementById('c-currency')?.value||'USD';
-  const el = document.getElementById('c-preview');
-  if(!price){ el.style.display='none'; return; }
+  const price=parseFloat(document.getElementById('c-price')?.value)||0;
+  const cur=document.getElementById('c-currency')?.value||'USD';
+  const el=document.getElementById('c-preview');
+  if(!price){el.style.display='none';return;}
   el.style.display='block';
-  el.textContent = `${fmt(price)} ${cur} (ราคาต่อหน่วยในสกุลเงินต้นทาง)`;
+  el.textContent=fmt(price)+' '+cur+' = ฿'+fmt(price*fx(cur))+' THB (ก่อน Discount และ VAT)';
 }
 function saveCatalogItem(){
   const name=document.getElementById('c-name').value.trim();
   const model=document.getElementById('c-model').value.trim();
   const currency=document.getElementById('c-currency').value;
   const unitPrice=parseFloat(document.getElementById('c-price').value)||0;
-  if(!name){ toast('กรุณาใส่ชื่อสินค้า'); return; }
-  if(!unitPrice){ toast('กรุณาใส่ราคาต่อหน่วย'); return; }
+  if(!name){toast('กรุณาใส่ชื่อสินค้า');return;}
+  if(!unitPrice){toast('กรุณาใส่ราคาต่อหน่วย');return;}
   if(editingCatalogId){
-    const it=APP.catalog.find(c=>c.id===editingCatalogId);
-    Object.assign(it,{name,model,currency,unitPrice});
-    // sync project items
-    APP.projects.forEach(p=>{ p.items.filter(i=>i.catalogId===editingCatalogId).forEach(i=>Object.assign(i,{name,model,currency,unitPrice})); });
+    const it=S.catalog.find(c=>c.id===editingCatalogId);
+    it.name=name;it.model=model;it.currency=currency;it.unitPrice=unitPrice;
+    S.items.filter(i=>i.catalogId===editingCatalogId).forEach(i=>{i.name=name;i.model=model;i.currency=currency;i.unitPrice=unitPrice;});
     toast('แก้ไขสินค้าในคลังแล้ว ✓');
   } else {
-    APP.catalog.push({id:Date.now(),name,model,currency,unitPrice});
-    toast('เพิ่มสินค้าใหม่ในคลังแล้ว ✓');
+    S.catalog.push({id:Date.now(),name,model,currency,unitPrice});
+    toast('เพิ่มสินค้าในคลังแล้ว ✓');
   }
-  saveApp(); closeModal('catalog-modal'); renderCatalog();
+  save(); closeModal('catalog-modal'); renderCatalog();
 }
 function deleteCatalogItem(id){
-  const inUse = APP.projects.some(p=>p.items.some(i=>i.catalogId===id));
-  if(inUse){ toast('ไม่สามารถลบได้ มีโปรเจคที่ใช้สินค้านี้อยู่'); return; }
+  if(S.items.some(i=>i.catalogId===id)){toast('ไม่สามารถลบได้ มีรายการในโครงการที่ใช้สินค้านี้อยู่');return;}
   if(!confirm('ลบสินค้านี้ออกจากคลัง?')) return;
-  APP.catalog = APP.catalog.filter(c=>c.id!==id);
-  saveApp(); renderCatalog(); toast('ลบสินค้าแล้ว');
+  S.catalog=S.catalog.filter(c=>c.id!==id); save(); renderCatalog(); toast('ลบแล้ว');
 }
 
-// ══════════════════════════════════════════
-//  SETTINGS (for current project)
-// ══════════════════════════════════════════
+// ═══ SETTINGS ═══
 function loadSettings(){
-  const p = proj(); if(!p) return;
-  document.getElementById('s-name').value = p.name;
-  document.getElementById('s-client').value = p.client||'';
-  document.getElementById('s-model').value = p.model||'';
-  document.getElementById('s-author').value = p.author||'';
-  document.getElementById('s-status').value = p.status||'draft';
-  document.getElementById('s-budget').value = p.budget;
-  document.getElementById('s-comm').value = p.commission;
-  document.getElementById('s-vat').value = p.vat;
+  document.getElementById('s-name').value=S.project.name||'';
+  document.getElementById('s-client').value=S.project.client||'';
+  document.getElementById('s-model').value=S.project.model||'';
+  document.getElementById('s-budget').value=S.project.budget||0;
+  document.getElementById('s-comm').value=S.project.commission||10;
+  document.getElementById('s-vat').value=S.project.vat||7;
+  document.getElementById('s-author').value=S.project.author||'';
+  document.getElementById('s-status').value=S.project.status||'draft';
   renderFxTable();
 }
 function saveSettings(){
-  const p = proj(); if(!p) return;
-  p.name = document.getElementById('s-name').value.trim()||p.name;
-  p.client = document.getElementById('s-client').value.trim();
-  p.model = document.getElementById('s-model').value.trim();
-  p.author = document.getElementById('s-author').value.trim();
-  p.status = document.getElementById('s-status').value;
-  p.budget = parseFloat(document.getElementById('s-budget').value)||0;
-  p.commission = parseFloat(document.getElementById('s-comm').value)||0;
-  p.vat = parseFloat(document.getElementById('s-vat').value)||0;
-  p.updatedAt = new Date().toISOString();
-  document.getElementById('crumb-name').textContent = p.name;
-  document.getElementById('crumb-author').textContent = p.author ? '· '+p.author : '';
-  saveApp(); renderDash(); renderProjectTabs();
-  toast('บันทึกการตั้งค่าแล้ว ✓');
+  S.project.name=document.getElementById('s-name').value;
+  S.project.client=document.getElementById('s-client').value;
+  S.project.model=document.getElementById('s-model').value;
+  S.project.budget=parseFloat(document.getElementById('s-budget').value)||0;
+  S.project.commission=parseFloat(document.getElementById('s-comm').value)||0;
+  S.project.vat=parseFloat(document.getElementById('s-vat').value)||0;
+  S.project.author=document.getElementById('s-author').value;
+  S.project.status=document.getElementById('s-status').value;
+  save(); renderDash(); renderProjectTabs(); toast('บันทึกแล้ว ✓');
 }
 function renderFxTable(){
-  const p = proj(); if(!p) return;
-  document.getElementById('fx-table').innerHTML = `
-    <thead><tr><th>สกุลเงิน</th><th>อัตรา (→ THB)</th><th></th></tr></thead>
-    <tbody>${Object.entries(p.currencies).map(([code,rate])=>`<tr>
-      <td>${bdg(code)} ${code}</td>
-      <td><input class="fx-inp" type="number" value="${rate}" step="0.01" min="0"
-        onchange="updateFx('${code}',+this.value)" ${code==='THB'?'disabled':''}></td>
-      <td>${code==='THB'?'<span style="font-size:11px;color:var(--text3);">ฐาน</span>':`<button class="btn btn-sm btn-danger" onclick="removeCurrency('${code}')">ลบ</button>`}</td>
-    </tr>`).join('')}</tbody>`;
+  document.getElementById('fx-table').innerHTML='<thead><tr><th>สกุลเงิน</th><th>อัตรา (→ THB)</th><th></th></tr></thead><tbody>'
+    +Object.entries(S.currencies).map(([code,rate])=>'<tr><td>'+bdg(code)+' '+code+'</td>'
+      +'<td><input class="fx-inp" type="number" value="'+rate+'" step="0.01" min="0" onchange="updateFx(\''+code+'\',+this.value)"'+(code==='THB'?' disabled':'')+'></td>'
+      +'<td>'+(code==='THB'?'<span style="font-size:11px;color:var(--text3);">ฐาน</span>':'<button class="btn btn-sm btn-danger" onclick="removeCurrency(\''+code+'\')">ลบ</button>')+'</td></tr>').join('')
+    +'</tbody>';
 }
-function updateFx(code,val){ const p=proj();if(!p)return; p.currencies[code]=val; saveApp(); renderDash(); renderProjectTabs(); toast('อัปเดตอัตราแลกเปลี่ยนแล้ว ✓'); }
+function updateFx(code,val){S.currencies[code]=val;save();renderDash();renderProjectTabs();toast('อัปเดตอัตราแลกเปลี่ยนแล้ว ✓');}
 function addCurrency(){
-  const p=proj();if(!p)return;
   const code=document.getElementById('new-cur').value;
   const rate=parseFloat(document.getElementById('new-rate').value);
-  if(!rate||rate<=0){ toast('กรุณาใส่อัตราแลกเปลี่ยน'); return; }
-  p.currencies[code]=rate; saveApp(); renderFxTable(); document.getElementById('new-rate').value=''; toast(`เพิ่ม ${code} แล้ว ✓`);
+  if(!rate||rate<=0){toast('กรุณาใส่อัตราแลกเปลี่ยน');return;}
+  S.currencies[code]=rate;save();renderFxTable();document.getElementById('new-rate').value='';toast('เพิ่ม '+code+' แล้ว ✓');
 }
 function removeCurrency(code){
-  const p=proj();if(!p)return;
-  if(p.items.some(i=>i.currency===code)){ toast(`ไม่สามารถลบ ${code} เพราะมีรายการที่ใช้สกุลเงินนี้`); return; }
-  delete p.currencies[code]; saveApp(); renderFxTable(); toast(`ลบ ${code} แล้ว`);
-}
-function deleteCurrentProject(){
-  const p=proj();if(!p)return;
-  if(!confirm(`ลบโปรเจค "${p.name}" ?\nไม่สามารถย้อนกลับได้`)) return;
-  APP.projects = APP.projects.filter(x=>x.id!==currentProjId);
-  saveApp(); goHome(); toast('ลบโปรเจคแล้ว');
+  if(S.items.some(i=>i.currency===code)||S.catalog.some(c=>c.currency===code)){toast('ไม่สามารถลบ '+code+' เพราะมีสินค้าที่ใช้สกุลเงินนี้');return;}
+  delete S.currencies[code];save();renderFxTable();toast('ลบ '+code+' แล้ว');
 }
 
-// ══════════════════════════════════════════
-//  EXPORT
-// ══════════════════════════════════════════
-function exportPDF(){ window.print(); }
+// ═══ ATTACHMENTS ═══
+function fileIcon(n){const e=(n||'').split('.').pop().toLowerCase();return {pdf:'📄',xlsx:'📊',xls:'📊',doc:'📝',docx:'📝',png:'🖼️',jpg:'🖼️',jpeg:'🖼️'}[e]||'📎';}
+function fmtBytes(b){if(!b)return'';if(b<1024)return b+'B';if(b<1048576)return(b/1024).toFixed(1)+'KB';return(b/1048576).toFixed(1)+'MB';}
+function getBase64(file){return new Promise((res,rej)=>{const r=new FileReader();r.readAsDataURL(file);r.onload=()=>res(r.result);r.onerror=rej;});}
+function onAttachDrop(e){
+  e.preventDefault();
+  const dz=document.getElementById('attach-dropzone');
+  if(dz){dz.style.borderColor='';dz.style.background='';}
+  if(e.dataTransfer.files.length) doUpload(e.dataTransfer.files);
+}
+async function doUpload(files){
+  if(!S.attachments) S.attachments=[];
+  const rem=10-S.attachments.length;
+  if(rem<=0){toast('ครบ 10 ไฟล์แล้ว');return;}
+  const toUp=Array.from(files).slice(0,rem);
+  if(toUp.length<files.length) toast('อัปโหลดได้อีก '+rem+' ไฟล์');
+  const wrap=document.getElementById('upload-prog-wrap');
+  const bar=document.getElementById('upload-prog-bar');
+  const lbl=document.getElementById('upload-prog-label');
+  const pctEl=document.getElementById('upload-prog-pct');
+  const btn=document.getElementById('btn-add-attach');
+  if(wrap) wrap.style.display='block';
+  if(btn) btn.disabled=true;
+  try{
+    let fd=[];
+    for(let i=0;i<toUp.length;i++){
+      const f=toUp[i];
+      if(lbl) lbl.textContent='เตรียม '+(i+1)+'/'+toUp.length+': '+f.name;
+      const p=Math.round(i/toUp.length*40);
+      if(bar) bar.style.width=p+'%'; if(pctEl) pctEl.textContent=p+'%';
+      fd.push({name:f.name,mimeType:f.type||'application/octet-stream',base64:await getBase64(f),size:f.size});
+    }
+    if(lbl) lbl.textContent='กำลังอัปโหลดไปยัง Google Drive...';
+    if(bar) bar.style.width='65%'; if(pctEl) pctEl.textContent='65%';
+    const res=await fetch(APPS_SCRIPT_URL,{method:'POST',body:JSON.stringify({files:fd, projectName: S.project.name||'Geo Cost Management'})});
+    if(bar) bar.style.width='90%'; if(pctEl) pctEl.textContent='90%';
+    const result=await res.json();
+    if(result.success){
+      const enriched=result.files.map((f,i)=>({...f,size:toUp[i]?.size||0,uploadedAt:new Date().toISOString()}));
+      S.attachments=[...S.attachments,...enriched];
+      save();
+      if(bar) bar.style.width='100%'; if(pctEl) pctEl.textContent='100%';
+      toast('อัปโหลด '+enriched.length+' ไฟล์สำเร็จ ✓');
+      renderAttachList();
+    } else { toast('Error: '+(result.error||'unknown')); }
+  } catch(err){ toast('เชื่อมต่อ Google Drive ไม่ได้'); console.error(err); }
+  finally{ setTimeout(()=>{if(wrap)wrap.style.display='none';if(bar)bar.style.width='0%';},1500); if(btn)btn.disabled=false; }
+}
+function renderAttachList(){
+  if(!S.attachments) S.attachments=[];
+  const files=S.attachments,count=files.length;
+  const ct=document.getElementById('attach-counter');
+  if(ct){ct.textContent=count+' / 10';ct.style.background=count>=10?'var(--red-bg)':'var(--blue-bg)';ct.style.color=count>=10?'var(--red)':'var(--blue)';}
+  const nb=document.getElementById('attach-badge');
+  if(nb){nb.style.display=count>0?'inline':'none';nb.textContent=count;}
+  const dz=document.getElementById('attach-dropzone'); if(dz) dz.style.display=count>=10?'none':'';
+  const btn=document.getElementById('btn-add-attach'); if(btn) btn.style.display=count>=10?'none':'';
+  const list=document.getElementById('attach-list'); if(!list) return;
+  if(count===0){list.innerHTML='<div style="text-align:center;padding:1.5rem;color:var(--text3);font-size:13px;">ยังไม่มีไฟล์แนบ — ลากหรือคลิก Drop zone ด้านบน</div>';return;}
+  list.innerHTML=files.map((f,i)=>{
+    const date=f.uploadedAt?new Date(f.uploadedAt).toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'2-digit',hour:'2-digit',minute:'2-digit'}):'';
+    return '<div style="display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:10px;background:var(--surface2);margin-bottom:4px;">'
+      +'<span style="font-size:22px;">'+fileIcon(f.name)+'</span>'
+      +'<div style="flex:1;min-width:0;">'
+      +'<a href="'+f.url+'" target="_blank" style="font-size:13px;font-weight:600;color:var(--blue);text-decoration:none;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+f.name+'</a>'
+      +'<div style="font-size:11px;color:var(--text3);margin-top:2px;display:flex;gap:8px;">'
+      +(f.size?'<span>'+fmtBytes(f.size)+'</span>':'')+(date?'<span>'+date+'</span>':'')
+      +'<a href="'+f.url+'" target="_blank" style="color:var(--blue);text-decoration:none;">เปิดใน Drive ↗</a>'
+      +'</div></div>'
+      +'<button class="btn btn-sm btn-danger" onclick="deleteAttach('+i+')">✕</button></div>';
+  }).join('');
+}
+function deleteAttach(i){
+  if(!confirm('ลบไฟล์แนบนี้?\n(ไฟล์ใน Google Drive จะยังอยู่)')) return;
+  S.attachments.splice(i,1);save();renderAttachList();toast('ลบแล้ว');
+}
+
+// ═══ EXPORT ═══
+function exportPDF(){window.print();}
 function exportExcel(){
-  const p=proj();if(!p)return;
-  const t=totals(p);
-  const wb=XLSX.utils.book_new();
+  const t=totals(),wb=XLSX.utils.book_new();
   const rows=[['#','รายการ','Model','หมวด','สกุลเงิน','ราคา/หน่วย','Qty','Discount%','Dealer Price','+VAT','ต้นทุน/หน่วย (THB)','ต้นทุนรวม (THB)']];
-  p.items.forEach((it,i)=>{
-    const d=it.unitPrice*(1-it.discount/100);
-    const v=d*(1+p.vat/100);
-    const pu=Math.round(v*fx(it.currency,p));
-    rows.push([i+1,it.name,it.model||'',it.category==='foreign'?'ต่างประเทศ':'ในประเทศ',
-      it.currency,it.unitPrice,it.qty,it.discount,Math.round(d),Math.round(v),pu,pu*it.qty]);
+  S.items.forEach((it,i)=>{
+    const d=it.unitPrice*(1-it.discount/100),v=d*(1+S.project.vat/100);
+    const pu=Math.round(v*fx(it.currency));
+    rows.push([i+1,it.name,it.model||'',it.category==='foreign'?'ต่างประเทศ':'ในประเทศ',it.currency,it.unitPrice,it.qty,it.discount,Math.round(d),Math.round(v),pu,pu*it.qty]);
   });
-  rows.push([],[,,,,,,,,,,'รวมต้นทุนสินค้า',Math.round(t.goods)]);
-  rows.push([,,,,,,,,,,'Commission',Math.round(t.comm)]);
-  rows.push([,,,,,,,,,,'VAT',Math.round(t.vat)]);
-  rows.push([,,,,,,,,,,'ต้นทุนรวม',Math.round(t.total)]);
-  rows.push([,,,,,,,,,,'กำไรสุทธิ์',Math.round(t.profit)]);
-  rows.push([,,,,,,,,,,'งบประมาณ',Math.round(t.budget)]);
+  rows.push([],[,,,,,,,,,,'รวมต้นทุนสินค้า',Math.round(t.goods)],[,,,,,,,,,,'Commission',Math.round(t.comm)],[,,,,,,,,,,'VAT',Math.round(t.vat)],[,,,,,,,,,,'ต้นทุนรวม',Math.round(t.total)],[,,,,,,,,,,'กำไรสุทธิ์',Math.round(t.profit)],[,,,,,,,,,,'งบประมาณ',Math.round(t.budget)]);
   const ws=XLSX.utils.aoa_to_sheet(rows);
   ws['!cols']=[{wch:4},{wch:50},{wch:16},{wch:10},{wch:8},{wch:12},{wch:6},{wch:10},{wch:12},{wch:12},{wch:18},{wch:16}];
-  XLSX.utils.book_append_sheet(wb,ws,'รายการสินค้า');
-  // proj info sheet
-  const info=[
-    ['ชื่อโปรเจค',p.name],['หน่วยงาน',p.client||''],['โมเดล',p.model||''],
-    ['ผู้จัดทำ',p.author||''],['สถานะ',p.status||''],
-    ['งบประมาณ',p.budget],['Commission%',p.commission],['VAT%',p.vat]
-  ];
-  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(info),'ข้อมูลโปรเจค');
-  const fxRows=[['สกุลเงิน','อัตรา→THB'],...Object.entries(p.currencies)];
-  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(fxRows),'อัตราแลกเปลี่ยน');
-  XLSX.writeFile(wb,`GeoCost_${p.name.slice(0,20)}_${new Date().toISOString().split('T')[0]}.xlsx`);
+  XLSX.utils.book_append_sheet(wb,ws,'รายการโครงการ');
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([['สกุลเงิน','อัตรา→THB'],...Object.entries(S.currencies)]),'อัตราแลกเปลี่ยน');
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([['#','ชื่อสินค้า','Model','สกุลเงิน','ราคา/หน่วย'],...S.catalog.map((c,i)=>[i+1,c.name,c.model||'',c.currency,c.unitPrice])]),'คลังสินค้า');
+  XLSX.writeFile(wb,'GeoCost_'+new Date().toISOString().split('T')[0]+'.xlsx');
   toast('ดาวน์โหลด Excel แล้ว ✓');
 }
 
-// ══════════════════════════════════════════
-//  HELPERS
-// ══════════════════════════════════════════
-function closeModal(id){ document.getElementById(id).classList.remove('open'); }
-document.addEventListener('click',e=>{ if(!e.target.closest('.search-wrap')) document.getElementById('search-dropdown').classList.remove('open'); });
+// ═══ HELPERS ═══
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+document.addEventListener('click',e=>{if(!e.target.closest('.search-wrap'))document.getElementById('search-dropdown').classList.remove('open');});
 let _tt;
-function toast(msg){ const el=document.getElementById('toast'); el.textContent=msg; el.classList.add('show'); clearTimeout(_tt); _tt=setTimeout(()=>el.classList.remove('show'),2800); }
+function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(_tt);_tt=setTimeout(()=>el.classList.remove('show'),2800);}
 
-// ══════════════════════════════════════════
-//  INIT
-// ══════════════════════════════════════════
+// ═══ INIT ═══
 document.addEventListener('DOMContentLoaded',()=>{
-  loadApp();
-  renderHome();
+  load();
+  renderProjList();
+  goPage('projects');
   ['item-qty','item-disc'].forEach(id=>document.getElementById(id)?.addEventListener('input',updateItemPreview));
   document.getElementById('c-currency')?.addEventListener('change',updateCatalogPreview);
 });
