@@ -225,30 +225,34 @@ table tr.grand-row td{background:var(--surface2);font-weight:700;font-size:12px;
 <div id="screen-app">
 <div class="app">
   <aside class="sidebar no-print">
-    <div class="nav-group">ภาพรวม</div>
+    <!-- 🟢 หมวดหมู่สำหรับทีมงาน (แสดงเสมอ) -->
+    <div class="nav-group">สำหรับทีมงาน</div>
     <div class="nav-item active" onclick="goPage('dashboard')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
       Dashboard
     </div>
-    <div class="nav-group">โปรเจค</div>
     <div class="nav-item" onclick="goPage('project')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="2"/></svg>
       รายการสินค้า
     </div>
-    <div class="nav-item" id="nav-admin" style="display:none;" onclick="goPage('admin')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-      Admin — คลัง
-    </div>
-    <div class="nav-group">ตั้งค่า</div>
     <div class="nav-item" onclick="goPage('settings')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
       ตั้งค่าโปรเจค
     </div>
+
+    <!-- 🔴 หมวดหมู่สำหรับแอดมิน (จะซ่อนไว้จนกว่าจะกดโหมดแอดมิน) -->
+    <div id="sidebar-admin-section" style="display: none; margin-top: 10px;">
+      <div class="nav-group" style="color: var(--amber);">สำหรับแอดมิน</div>
+      <div class="nav-item" onclick="goPage('admin')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        คลังสินค้า (Catalog)
+      </div>
+    </div>
+
     <div style="padding:1rem 16px;margin-top:auto;">
       <button class="btn btn-sm" style="width:100%;justify-content:center;" onclick="goHome()">← กลับหน้าหลัก</button>
     </div>
   </aside>
-
   <main class="content">
 
     <!-- DASHBOARD -->
@@ -742,10 +746,22 @@ function toggleMode(){
     const pw = prompt('รหัสผ่าน Admin (ค่าเริ่มต้น: admin1234):');
     if(pw !== 'admin1234'){ toast('รหัสผ่านไม่ถูกต้อง'); return; }
     isAdmin = true;
-  } else { isAdmin = false; }
+    toast('เข้าสู่โหมด Admin แล้ว');
+  } else { 
+    isAdmin = false; 
+    toast('กลับสู่โหมดทีมงาน');
+    // ถ้าปิดโหมดแอดมินตอนที่กำลังดูหน้าคลังสินค้าอยู่ ให้เด้งกลับไปหน้า Dashboard อัตโนมัติ
+    if (document.getElementById('page-admin').classList.contains('active')) {
+      goPage('dashboard');
+    }
+  }
+
+  // เปลี่ยนสีปุ่มด้านบน
   document.getElementById('mode-pill').textContent = isAdmin ? 'Admin ✓' : 'ทีมงาน';
-  document.getElementById('mode-pill').className = 'mode-pill '+(isAdmin?'admin':'team');
-  document.getElementById('nav-admin').style.display = isAdmin ? 'flex' : 'none';
+  document.getElementById('mode-pill').className = 'mode-pill ' + (isAdmin ? 'admin' : 'team');
+  
+  // เปิด-ปิด แท็บแอดมินด้านข้าง
+  document.getElementById('sidebar-admin-section').style.display = isAdmin ? 'block' : 'none';
 }
 
 // ══════════════════════════════════════════
