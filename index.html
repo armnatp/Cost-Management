@@ -545,7 +545,7 @@ function saveProjects(){ try{ localStorage.setItem('geo_projects_v1',JSON.string
 
 // ═══ CALCS ═══
 const fx=cur=>S.currencies[cur]||1;
-const itemCostPerUnit=i=>i.unitPrice*(1-i.discount/100)*fx(i.currency); // VAT คำนวณจากงบ ไม่ใช่ต่อรายการ
+const itemCostPerUnit=i=>i.unitPrice*(1-i.discount/100)*(1+S.project.vat/100)*fx(i.currency);
 const itemCost=i=>itemCostPerUnit(i)*i.qty;
 function totals(){
   const goods=S.items.reduce((s,i)=>s+itemCost(i),0);
@@ -765,14 +765,15 @@ const projThead=`<thead><tr>
 </tr></thead>`;
 function projRow(item,num){
   const dealer=item.unitPrice*(1-item.discount/100);
-  const cpu=itemCostPerUnit(item);   // dealer × fx (VAT คิดจากงบ ไม่ใช่ต่อรายการ)
-  const ctotal=itemCost(item);       // cpu × qty
+  const withVat=dealer*(1+S.project.vat/100);
+  const cpu=itemCostPerUnit(item);
+  const ctotal=itemCost(item);
   return '<tr><td class="dim">'+num+'</td><td>'+item.name+'</td><td class="dim">'+(item.model||'—')+'</td>'
     +'<td>'+bdg(item.currency)+'</td>'
     +'<td class="r">'+fmt(item.unitPrice)+'</td>'
     +'<td class="r"><input class="inline-num" type="number" min="1" value="'+item.qty+'" onchange="updateProjectItem('+item.id+',\'qty\',+this.value)"></td>'
     +'<td class="r"><input class="inline-num" type="number" min="0" max="100" step="0.1" value="'+item.discount+'" onchange="updateProjectItem('+item.id+',\'discount\',+this.value)"></td>'
-    +'<td class="r">'+fmt(dealer)+'</td><td class="r" style="color:var(--text3);font-size:11px;">—</td>'
+    +'<td class="r">'+fmt(dealer)+'</td><td class="r">'+fmt(withVat)+'</td>'
     +'<td class="r">'+fmt(cpu)+'</td><td class="r"><strong>'+fmt(ctotal)+'</strong></td>'
     +'<td class="no-print" style="white-space:nowrap;">'
     +'<button class="btn btn-sm" onclick="openEditItemModal('+item.id+')" style="margin-right:3px;">✏</button>'
