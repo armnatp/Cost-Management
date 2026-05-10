@@ -1085,22 +1085,47 @@ function deleteAttach(i){
 // ═══ EXPORT ═══
 function exportPDF(){window.print();}
 function exportExcel(){
-  const t=totals(),wb=XLSX.utils.book_new();
-  const rows=[['#','รายการ','Model','หมวด','สกุลเงิน','ราคา/หน่วย','Qty','Discount%','Dealer Price','+VAT','ต้นทุน/หน่วย (THB)','ต้นทุนรวม (THB)']];
-  S.items.forEach((it,i)=>{
-    const d=it.unitPrice*(1-it.discount/100),v=d*(1+S.project.vat/100);
-    const pu=Math.round(v*fx(it.currency));
-    rows.push([i+1,it.name,it.model||'',it.category==='foreign'?'ต่างประเทศ':'ในประเทศ',it.currency,it.unitPrice,it.qty,it.discount,Math.round(d),Math.round(v),pu,pu*it.qty]);
-  });
-  rows.push([],[,,,,,,,,,,'รวมต้นทุนสินค้า',Math.round(t.goods)],[,,,,,,,,,,'Commission',Math.round(t.comm)],[,,,,,,,,,,'VAT',Math.round(t.vat)],[,,,,,,,,,,'ต้นทุนรวม',Math.round(t.total)],[,,,,,,,,,,'กำไรสุทธิ์',Math.round(t.profit)],[,,,,,,,,,,'งบประมาณ',Math.round(t.budget)]);
-  const ws=XLSX.utils.aoa_to_sheet(rows);
-  ws['!cols']=[{wch:4},{wch:50},{wch:16},{wch:10},{wch:8},{wch:12},{wch:6},{wch:10},{wch:12},{wch:12},{wch:18},{wch:16}];
-  XLSX.utils.book_append_sheet(wb,ws,'รายการโครงการ');
-  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([['สกุลเงิน','อัตรา→THB'],...Object.entries(S.currencies)]),'อัตราแลกเปลี่ยน');
-  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([['#','ชื่อสินค้า','Model','สกุลเงิน','ราคา/หน่วย'],...S.catalog.map((c,i)=>[i+1,c.name,c.model||'',c.currency,c.unitPrice])]),'คลังสินค้า');
-  XLSX.writeFile(wb,'GeoCost_'+new Date().toISOString().split('T')[0]+'.xlsx');
-  toast('ดาวน์โหลด Excel แล้ว ✓');
+  const t=totals();
+  const payload={
+    action:'export_excel',
+    S: S,
+    totals:{
+      goods:t.goods, comm:t.comm, vat:t.vat,
+      total:t.total, profit:t.profit, margin:t.margin, budget:t.budget
+    }
+  };
+  toast('กำลังสร้าง Excel... รอสักครู่ ⏳');
+  const btn=document.querySelector('[onclick="exportExcel()"]');
+  if(btn){ btn.disabled=true; btn.textContent='⏳ กำลังสร้าง...'; }
+
+  fetch(APPS_SCRIPT_URL,{method:'POST',body:JSON.stringify(payload)})
+    .then(r=>r.json())
+    .then(result=>{
+      if(result.success && result.xlsx){
+        // แปลง base64 → Blob → download
+        const bytes=Uint8Array.from(atob(result.xlsx),c=>c.charCodeAt(0));
+        const blob=new Blob([bytes],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+        const url=URL.createObjectURL(blob);
+        const a=document.createElement('a');
+        a.href=url;
+        a.download=`GeoCost_${(S.project.name||'project').replace(/[^\u0E00-\u0E7Fa-zA-Z0-9]/g,'_').slice(0,30)}_${new Date().toISOString().split('T')[0]}.xlsx`;
+        a.click();
+        URL.revokeObjectURL(url);
+        toast('ดาวน์โหลด Excel สำเร็จ ✓');
+      } else {
+        toast('Error: '+(result.error||'ไม่สามารถสร้าง Excel ได้'));
+        console.error(result);
+      }
+    })
+    .catch(err=>{
+      toast('เชื่อมต่อ Apps Script ไม่ได้');
+      console.error(err);
+    })
+    .finally(()=>{
+      if(btn){ btn.disabled=false; btn.textContent='⬇ Excel'; }
+    });
 }
+
 
 // ═══ HELPERS ═══
 function closeModal(id){document.getElementById(id).classList.remove('open');}
