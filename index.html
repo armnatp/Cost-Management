@@ -277,10 +277,12 @@ table tr.grand-row td{background:var(--surface2);font-weight:700;font-size:12px;
       <div class="formula-box" style="margin-top:1rem;">
         <span class="fc">// สูตรคำนวณ</span><br>
         <span class="fl">Dealer_Price</span> = <span class="fv">Unit_Price × (1 − Discount%)</span><br>
-        <span class="fl">TAX_Price</span>    = <span class="fv">Dealer_Price × (1 + VAT%)</span><br>
-        <span class="fl">Cost_THB</span>     = <span class="fv">TAX_Price × Qty × อัตราแลกเปลี่ยน</span><br>
+        <span class="fl">Cost/หน่วย</span>  = <span class="fv">Dealer_Price × อัตราแลกเปลี่ยน</span><br>
+        <span class="fl">Cost_สินค้า</span> = <span class="fv">Cost/หน่วย × Qty (รวมทุกรายการ)</span><br>
         <span class="fl">Commission</span>   = <span class="fv">งบประมาณ × Commission%</span><br>
-        <span class="fl">Profit</span>       = <span class="fv">งบประมาณ − ต้นทุนรวม − Commission − VAT</span>
+        <span class="fl">VAT</span>          = <span class="fv">งบประมาณ × VAT% / (100 + VAT%)</span>  <span class="fc">// เช่น 7% → ×7/107</span><br>
+        <span class="fl">ต้นทุนรวม</span>   = <span class="fv">Cost_สินค้า + Commission + VAT</span><br>
+        <span class="fl">กำไร</span>         = <span class="fv">งบประมาณ − ต้นทุนรวม</span>
       </div>
     </div>
   </div>
@@ -543,26 +545,29 @@ function saveProjects(){ try{ localStorage.setItem('geo_projects_v1',JSON.string
 
 // ═══ CALCS ═══
 const fx=cur=>S.currencies[cur]||1;
-const itemCostPerUnit=i=>i.unitPrice*(1-i.discount/100)*(1+S.project.vat/100)*fx(i.currency);
+const itemCostPerUnit=i=>i.unitPrice*(1-i.discount/100)*fx(i.currency); // VAT คำนวณจากงบ ไม่ใช่ต่อรายการ
 const itemCost=i=>itemCostPerUnit(i)*i.qty;
 function totals(){
   const goods=S.items.reduce((s,i)=>s+itemCost(i),0);
   const b=S.project.budget;
   const comm=b*S.project.commission/100;
-  const vat=b*S.project.vat/100;
+  // VAT = งบ × VAT% / (100 + VAT%)  เช่น 7% → งบ × 7/107
+  const vat=b*S.project.vat/(100+S.project.vat);
   const total=goods+comm+vat;
   const profit=b-total;
   return{goods,comm,vat,total,profit,margin:b>0?profit/b*100:0,budget:b};
 }
 function calcFromData(data){
   const rfx=cur=>(data.currencies||{})[cur]||1;
+  const vatRate=data.project.vat||7;
   const goods=(data.items||[]).reduce((s,i)=>{
     const d=i.unitPrice*(1-i.discount/100);
-    return s+d*(1+(data.project.vat||7)/100)*i.qty*rfx(i.currency);
+    // ราคาสินค้าไม่รวม VAT (VAT คำนวณแยกจากงบ)
+    return s+d*i.qty*rfx(i.currency);
   },0);
   const b=data.project.budget||0;
   const comm=b*(data.project.commission||10)/100;
-  const vat=b*(data.project.vat||7)/100;
+  const vat=b*vatRate/(100+vatRate);
   const profit=b-goods-comm-vat;
   return{goods,profit,margin:b>0?profit/b*100:0,budget:b};
 }
@@ -760,15 +765,14 @@ const projThead=`<thead><tr>
 </tr></thead>`;
 function projRow(item,num){
   const dealer=item.unitPrice*(1-item.discount/100);
-  const withVat=dealer*(1+S.project.vat/100);
-  const cpu=itemCostPerUnit(item);
-  const ctotal=itemCost(item);
+  const cpu=itemCostPerUnit(item);   // dealer × fx (VAT คิดจากงบ ไม่ใช่ต่อรายการ)
+  const ctotal=itemCost(item);       // cpu × qty
   return '<tr><td class="dim">'+num+'</td><td>'+item.name+'</td><td class="dim">'+(item.model||'—')+'</td>'
     +'<td>'+bdg(item.currency)+'</td>'
     +'<td class="r">'+fmt(item.unitPrice)+'</td>'
     +'<td class="r"><input class="inline-num" type="number" min="1" value="'+item.qty+'" onchange="updateProjectItem('+item.id+',\'qty\',+this.value)"></td>'
     +'<td class="r"><input class="inline-num" type="number" min="0" max="100" step="0.1" value="'+item.discount+'" onchange="updateProjectItem('+item.id+',\'discount\',+this.value)"></td>'
-    +'<td class="r">'+fmt(dealer)+'</td><td class="r">'+fmt(withVat)+'</td>'
+    +'<td class="r">'+fmt(dealer)+'</td><td class="r" style="color:var(--text3);font-size:11px;">—</td>'
     +'<td class="r">'+fmt(cpu)+'</td><td class="r"><strong>'+fmt(ctotal)+'</strong></td>'
     +'<td class="no-print" style="white-space:nowrap;">'
     +'<button class="btn btn-sm" onclick="openEditItemModal('+item.id+')" style="margin-right:3px;">✏</button>'
@@ -798,7 +802,7 @@ function renderProjectTabs(){
   document.getElementById('ptbl-summary').innerHTML='<table><thead><tr><th>รายการ</th><th class="r">มูลค่า (THB)</th><th class="r">สัดส่วน</th></tr></thead><tbody>'
     +'<tr><td>ต้นทุนสินค้า</td><td class="r">฿'+fmt(t.goods)+'</td><td class="r">'+pct(t.goods,t.budget)+'</td></tr>'
     +'<tr><td>Commission ('+S.project.commission+'%)</td><td class="r">฿'+fmt(t.comm)+'</td><td class="r">'+pct(t.comm,t.budget)+'</td></tr>'
-    +'<tr><td>VAT ('+S.project.vat+'%)</td><td class="r">฿'+fmt(t.vat)+'</td><td class="r">'+pct(t.vat,t.budget)+'</td></tr>'
+    +'<tr><td>VAT (งบ × '+S.project.vat+'/'+String(100+S.project.vat)+')</td><td class="r">฿'+fmt(t.vat)+'</td><td class="r">'+pct(t.vat,t.budget)+'</td></tr>'
     +'<tr class="total-row"><td>ต้นทุนรวม</td><td class="r">฿'+fmt(t.total)+'</td><td class="r">'+pct(t.total,t.budget)+'</td></tr>'
     +'<tr class="profit-row"><td>กำไรสุทธิ์</td><td class="r">฿'+fmt(t.profit)+'</td><td class="r">'+t.margin.toFixed(1)+'%</td></tr>'
     +'<tr class="grand-row"><td>งบประมาณ</td><td class="r">฿'+fmt(t.budget)+'</td><td class="r">100%</td></tr>'
@@ -880,11 +884,11 @@ function updateItemPreview(){
   const disc=parseFloat(document.getElementById('item-disc').value)||0;
   const c=selectedCatalogItem;
   const dealer=c.unitPrice*(1-disc/100);
-  const withVat=dealer*(1+S.project.vat/100);
-  const costTHB=withVat*qty*fx(c.currency);
+  const costPerUnit=dealer*fx(c.currency);
+  const costTHB=costPerUnit*qty;
   const el=document.getElementById('item-preview');
   el.style.display='block';
-  el.innerHTML='ราคา/หน่วย: '+fmt(c.unitPrice)+' '+c.currency+' → Dealer: '+fmt(dealer)+' → +VAT: '+fmt(withVat)+'<br>ต้นทุนรวม: <strong>฿'+fmt(costTHB)+'</strong>';
+  el.innerHTML='ราคา/หน่วย: '+fmt(c.unitPrice)+' '+c.currency+' → Dealer: '+fmt(dealer)+' '+c.currency+'<br>ต้นทุน/หน่วย: ฿'+fmt(costPerUnit)+' &nbsp;|&nbsp; ต้นทุนรวม: <strong>฿'+fmt(costTHB)+'</strong>';
 }
 function saveProjectItem(){
   if(!selectedCatalogItem){toast('กรุณาเลือกสินค้าก่อน');return;}
