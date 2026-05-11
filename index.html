@@ -149,6 +149,21 @@ table tr.grand-row td{background:var(--surface2);font-weight:700;font-size:12px;
 /* ── Proj card ── */
 .proj-card-bar{height:4px;margin:-1.25rem -1.5rem 1rem;border-radius:13px 13px 0 0;}
 
+
+/* ── Catalog image ── */
+.cat-img{width:48px;height:48px;border-radius:8px;object-fit:cover;border:1px solid var(--border);background:var(--surface2);flex-shrink:0;}
+.cat-img-placeholder{width:48px;height:48px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.img-upload-btn{cursor:pointer;border:1.5px dashed var(--border-md);border-radius:10px;padding:10px;text-align:center;font-size:12px;color:var(--text3);transition:all .15s;}
+.img-upload-btn:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-bg);}
+/* ── Set badge ── */
+.set-badge{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;padding:2px 7px;border-radius:6px;background:var(--purple-bg,#ede9fe);color:var(--purple,#6d28d9);}
+/* ── Set sub-items in table ── */
+.set-row td{background:#faf9ff!important;font-size:11px!important;}
+.set-row td:first-child{padding-left:28px!important;}
+.set-header-row td{background:#ede9fe!important;font-weight:700!important;color:#6d28d9!important;}
+/* ── Search item with image ── */
+.search-item-img{width:36px;height:36px;border-radius:6px;object-fit:cover;flex-shrink:0;}
+
 </style>
 </head>
 <body>
@@ -434,7 +449,8 @@ table tr.grand-row td{background:var(--surface2);font-weight:700;font-size:12px;
       <div id="selected-product-info" style="display:none;background:var(--surface2);border-radius:10px;padding:12px 14px;">
         <div style="font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">สินค้าที่เลือก</div>
         <div style="font-size:13px;font-weight:600;" id="sel-name"></div>
-        <div style="font-size:11px;color:var(--text2);margin-top:3px;display:flex;gap:10px;" id="sel-meta"></div>
+        <div style="font-size:11px;color:var(--text2);margin-top:3px;display:flex;gap:10px;flex-wrap:wrap;" id="sel-meta"></div>
+        <div id="set-items-preview" style="display:none;margin-top:8px;max-height:160px;overflow-y:auto;"></div>
       </div>
       <div class="g3">
         <div class="field"><label>จำนวน</label><input type="number" id="item-qty" min="1" value="1" oninput="updateItemPreview()"></div>
@@ -461,13 +477,54 @@ table tr.grand-row td{background:var(--surface2);font-weight:700;font-size:12px;
       <button class="btn btn-icon" onclick="closeModal('catalog-modal')">✕</button>
     </div>
     <div class="modal-body">
-      <div class="field"><label>ชื่อสินค้า / บริการ *</label><input type="text" id="c-name" placeholder="ชื่อสินค้า"></div>
-      <div class="g2">
-        <div class="field"><label>Model / รหัส</label><input type="text" id="c-model" placeholder="Model No."></div>
-        <div class="field"><label>สกุลเงิน *</label><select id="c-currency"></select></div>
+      <!-- Type toggle -->
+      <div style="display:flex;gap:6px;background:var(--surface2);border-radius:10px;padding:4px;">
+        <button id="c-tab-single" onclick="switchCatalogTab('single')"
+          style="flex:1;padding:6px;border-radius:7px;border:none;font-size:12px;font-weight:600;font-family:'Sarabun',sans-serif;cursor:pointer;background:var(--surface);color:var(--blue);box-shadow:0 1px 4px rgba(0,0,0,.08);">
+          📦 สินค้าเดี่ยว
+        </button>
+        <button id="c-tab-set" onclick="switchCatalogTab('set')"
+          style="flex:1;padding:6px;border-radius:7px;border:none;font-size:12px;font-weight:600;font-family:'Sarabun',sans-serif;cursor:pointer;background:none;color:var(--text3);">
+          🗂 Set / ชุดสินค้า
+        </button>
       </div>
-      <div class="field"><label>ราคาต่อหน่วย *</label><input type="number" id="c-price" min="0" step="0.01" placeholder="0.00" oninput="updateCatalogPreview()"></div>
-      <div id="c-preview" class="preview-pill" style="display:none;"></div>
+
+      <!-- ชื่อ + รูปภาพ (ใช้ร่วมกันทั้ง 2 tab) -->
+      <div style="display:flex;gap:12px;align-items:flex-start;">
+        <div style="flex:1;">
+          <div class="field"><label>ชื่อสินค้า / ชื่อ Set *</label><input type="text" id="c-name" placeholder="ชื่อสินค้า หรือชื่อ Set"></div>
+        </div>
+        <div>
+          <div style="font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;">รูปภาพ</div>
+          <div id="c-img-preview" class="cat-img-placeholder" onclick="document.getElementById('c-img-input').click()" title="คลิกเพื่อเลือกรูป" style="cursor:pointer;">🖼️</div>
+          <input type="file" id="c-img-input" accept="image/*" style="display:none;" onchange="onCatalogImgSelect(this)">
+          <div style="font-size:10px;color:var(--text3);text-align:center;margin-top:3px;cursor:pointer;" onclick="document.getElementById('c-img-input').click()">คลิกเพื่อเพิ่มรูป</div>
+        </div>
+      </div>
+
+      <!-- Single product fields -->
+      <div id="c-single-fields">
+        <div class="g2">
+          <div class="field"><label>Model / รหัส</label><input type="text" id="c-model" placeholder="Model No."></div>
+          <div class="field"><label>สกุลเงิน *</label><select id="c-currency"></select></div>
+        </div>
+        <div class="field"><label>ราคาต่อหน่วย *</label><input type="number" id="c-price" min="0" step="0.01" placeholder="0.00" oninput="updateCatalogPreview()"></div>
+        <div id="c-preview" class="preview-pill" style="display:none;"></div>
+      </div>
+
+      <!-- Set fields -->
+      <div id="c-set-fields" style="display:none;">
+        <div class="field" style="margin-bottom:6px;"><label>รายการสมาชิกใน Set</label></div>
+        <div id="c-set-members" style="display:flex;flex-direction:column;gap:6px;margin-bottom:8px;max-height:200px;overflow-y:auto;"></div>
+        <div style="display:flex;gap:6px;">
+          <div class="search-wrap" style="flex:1;">
+            <input type="text" id="c-set-search" placeholder="ค้นหาสินค้าเพื่อเพิ่มใน Set..." autocomplete="off"
+              oninput="onSetMemberSearch()" style="width:100%;padding:7px 10px;border:1.5px solid var(--border-md);border-radius:10px;font-size:13px;font-family:'Sarabun',sans-serif;">
+            <div id="c-set-dropdown" class="search-dropdown"></div>
+          </div>
+        </div>
+        <div id="c-set-preview" class="preview-pill" style="display:none;margin-top:8px;"></div>
+      </div>
     </div>
     <div class="modal-ft" style="gap:10px;">
       <button class="btn" onclick="closeModal('catalog-modal')" style="flex:1;justify-content:center;">ยกเลิก</button>
@@ -545,7 +602,7 @@ function saveProjects(){ try{ localStorage.setItem('geo_projects_v1',JSON.string
 
 // ═══ CALCS ═══
 const fx=cur=>S.currencies[cur]||1;
-const itemCostPerUnit=i=>i.unitPrice*(1-i.discount/100)*(1+S.project.vat/100)*fx(i.currency);
+const itemCostPerUnit=i=>i.isSetHeader?0:i.unitPrice*(1-i.discount/100)*(1+S.project.vat/100)*fx(i.currency);
 const itemCost=i=>itemCostPerUnit(i)*i.qty;
 function totals(){
   const goods=S.items.reduce((s,i)=>s+itemCost(i),0);
@@ -764,11 +821,48 @@ const projThead=`<thead><tr>
   <th class="no-print"></th>
 </tr></thead>`;
 function projRow(item,num){
+  // Set header row
+  if(item.isSetHeader){
+    const imgH=item.image?`<img src="${item.image}" style="width:28px;height:28px;border-radius:6px;object-fit:cover;">`:'';
+    return `<tr class="set-header-row">
+      <td class="dim">${num}</td>
+      <td colspan="9" style="padding:8px 10px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          ${imgH}<span class="set-badge">🗂 Set</span><strong>${item.name}</strong>
+        </div>
+      </td>
+      <td class="no-print"><button class="btn btn-sm btn-danger" onclick="deleteSetFromProject('${item.setId}')">✕ ลบ Set</button></td>
+    </tr>`;
+  }
+  // Set child row
+  if(item.isSetChild){
+    const dealer=item.unitPrice*(1-item.discount/100);
+    const withVat=dealer*(1+S.project.vat/100);
+    const cpu=itemCostPerUnit(item);
+    const ctotal=itemCost(item);
+    const imgH=item.image?`<img src="${item.image}" style="width:22px;height:22px;border-radius:4px;object-fit:cover;margin-right:4px;vertical-align:middle;">`:'';
+    return `<tr class="set-row">
+      <td class="dim" style="padding-left:20px;color:#9a9a93;">↳</td>
+      <td>${imgH}${item.name}</td>
+      <td class="dim">${item.model||'—'}</td>
+      <td>${bdg(item.currency)}</td>
+      <td class="r">${fmt(item.unitPrice)}</td>
+      <td class="r"><input class="inline-num" type="number" min="1" value="${item.qty}" onchange="updateProjectItem(${item.id},'qty',+this.value)"></td>
+      <td class="r"><input class="inline-num" type="number" min="0" max="100" step="0.1" value="${item.discount}" onchange="updateProjectItem(${item.id},'discount',+this.value)"></td>
+      <td class="r">${fmt(dealer)}</td><td class="r">${fmt(withVat)}</td>
+      <td class="r">${fmt(cpu)}</td><td class="r"><strong>${fmt(ctotal)}</strong></td>
+      <td class="no-print"></td>
+    </tr>`;
+  }
+  // Normal row
   const dealer=item.unitPrice*(1-item.discount/100);
   const withVat=dealer*(1+S.project.vat/100);
   const cpu=itemCostPerUnit(item);
   const ctotal=itemCost(item);
-  return '<tr><td class="dim">'+num+'</td><td>'+item.name+'</td><td class="dim">'+(item.model||'—')+'</td>'
+  const imgH=item.image?`<img src="${item.image}" style="width:28px;height:28px;border-radius:6px;object-fit:cover;margin-right:6px;vertical-align:middle;">`:'';
+  return '<tr><td class="dim">'+num+'</td>'
+    +'<td>'+imgH+item.name+'</td>'
+    +'<td class="dim">'+(item.model||'—')+'</td>'
     +'<td>'+bdg(item.currency)+'</td>'
     +'<td class="r">'+fmt(item.unitPrice)+'</td>'
     +'<td class="r"><input class="inline-num" type="number" min="1" value="'+item.qty+'" onchange="updateProjectItem('+item.id+',\'qty\',+this.value)"></td>'
@@ -780,6 +874,13 @@ function projRow(item,num){
     +'<button class="btn btn-sm btn-danger" onclick="deleteProjectItem('+item.id+')">✕</button>'
     +'</td></tr>';
 }
+function deleteSetFromProject(setId){
+  if(!confirm('ลบทั้ง Set ออกจากโครงการ?')) return;
+  S.items=S.items.filter(i=>i.setId!==setId);
+  save(); renderProjectTabs(); renderDash(); toast('ลบ Set แล้ว');
+}
+
+
 function renderProjectTabs(){
   const t=totals();
   const foreign=S.items.filter(i=>i.category==='foreign');
@@ -858,10 +959,21 @@ function onItemSearch(){
   if(q.length<1){dd.classList.remove('open');return;}
   const results=S.catalog.filter(c=>c.name.toLowerCase().includes(q)||(c.model&&c.model.toLowerCase().includes(q))).slice(0,8);
   dd.innerHTML=results.length
-    ?results.map(c=>'<div class="search-item" onclick="selectCatalogItem('+c.id+')">'
-        +'<div class="search-item-name">'+c.name+'</div>'
-        +'<div class="search-item-meta"><span>'+bdg(c.currency)+' ฿'+fmt(c.unitPrice)+'/หน่วย</span>'+(c.model?'<span>Model: '+c.model+'</span>':'')+'</div>'
-        +'</div>').join('')
+    ?results.map(c=>{
+      const imgHtml=c.image
+        ?`<img src="${c.image}" class="search-item-img">`
+        :`<div class="cat-img-placeholder" style="width:36px;height:36px;font-size:15px;">${c.isSet?'🗂':'📦'}</div>`;
+      const metaHtml=c.isSet
+        ?`<span style="color:#6d28d9;font-weight:700;">🗂 Set ${c.members?.length||0} รายการ</span>`
+        :`<span>${bdg(c.currency)} ฿${fmt(c.unitPrice)}/หน่วย</span>${c.model?`<span>Model: ${c.model}</span>`:''}`;
+      return `<div class="search-item" onclick="selectCatalogItem(${c.id})" style="display:flex;align-items:center;gap:8px;">
+        ${imgHtml}
+        <div style="flex:1;min-width:0;">
+          <div class="search-item-name">${c.name}</div>
+          <div class="search-item-meta">${metaHtml}</div>
+        </div>
+      </div>`;
+    }).join('')
     :'<div class="search-empty">ไม่พบสินค้า "'+q+'"</div>';
   dd.classList.add('open');
 }
@@ -870,14 +982,51 @@ function selectCatalogItem(id){
   selectedCatalogItem=c;
   document.getElementById('item-search').value=c.name;
   document.getElementById('search-dropdown').classList.remove('open');
-  document.getElementById('item-cat').value=c.currency==='THB'?'local':'foreign';
+  if(!c.isSet) document.getElementById('item-cat').value=c.currency==='THB'?'local':'foreign';
   showSelectedProduct(c); updateItemPreview();
-  document.getElementById('item-qty').focus();
+  if(!c.isSet) document.getElementById('item-qty').focus();
 }
 function showSelectedProduct(c){
+  const imgHtml=c.image
+    ?`<img src="${c.image}" style="width:44px;height:44px;border-radius:8px;object-fit:cover;flex-shrink:0;border:1px solid var(--border);">`
+    :'';
+  const metaHtml=c.isSet
+    ?`<span style="color:#6d28d9;font-weight:700;">🗂 Set ${c.members?.length||0} รายการ</span><span>ราคาตามรายการย่อย</span>`
+    :`<span>${bdg(c.currency)} ราคา/หน่วย: ${fmt(c.unitPrice)}</span>`+(c.model?`<span>Model: ${c.model}</span>`:'')+`<span>อัตรา: ×${fx(c.currency)} THB</span>`;
   document.getElementById('sel-name').textContent=c.name;
-  document.getElementById('sel-meta').innerHTML='<span>'+bdg(c.currency)+' ราคา/หน่วย: '+fmt(c.unitPrice)+'</span>'+(c.model?'<span>Model: '+c.model+'</span>':'')+'<span>อัตรา: ×'+fx(c.currency)+' THB</span>';
-  document.getElementById('selected-product-info').style.display='block';
+  document.getElementById('sel-meta').innerHTML=metaHtml;
+  const info=document.getElementById('selected-product-info');
+  info.style.display='block';
+  // ใส่รูปถ้ามี
+  let imgEl=info.querySelector('.sel-img-wrap');
+  if(!imgEl){
+    imgEl=document.createElement('div');
+    imgEl.className='sel-img-wrap';
+    imgEl.style.cssText='display:flex;align-items:center;gap:10px;margin-bottom:6px;';
+    info.insertBefore(imgEl,info.firstChild);
+  }
+  imgEl.innerHTML=imgHtml+(imgHtml?`<div><div style="font-size:13px;font-weight:600;">${c.name}</div></div>`:'');
+
+  // ถ้าเป็น Set แสดง sub-items preview
+  const prevEl=document.getElementById('set-items-preview');
+  if(c.isSet && c.members?.length){
+    const subHtml=c.members.map(m=>{
+      const sub=S.catalog.find(x=>x.id===m.catalogId);
+      if(!sub) return '';
+      return `<div style="display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid var(--border);">
+        ${sub.image?`<img src="${sub.image}" style="width:24px;height:24px;border-radius:4px;object-fit:cover;">`:'<span style="font-size:14px;">📦</span>'}
+        <span style="flex:1;font-size:12px;">${sub.name}</span>
+        <span style="font-size:11px;color:var(--text3);">×${m.qty}</span>
+        <span style="font-size:11px;font-family:'IBM Plex Mono',monospace;">${bdg(sub.currency)} ${fmt(sub.unitPrice*m.qty)}</span>
+      </div>`;
+    }).join('');
+    if(prevEl){
+      prevEl.innerHTML=subHtml;
+      prevEl.style.display='block';
+    }
+  } else if(prevEl){
+    prevEl.style.display='none';
+  }
 }
 function updateItemPreview(){
   if(!selectedCatalogItem){document.getElementById('item-preview').style.display='none';return;}
@@ -897,40 +1046,245 @@ function saveProjectItem(){
   const disc=parseFloat(document.getElementById('item-disc').value)||0;
   const cat=document.getElementById('item-cat').value;
   const c=selectedCatalogItem;
-  if(editingProjectId){
-    const it=S.items.find(i=>i.id===editingProjectId);
-    it.catalogId=c.id;it.name=c.name;it.model=c.model;it.currency=c.currency;it.unitPrice=c.unitPrice;
-    it.qty=qty;it.discount=disc;it.category=cat;
-    toast('แก้ไขรายการแล้ว ✓');
+
+  if(c.isSet){
+    // เพิ่ม Set → expand เป็น sub-items ทุกตัว
+    if(editingProjectId){
+      // ลบ item เดิม แล้วเพิ่มใหม่
+      S.items=S.items.filter(i=>i.id!==editingProjectId);
+    }
+    // เพิ่ม Set header row
+    const setId='set_'+Date.now();
+    S.items.push({
+      id:Date.now(), catalogId:c.id, name:c.name, model:'',
+      currency:'THB', unitPrice:0, qty:1, discount:0, category:cat,
+      isSetHeader:true, setId, image:c.image||null
+    });
+    // เพิ่ม sub-items
+    (c.members||[]).forEach((m,i)=>{
+      const sub=S.catalog.find(x=>x.id===m.catalogId);
+      if(!sub) return;
+      S.items.push({
+        id:Date.now()+i+1, catalogId:sub.id,
+        name:sub.name, model:sub.model||'',
+        currency:sub.currency, unitPrice:sub.unitPrice,
+        qty:m.qty, discount:disc, category:cat,
+        isSetChild:true, setId, image:sub.image||null
+      });
+    });
+    toast('เพิ่ม Set "'+c.name+'" แล้ว ✓');
   } else {
-    S.items.push({id:Date.now(),catalogId:c.id,name:c.name,model:c.model||'',currency:c.currency,unitPrice:c.unitPrice,qty,discount:disc,category:cat});
-    toast('เพิ่มรายการแล้ว ✓');
+    if(editingProjectId){
+      const it=S.items.find(i=>i.id===editingProjectId);
+      it.catalogId=c.id;it.name=c.name;it.model=c.model;
+      it.currency=c.currency;it.unitPrice=c.unitPrice;
+      it.qty=qty;it.discount=disc;it.category=cat;
+      it.image=c.image||null;
+      toast('แก้ไขรายการแล้ว ✓');
+    } else {
+      S.items.push({id:Date.now(),catalogId:c.id,name:c.name,model:c.model||'',
+        currency:c.currency,unitPrice:c.unitPrice,qty,discount:disc,
+        category:cat,image:c.image||null});
+      toast('เพิ่มรายการแล้ว ✓');
+    }
   }
   save(); closeModal('item-modal'); renderProjectTabs(); renderDash();
 }
 
 // ═══ CATALOG ═══
+// ── Catalog state ──
+let catalogImgData = null;    // base64 รูปภาพชั่วคราว
+let catalogTabMode = 'single'; // 'single' | 'set'
+let setMembers = [];          // [{catalogId, qty}]
+
+function switchCatalogTab(mode){
+  catalogTabMode = mode;
+  document.getElementById('c-single-fields').style.display = mode==='single' ? '' : 'none';
+  document.getElementById('c-set-fields').style.display   = mode==='set'    ? '' : 'none';
+  const btnS = document.getElementById('c-tab-single');
+  const btnSet = document.getElementById('c-tab-set');
+  btnS.style.background   = mode==='single' ? 'var(--surface)' : 'none';
+  btnS.style.color        = mode==='single' ? 'var(--blue)' : 'var(--text3)';
+  btnS.style.boxShadow    = mode==='single' ? '0 1px 4px rgba(0,0,0,.08)' : 'none';
+  btnSet.style.background = mode==='set'    ? 'var(--surface)' : 'none';
+  btnSet.style.color      = mode==='set'    ? 'var(--blue)' : 'var(--text3)';
+  btnSet.style.boxShadow  = mode==='set'    ? '0 1px 4px rgba(0,0,0,.08)' : 'none';
+}
+
+function onCatalogImgSelect(input){
+  const file=input.files[0]; if(!file) return;
+  const prev=document.getElementById('c-img-preview');
+  prev.innerHTML='⏳'; prev.style.padding='';
+
+  const reader=new FileReader();
+  reader.onload=async e=>{
+    const base64=e.target.result;
+    try{
+      const res=await fetch(APPS_SCRIPT_URL,{method:'POST',body:JSON.stringify({
+        action:'upload_image', base64, mimeType:file.type, name:file.name
+      })});
+      const result=await res.json();
+      if(result.success){
+        catalogImgData=result.url; // เก็บแค่ URL
+        prev.innerHTML='';prev.style.padding='0';
+        const img=document.createElement('img');
+        img.src=catalogImgData; img.className='cat-img';
+        prev.appendChild(img);
+        toast('อัปโหลดรูปภาพแล้ว ✓');
+      } else {
+        prev.innerHTML='🖼️'; prev.style.padding='';
+        toast('อัปโหลดรูปไม่สำเร็จ: '+(result.error||'unknown'));
+      }
+    } catch(err){
+      prev.innerHTML='🖼️'; prev.style.padding='';
+      toast('เชื่อมต่อ Google Drive ไม่ได้');
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+// ── Set member search ──
+function onSetMemberSearch(){
+  const q = document.getElementById('c-set-search').value.trim().toLowerCase();
+  const dd = document.getElementById('c-set-dropdown');
+  if(q.length < 1){ dd.classList.remove('open'); return; }
+  const results = S.catalog.filter(c =>
+    !c.isSet &&
+    c.name.toLowerCase().includes(q) || (c.model&&c.model.toLowerCase().includes(q))
+  ).slice(0,6);
+  dd.innerHTML = results.length
+    ? results.map(c=>`<div class="search-item" onclick="addSetMember(${c.id})" style="display:flex;align-items:center;gap:8px;">
+        ${c.image ? `<img src="${c.image}" class="search-item-img">` : '<div class="cat-img-placeholder" style="width:32px;height:32px;font-size:14px;">📦</div>'}
+        <div>
+          <div class="search-item-name">${c.name}</div>
+          <div class="search-item-meta"><span>${bdg(c.currency)} ${fmt(c.unitPrice)}</span>${c.model?`<span>${c.model}</span>`:''}</div>
+        </div>
+      </div>`).join('')
+    : '<div class="search-empty">ไม่พบสินค้า</div>';
+  dd.classList.add('open');
+}
+
+function addSetMember(catalogId){
+  if(setMembers.find(m=>m.catalogId===catalogId)){
+    toast('มีสินค้านี้ใน Set แล้ว'); return;
+  }
+  setMembers.push({catalogId, qty:1});
+  document.getElementById('c-set-search').value='';
+  document.getElementById('c-set-dropdown').classList.remove('open');
+  renderSetMembers();
+}
+
+function renderSetMembers(){
+  const el = document.getElementById('c-set-members');
+  if(!setMembers.length){
+    el.innerHTML='<div style="text-align:center;padding:12px;color:var(--text3);font-size:12px;">ยังไม่มีสินค้าใน Set — ค้นหาเพื่อเพิ่ม</div>';
+    updateSetPreview(); return;
+  }
+  el.innerHTML = setMembers.map((m,i)=>{
+    const c = S.catalog.find(x=>x.id===m.catalogId);
+    if(!c) return '';
+    return `<div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface2);border-radius:8px;">
+      ${c.image?`<img src="${c.image}" class="search-item-img">`:'<div class="cat-img-placeholder" style="width:32px;height:32px;font-size:13px;">📦</div>'}
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${c.name}</div>
+        <div style="font-size:11px;color:var(--text3);">${bdg(c.currency)} ${fmt(c.unitPrice)}/หน่วย</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px;">
+        <label style="font-size:10px;color:var(--text3);">จำนวน</label>
+        <input type="number" min="1" value="${m.qty}" style="width:52px;padding:3px 6px;border:1px solid var(--border-md);border-radius:6px;font-size:12px;text-align:center;"
+          onchange="setMembers[${i}].qty=+this.value;updateSetPreview()">
+      </div>
+      <button class="btn btn-sm btn-danger btn-icon" onclick="setMembers.splice(${i},1);renderSetMembers()">✕</button>
+    </div>`;
+  }).join('');
+  updateSetPreview();
+}
+
+function updateSetPreview(){
+  const el = document.getElementById('c-set-preview');
+  if(!setMembers.length){ el.style.display='none'; return; }
+  const total = setMembers.reduce((s,m)=>{
+    const c=S.catalog.find(x=>x.id===m.catalogId);
+    return s + (c ? c.unitPrice*fx(c.currency)*m.qty : 0);
+  },0);
+  el.style.display='block';
+  el.innerHTML=`<strong>${setMembers.length} รายการ</strong> รวมต้นทุน Set: <strong>฿${fmt(total)}</strong>`;
+}
+
 function renderCatalog(){
   const q=(document.getElementById('catalog-search')?.value||'').toLowerCase();
   const list=q?S.catalog.filter(c=>c.name.toLowerCase().includes(q)||(c.model&&c.model.toLowerCase().includes(q))):S.catalog;
   document.getElementById('catalog-count').textContent=S.catalog.length;
-  document.getElementById('catalog-table').innerHTML='<table><thead><tr><th>#</th><th>ชื่อสินค้า</th><th>Model</th><th>สกุลเงิน</th><th class="r">ราคา/หน่วย</th><th class="no-print"></th></tr></thead><tbody>'
-    +list.map((c,i)=>'<tr><td class="dim">'+(i+1)+'</td><td>'+c.name+'</td><td class="dim">'+(c.model||'—')+'</td><td>'+bdg(c.currency)+'</td><td class="r"><strong>'+fmt(c.unitPrice)+'</strong> '+c.currency+'</td>'
-      +'<td class="no-print" style="white-space:nowrap;">'+(isAdmin?'<button class="btn btn-sm" onclick="openCatalogModal('+c.id+')" style="margin-right:3px;">✏</button><button class="btn btn-sm btn-danger" onclick="deleteCatalogItem('+c.id+')">✕</button>':'')+'</td></tr>').join('')
+
+  const imgCell = c => c.image
+    ? `<img src="${c.image}" class="cat-img">`
+    : `<div class="cat-img-placeholder">📦</div>`;
+
+  const typeCell = c => c.isSet
+    ? `<span class="set-badge">🗂 Set ${c.members?.length||0} รายการ</span>`
+    : bdg(c.currency);
+
+  const priceCell = c => c.isSet
+    ? `<span style="font-size:11px;color:var(--text3);">ดูราคาต่อรายการ</span>`
+    : `<strong>${fmt(c.unitPrice)}</strong> ${c.currency}`;
+
+  document.getElementById('catalog-table').innerHTML='<table><thead><tr>'
+    +'<th style="width:28px;">#</th><th style="width:54px;">รูป</th>'
+    +'<th>ชื่อสินค้า / Set</th><th>Model</th>'
+    +'<th>ประเภท</th><th class="r">ราคา/หน่วย</th>'
+    +'<th class="no-print"></th></tr></thead><tbody>'
+    +list.map((c,i)=>`<tr>
+      <td class="dim">${i+1}</td>
+      <td>${imgCell(c)}</td>
+      <td>${c.name}</td>
+      <td class="dim">${c.model||'—'}</td>
+      <td>${typeCell(c)}</td>
+      <td class="r">${priceCell(c)}</td>
+      <td class="no-print" style="white-space:nowrap;">
+        ${isAdmin?`<button class="btn btn-sm" onclick="openCatalogModal(${c.id})" style="margin-right:3px;">✏</button><button class="btn btn-sm btn-danger" onclick="deleteCatalogItem(${c.id})">✕</button>`:''}
+      </td>
+    </tr>`).join('')
     +'</tbody></table>';
 }
+
 function openCatalogModal(id){
   editingCatalogId=id||null;
+  catalogImgData=null;
+  setMembers=[];
   const c=id?S.catalog.find(x=>x.id===id):null;
-  document.getElementById('catalog-modal-title').textContent=c?'แก้ไขสินค้าในคลัง':'เพิ่มสินค้าใหม่';
+  document.getElementById('catalog-modal-title').textContent=c?'แก้ไขสินค้า/Set':'เพิ่มสินค้าใหม่';
   document.getElementById('c-name').value=c?.name||'';
   document.getElementById('c-model').value=c?.model||'';
   document.getElementById('c-price').value=c?.unitPrice||'';
+
+  // รูปภาพ
+  const prev=document.getElementById('c-img-preview');
+  if(c?.image){
+    catalogImgData=c.image;
+    prev.innerHTML=''; prev.style.padding='0';
+    const img=document.createElement('img'); img.src=c.image; img.className='cat-img';
+    prev.appendChild(img);
+  } else {
+    prev.innerHTML='🖼️'; prev.style.padding='';
+  }
+
+  // Tab mode
+  const mode = c?.isSet ? 'set' : 'single';
+  switchCatalogTab(mode);
+
+  if(mode==='set' && c?.members){
+    setMembers=[...c.members];
+    renderSetMembers();
+  } else {
+    renderSetMembers();
+  }
+
   document.getElementById('c-currency').innerHTML=Object.keys(S.currencies).map(cur=>'<option value="'+cur+'"'+(c?.currency===cur?' selected':'')+'>'+cur+' (×'+S.currencies[cur]+')</option>').join('');
   updateCatalogPreview();
   document.getElementById('catalog-modal').classList.add('open');
   setTimeout(()=>document.getElementById('c-name').focus(),100);
 }
+
 function updateCatalogPreview(){
   const price=parseFloat(document.getElementById('c-price')?.value)||0;
   const cur=document.getElementById('c-currency')?.value||'USD';
@@ -939,24 +1293,45 @@ function updateCatalogPreview(){
   el.style.display='block';
   el.textContent=fmt(price)+' '+cur+' = ฿'+fmt(price*fx(cur))+' THB (ก่อน Discount และ VAT)';
 }
+
 function saveCatalogItem(){
   const name=document.getElementById('c-name').value.trim();
-  const model=document.getElementById('c-model').value.trim();
-  const currency=document.getElementById('c-currency').value;
-  const unitPrice=parseFloat(document.getElementById('c-price').value)||0;
   if(!name){toast('กรุณาใส่ชื่อสินค้า');return;}
-  if(!unitPrice){toast('กรุณาใส่ราคาต่อหน่วย');return;}
-  if(editingCatalogId){
-    const it=S.catalog.find(c=>c.id===editingCatalogId);
-    it.name=name;it.model=model;it.currency=currency;it.unitPrice=unitPrice;
-    S.items.filter(i=>i.catalogId===editingCatalogId).forEach(i=>{i.name=name;i.model=model;i.currency=currency;i.unitPrice=unitPrice;});
-    toast('แก้ไขสินค้าในคลังแล้ว ✓');
+
+  if(catalogTabMode==='set'){
+    if(setMembers.length<2){toast('Set ต้องมีสินค้าอย่างน้อย 2 รายการ');return;}
+    const entry={id:editingCatalogId||Date.now(),name,model:'',currency:'THB',unitPrice:0,
+      image:catalogImgData||null, isSet:true, members:[...setMembers]};
+    if(editingCatalogId){
+      const idx=S.catalog.findIndex(c=>c.id===editingCatalogId);
+      S.catalog[idx]={...S.catalog[idx],...entry};
+      toast('แก้ไข Set แล้ว ✓');
+    } else {
+      S.catalog.push(entry);
+      toast('เพิ่ม Set ใหม่แล้ว ✓');
+    }
   } else {
-    S.catalog.push({id:Date.now(),name,model,currency,unitPrice});
-    toast('เพิ่มสินค้าในคลังแล้ว ✓');
+    const model=document.getElementById('c-model').value.trim();
+    const currency=document.getElementById('c-currency').value;
+    const unitPrice=parseFloat(document.getElementById('c-price').value)||0;
+    if(!unitPrice){toast('กรุณาใส่ราคาต่อหน่วย');return;}
+    if(editingCatalogId){
+      const it=S.catalog.find(c=>c.id===editingCatalogId);
+      it.name=name;it.model=model;it.currency=currency;it.unitPrice=unitPrice;
+      it.image=catalogImgData!==null?catalogImgData:it.image;
+      S.items.filter(i=>i.catalogId===editingCatalogId).forEach(i=>{
+        i.name=name;i.model=model;i.currency=currency;i.unitPrice=unitPrice;
+      });
+      toast('แก้ไขสินค้าในคลังแล้ว ✓');
+    } else {
+      S.catalog.push({id:Date.now(),name,model,currency,unitPrice,
+        image:catalogImgData||null,isSet:false});
+      toast('เพิ่มสินค้าในคลังแล้ว ✓');
+    }
   }
   save(); closeModal('catalog-modal'); renderCatalog();
 }
+
 function deleteCatalogItem(id){
   if(S.items.some(i=>i.catalogId===id)){toast('ไม่สามารถลบได้ มีรายการในโครงการที่ใช้สินค้านี้อยู่');return;}
   if(!confirm('ลบสินค้านี้ออกจากคลัง?')) return;
