@@ -579,18 +579,48 @@ let S=JSON.parse(JSON.stringify(DEFAULT));
 let PROJECTS=[];
 
 // ═══ STORAGE ═══
-function load(){
+// Current draft is still kept locally for autosave, but the project list is loaded/saved to Google Sheet via Apps Script.
+async function api(action, payload={}){
+  const res = await fetch(APPS_SCRIPT_URL, {
+    method: 'POST',
+    body: JSON.stringify({ action, ...payload })
+  });
+  const data = await res.json();
+  if(!data.success) throw new Error(data.error || 'Apps Script error');
+  return data;
+}
+
+function normalizeState(){
+  if(!S.attachments) S.attachments=[];
+  if(!S.project.author) S.project.author='';
+  if(!S.project.status) S.project.status='draft';
+}
+
+async function load(){
   try{
     const d=localStorage.getItem('geo_s_v1');
-    if(d) S=JSON.parse(d);
-    else S=JSON.parse(JSON.stringify(DEFAULT));
-    if(!S.attachments) S.attachments=[];
-    if(!S.project.author) S.project.author='';
-    if(!S.project.status) S.project.status='draft';
-    const pd=localStorage.getItem('geo_projects_v1');
-    if(pd) PROJECTS=JSON.parse(pd);
-  }catch(e){ S=JSON.parse(JSON.stringify(DEFAULT)); }
+    S=d ? JSON.parse(d) : JSON.parse(JSON.stringify(DEFAULT));
+    normalizeState();
+  }catch(e){
+    S=JSON.parse(JSON.stringify(DEFAULT));
+    normalizeState();
+  }
+
+  // Load shared projects from Google Sheet so other users can see the same list.
+  try{
+    const result = await api('list_projects');
+    PROJECTS = result.projects || [];
+    localStorage.setItem('geo_projects_v1', JSON.stringify(PROJECTS)); // fallback cache
+  }catch(e){
+    console.warn('โหลดโปรเจคจาก Cloud ไม่ได้ ใช้ข้อมูล cache ในเครื่องแทน', e);
+    try{
+      const pd=localStorage.getItem('geo_projects_v1');
+      PROJECTS=pd ? JSON.parse(pd) : [];
+    }catch(_){ PROJECTS=[]; }
+    toast('โหลด Cloud ไม่ได้ — แสดงข้อมูลจากเครื่องนี้ชั่วคราว');
+  }
 }
+
 function save(){
   try{
     localStorage.setItem('geo_s_v1',JSON.stringify(S));
@@ -598,7 +628,11 @@ function save(){
     if(el){ el.classList.add('show'); clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove('show'),1800); }
   }catch(e){}
 }
-function saveProjects(){ try{ localStorage.setItem('geo_projects_v1',JSON.stringify(PROJECTS)); }catch(e){} }
+
+function saveProjects(){
+  // Keep local cache only. Shared saving is handled by saveAsNewProject()/deleteProject() via Apps Script.
+  try{ localStorage.setItem('geo_projects_v1',JSON.stringify(PROJECTS)); }catch(e){}
+}
 
 // ═══ CALCS ═══
 const fx=cur=>S.currencies[cur]||1;
@@ -684,21 +718,35 @@ function confirmNewProject(){
   goPage('dashboard');
   toast('สร้างโปรเจค "'+name+'" แล้ว ✓');
 }
-function saveAsNewProject(){
+async function saveAsNewProject(){
   const name=S.project.name||'ไม่มีชื่อ';
   if(!S.project.author){toast('กรุณาใส่ชื่อผู้จัดทำในหน้าตั้งค่าก่อน');goPage('settings');return;}
   const existing=PROJECTS.find(p=>p.name===name);
   if(!confirm(existing?'อัปเดตโปรเจค "'+name+'"?':'บันทึกโปรเจค "'+name+'"?')) return;
+
   const snap=JSON.parse(JSON.stringify(S));
-  if(existing){
-    existing.data=snap; existing.savedAt=new Date().toISOString();
-    existing.author=S.project.author; existing.status=S.project.status||'draft';
-    toast('อัปเดตโปรเจคแล้ว ✓');
-  } else {
-    PROJECTS.push({id:'p_'+Date.now(),name,author:S.project.author,status:S.project.status||'draft',savedAt:new Date().toISOString(),data:snap});
-    toast('บันทึกโปรเจคใหม่แล้ว ✓');
+  const record = existing || {id:'p_'+Date.now()};
+  record.name = name;
+  record.author = S.project.author;
+  record.status = S.project.status || 'draft';
+  record.savedAt = new Date().toISOString();
+  record.data = snap;
+
+  try{
+    await api('save_project', { project: record });
+    if(existing){
+      Object.assign(existing, record);
+      toast('อัปเดตโปรเจคบน Cloud แล้ว ✓');
+    } else {
+      PROJECTS.push(record);
+      toast('บันทึกโปรเจคบน Cloud แล้ว ✓');
+    }
+    saveProjects();
+    renderProjList();
+  }catch(e){
+    console.error(e);
+    toast('บันทึก Cloud ไม่สำเร็จ: '+e.message);
   }
-  saveProjects(); renderProjList();
 }
 function loadProject(id){
   const p=PROJECTS.find(x=>x.id===id);
@@ -707,11 +755,17 @@ function loadProject(id){
   if(!S.attachments) S.attachments=[];
   save(); goPage('dashboard'); toast('โหลดโปรเจค "'+p.name+'" แล้ว');
 }
-function deleteProject(id){
+async function deleteProject(id){
   const p=PROJECTS.find(x=>x.id===id);
   if(!p||!confirm('ลบโปรเจค "'+p.name+'"?')) return;
-  PROJECTS=PROJECTS.filter(x=>x.id!==id);
-  saveProjects(); renderProjList(); toast('ลบโปรเจคแล้ว');
+  try{
+    await api('delete_project', { id });
+    PROJECTS=PROJECTS.filter(x=>x.id!==id);
+    saveProjects(); renderProjList(); toast('ลบโปรเจคจาก Cloud แล้ว');
+  }catch(e){
+    console.error(e);
+    toast('ลบ Cloud ไม่สำเร็จ: '+e.message);
+  }
 }
 function renderProjList(){
   const sub=document.getElementById('proj-list-sub');
@@ -1509,8 +1563,8 @@ let _tt;
 function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(_tt);_tt=setTimeout(()=>el.classList.remove('show'),2800);}
 
 // ═══ INIT ═══
-document.addEventListener('DOMContentLoaded',()=>{
-  load();
+document.addEventListener('DOMContentLoaded',async()=>{
+  await load();
   renderProjList();
   goPage('projects');
   ['item-qty','item-disc'].forEach(id=>document.getElementById(id)?.addEventListener('input',updateItemPreview));
