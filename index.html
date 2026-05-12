@@ -649,18 +649,41 @@ function totals(){
   return{goods,comm,vat,total,profit,margin:b>0?profit/b*100:0,budget:b};
 }
 function calcFromData(data){
-  const rfx=cur=>(data.currencies||{})[cur]||1;
-  const vatRate=data.project.vat||7;
-  const goods=(data.items||[]).reduce((s,i)=>{
-    const d=i.unitPrice*(1-i.discount/100);
-    // ราคาสินค้าไม่รวม VAT (VAT คำนวณแยกจากงบ)
-    return s+d*i.qty*rfx(i.currency);
-  },0);
-  const b=data.project.budget||0;
-  const comm=b*(data.project.commission||10)/100;
-  const vat=b*vatRate/(100+vatRate);
-  const profit=b-goods-comm-vat;
-  return{goods,profit,margin:b>0?profit/b*100:0,budget:b};
+  const rfx = cur => (data.currencies || {})[cur] || 1;
+  const vatRate = data.project.vat || 7;
+
+  const goods = (data.items || []).reduce((s, i) => {
+    if (i.isSetHeader) return s;
+
+    const unitPrice = Number(i.unitPrice || 0);
+    const discount = Number(i.discount || 0);
+    const qty = Number(i.qty || 1);
+    const currency = i.currency || 'THB';
+
+    const costPerUnit =
+      unitPrice *
+      (1 - discount / 100) *
+      (1 + vatRate / 100) *
+      rfx(currency);
+
+    return s + costPerUnit * qty;
+  }, 0);
+
+  const b = Number(data.project.budget || 0);
+  const comm = b * Number(data.project.commission || 10) / 100;
+  const vat = b * vatRate / (100 + vatRate);
+  const total = goods + comm + vat;
+  const profit = b - total;
+
+  return {
+    goods,
+    comm,
+    vat,
+    total,
+    profit,
+    margin: b > 0 ? profit / b * 100 : 0,
+    budget: b
+  };
 }
 const fmt=n=>Math.round(n).toLocaleString('th-TH');
 const pct=(a,b)=>b>0?(a/b*100).toFixed(1)+'%':'—';
