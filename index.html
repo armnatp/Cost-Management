@@ -200,42 +200,65 @@ table tr.grand-row td{background:var(--surface2);font-weight:700;font-size:12px;
 
 <div class="app">
 <aside class="sidebar no-print">
-  <div class="nav-group">โปรเจค</div>
-  <div class="nav-item" id="nav-projects" onclick="goPage('projects')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>
-    โปรเจคทั้งหมด
-    <span class="nav-count" id="nav-proj-count">0</span>
+  <!-- TEAM / PROJECT SIDEBAR -->
+  <div id="team-sidebar-menu">
+    <div class="nav-group">โปรเจค</div>
+    <div class="nav-item" id="nav-projects" onclick="goPage('projects')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>
+      โปรเจคทั้งหมด
+      <span class="nav-count" id="nav-proj-count">0</span>
+    </div>
+    <div class="nav-group">โครงการนี้</div>
+    <div class="nav-item" id="nav-dashboard" onclick="goPage('dashboard')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      Dashboard
+    </div>
+    <div class="nav-group">โครงการ</div>
+    <div class="nav-item" id="nav-project" onclick="goPage('project')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="2"/></svg>
+      รายการโครงการ
+    </div>
+    <div class="nav-item" id="nav-spare" onclick="goPage('spare')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7h-9"/><path d="M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/></svg>
+      ราคาขายอะไหล่
+    </div>
+    <div class="nav-item" id="nav-attachments" onclick="goPage('attachments')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>
+      ไฟล์แนบ <span id="attach-badge" style="display:none;margin-left:auto;background:var(--blue);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;"></span>
+    </div>
+    <div class="nav-group">ตั้งค่า</div>
+    <div class="nav-item" id="nav-settings" onclick="goPage('settings')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+      ตั้งค่าโครงการ
+    </div>
   </div>
-  <div class="nav-group">โครงการนี้</div>
-  <div class="nav-item" id="nav-dashboard" onclick="goPage('dashboard')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-    Dashboard
+
+  <!-- ADMIN SIDEBAR: แยกออกจากระบบโครงการชัดเจน -->
+  <div id="admin-sidebar-menu" style="display:none;">
+    <div class="nav-group">ระบบแอดมิน</div>
+    <div class="nav-item" id="nav-admin-dashboard" onclick="goPage('admin-dashboard')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+      Admin Dashboard
+    </div>
+    <div class="nav-item" id="nav-admin" onclick="goPage('admin')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7h-9"/><path d="M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/></svg>
+      Catalog กลาง
+      <span class="nav-count" id="nav-catalog-count">0</span>
+    </div>
+    <div class="nav-group">หลักการทำงาน</div>
+    <div style="padding:8px 16px;font-size:11px;color:var(--text3);line-height:1.55;">
+      Catalog กลางเป็นฐานข้อมูลของ Admin ใช้ร่วมกันทุกโปรเจค<br>
+      การแก้ไขในหน้านี้จะไม่บันทึกลงโปรเจคปัจจุบัน
+    </div>
   </div>
-  <div class="nav-group">โครงการ</div>
-  <div class="nav-item" id="nav-project" onclick="goPage('project')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="2"/></svg>
-    รายการโครงการ
-  </div>
-  <div class="nav-item" id="nav-spare" onclick="goPage('spare')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7h-9"/><path d="M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/></svg>
-    ราคาขายอะไหล่
-  </div>
-  <div class="nav-item" id="nav-admin" style="display:none;" onclick="goPage('admin')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-    Admin — คลังสินค้า
-  </div>
-  <div class="nav-item" id="nav-attachments" onclick="goPage('attachments')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>
-    ไฟล์แนบ <span id="attach-badge" style="display:none;margin-left:auto;background:var(--blue);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;"></span>
-  </div>
-  <div class="nav-group">ตั้งค่า</div>
-  <div class="nav-item" id="nav-settings" onclick="goPage('settings')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
-    ตั้งค่าโครงการ
-  </div>
-  <div class="sidebar-bottom">
+
+  <div class="sidebar-bottom" id="team-sidebar-bottom">
     <button class="btn sidebar-save-btn no-print" onclick="saveAsNewProject()">💾 บันทึกโปรเจค</button>
     <button class="btn btn-sm no-print" style="width:100%;justify-content:center;" onclick="goPage('projects')">☰ โปรเจคทั้งหมด</button>
+  </div>
+  <div class="sidebar-bottom" id="admin-sidebar-bottom" style="display:none;">
+    <button class="btn sidebar-save-btn no-print" onclick="loadGlobalCatalog().then(()=>{renderCatalog();renderAdminDashboard();toast('รีเฟรช Catalog กลางแล้ว ✓')})">↻ รีเฟรช Catalog</button>
+    <button class="btn btn-sm no-print" style="width:100%;justify-content:center;" onclick="toggleMode()">← กลับโหมดทีมงาน</button>
   </div>
 </aside>
 
@@ -392,11 +415,36 @@ table tr.grand-row td{background:var(--surface2);font-weight:700;font-size:12px;
   </div>
 </div>
 
+<!-- ADMIN DASHBOARD -->
+<div id="page-admin-dashboard" class="page">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;gap:10px;flex-wrap:wrap;">
+    <div>
+      <div style="font-size:18px;font-weight:700;">Admin Dashboard</div>
+      <div style="font-size:12px;color:var(--text3);margin-top:2px;">ระบบแอดมินแยกจากโปรเจค — จัดการ Catalog กลางเท่านั้น</div>
+    </div>
+    <button class="btn btn-primary" onclick="goPage('admin')">ไปที่ Catalog กลาง →</button>
+  </div>
+  <div class="kpi-grid">
+    <div class="kpi" style="--kc:#1a56db"><div class="kpi-lbl">Catalog กลาง</div><div class="kpi-val" id="admin-k-catalog">—</div><div class="kpi-sub">รายการ</div></div>
+    <div class="kpi" style="--kc:#8b5cf6"><div class="kpi-lbl">Set / Package</div><div class="kpi-val" id="admin-k-set">—</div><div class="kpi-sub">รายการ</div></div>
+    <div class="kpi" style="--kc:#10b981"><div class="kpi-lbl">Equipment</div><div class="kpi-val" id="admin-k-equipment">—</div><div class="kpi-sub">รายการ</div></div>
+    <div class="kpi" style="--kc:#f59e0b"><div class="kpi-lbl">Spare Parts</div><div class="kpi-val" id="admin-k-spare">—</div><div class="kpi-sub">รายการ</div></div>
+  </div>
+  <div class="card">
+    <div class="card-hd">แนวคิดระบบใหม่</div>
+    <div style="font-size:13px;color:var(--text2);line-height:1.8;">
+      <strong>Admin Catalog</strong> คือคลังสินค้ากลางของทีม ใช้ร่วมกันทุกโปรเจค<br>
+      <strong>Project</strong> จะดึงสินค้าไปใช้เป็น snapshot เฉพาะโปรเจคนั้น ไม่แก้ไขข้อมูล Catalog กลางโดยตรง<br>
+      การเพิ่ม/แก้ไข/ลบสินค้าในหน้านี้จะเรียก API: <code>list_catalog</code>, <code>save_catalog_item</code>, <code>delete_catalog_item</code>
+    </div>
+  </div>
+</div>
+
 <!-- ADMIN -->
 <div id="page-admin" class="page">
   <div id="admin-access-check"></div>
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
-    <div style="font-size:15px;font-weight:700;">Admin — คลังสินค้า</div>
+    <div><div style="font-size:15px;font-weight:700;">Admin — Catalog กลาง</div><div style="font-size:12px;color:var(--text3);margin-top:2px;">คลังสินค้ากลางของ Admin แยกจากข้อมูลโปรเจค</div></div>
     <button class="btn btn-primary" onclick="openCatalogModal()">+ เพิ่มสินค้าใหม่</button>
   </div>
   <div class="card">
@@ -960,15 +1008,23 @@ const statusMap={draft:{bg:'#fef3c7',tc:'#b45309',lbl:'Draft'},active:{bg:'#e6f4
 function goPage(name){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+
+  if((name==='admin' || name==='admin-dashboard') && !isAdmin){
+    toast('กรุณาเข้าสู่โหมด Admin ก่อน');
+    name='projects';
+  }
+
   const page=document.getElementById('page-'+name);
   if(page) page.classList.add('active');
   const nav=document.getElementById('nav-'+name);
   if(nav) nav.classList.add('active');
+
   if(name==='projects') renderProjList();
   if(name==='dashboard') renderDash();
   if(name==='project') renderProjectTabs();
   if(name==='attachments') renderAttachList();
   if(name==='settings') loadSettings();
+  if(name==='admin-dashboard') renderAdminDashboard();
   if(name==='admin'){
     document.getElementById('admin-access-check').innerHTML=isAdmin?'':'<div style="background:var(--amber-bg);border:1px solid var(--amber);border-radius:var(--r);padding:12px 16px;font-size:13px;color:var(--amber);margin-bottom:1rem;">⚠ หน้านี้สำหรับ Admin เท่านั้น</div>';
     renderCatalog();
@@ -976,15 +1032,55 @@ function goPage(name){
 }
 
 // ═══ MODE ═══
+function applyModeUI(){
+  const pill=document.getElementById('mode-pill');
+  if(pill){
+    pill.textContent=isAdmin?'Admin ✓':'ทีมงาน';
+    pill.className='mode-pill '+(isAdmin?'admin':'team');
+  }
+  const teamMenu=document.getElementById('team-sidebar-menu');
+  const adminMenu=document.getElementById('admin-sidebar-menu');
+  const teamBottom=document.getElementById('team-sidebar-bottom');
+  const adminBottom=document.getElementById('admin-sidebar-bottom');
+  if(teamMenu) teamMenu.style.display=isAdmin?'none':'block';
+  if(adminMenu) adminMenu.style.display=isAdmin?'block':'none';
+  if(teamBottom) teamBottom.style.display=isAdmin?'none':'block';
+  if(adminBottom) adminBottom.style.display=isAdmin?'block':'none';
+  const navCatalogCount=document.getElementById('nav-catalog-count');
+  if(navCatalogCount) navCatalogCount.textContent=catalogSource().length;
+}
+
 function toggleMode(){
   if(!isAdmin){
     const pw=prompt('รหัสผ่าน Admin:');
-    if(pw!=='admin1234'){toast('รหัสผ่านไม่ถูกต้อง');return;}
+    if(pw!=='admin1234'){
+      toast('รหัสผ่านไม่ถูกต้อง');
+      return;
+    }
     isAdmin=true;
-  } else { isAdmin=false; }
-  document.getElementById('mode-pill').textContent=isAdmin?'Admin ✓':'ทีมงาน';
-  document.getElementById('mode-pill').className='mode-pill '+(isAdmin?'admin':'team');
-  document.getElementById('nav-admin').style.display=isAdmin?'flex':'none';
+    applyModeUI();
+    goPage('admin-dashboard');
+    toast('เข้าสู่ระบบ Admin แล้ว');
+  } else {
+    isAdmin=false;
+    applyModeUI();
+    goPage('projects');
+    toast('กลับสู่โหมดทีมงานแล้ว');
+  }
+}
+
+function renderAdminDashboard(){
+  const list=catalogSource();
+  const setCount=list.filter(c=>c.isSet || c.type==='set' || c.category==='set').length;
+  const spareCount=list.filter(c=>String(c.type||'').toLowerCase().includes('spare')).length;
+  const equipmentCount=Math.max(list.length-setCount-spareCount,0);
+  const setText=(id,val)=>{const el=document.getElementById(id); if(el) el.textContent=String(val);};
+  setText('admin-k-catalog',list.length);
+  setText('admin-k-set',setCount);
+  setText('admin-k-equipment',equipmentCount);
+  setText('admin-k-spare',spareCount);
+  const navCatalogCount=document.getElementById('nav-catalog-count');
+  if(navCatalogCount) navCatalogCount.textContent=list.length;
 }
 
 // ═══ PROJECTS ═══
@@ -1638,6 +1734,7 @@ function renderCatalog(){
     ((c.specifications||c.specs||'').toLowerCase().includes(q))
   ):catalogSource();
   document.getElementById('catalog-count').textContent=catalogSource().length;
+  const navCount=document.getElementById('nav-catalog-count'); if(navCount) navCount.textContent=catalogSource().length;
 
   const imgCell = c => (c.imageUrl||c.image)
     ? `<img src="${c.imageUrl||c.image}" class="cat-img" onclick="openImageLightbox(${JSON.stringify(c.imageUrl||c.image)},${JSON.stringify(c.name||'Product Image')})" title="คลิกเพื่อดูรูปใหญ่">`
@@ -1672,7 +1769,7 @@ function renderCatalog(){
       <td>${typeCell(c)}</td>
       <td class="r">${priceCell(c)}</td>
       <td class="no-print" style="white-space:nowrap;">
-        ${isAdmin?`<button class="btn btn-sm" onclick="openCatalogModal(${JSON.stringify(c.id)})" style="margin-right:3px;">✏</button><button class="btn btn-sm btn-danger" onclick="deleteCatalogItem(${JSON.stringify(c.id)})">✕</button>`:''}
+        ${isAdmin?`<button class="btn btn-sm" onclick="openCatalogModal(${JSON.stringify(c.id)})" style="margin-right:6px;">แก้ไข</button><button class="btn btn-sm btn-danger" onclick="deleteCatalogItem(${JSON.stringify(c.id)})">ลบ</button>`:''}
       </td>
     </tr>`).join('')
     +'</tbody></table>';
@@ -1818,6 +1915,7 @@ async function saveCatalogItem(){
     // ✅ Refresh เฉพาะหน้า Admin Catalog กลาง
     await loadGlobalCatalog();
     renderCatalog();
+    renderAdminDashboard();
 
     // ✅ บังคับให้อยู่หน้า Admin ต่อ ไม่เด้งไป Project
     document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -2031,6 +2129,7 @@ function toast(msg){const el=document.getElementById('toast');el.textContent=msg
 document.addEventListener('DOMContentLoaded',async()=>{
   await load();
   renderAll();
+  applyModeUI();
   goPage('projects');
   ['item-qty','item-disc'].forEach(id=>document.getElementById(id)?.addEventListener('input',updateItemPreview));
   document.getElementById('c-currency')?.addEventListener('change',updateCatalogPreview);
