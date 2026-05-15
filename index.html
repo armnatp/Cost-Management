@@ -1164,6 +1164,14 @@ const projThead=`<thead><tr>
   <th class="r" style="color:var(--blue);">ต้นทุนรวม<br><span style="font-size:9px;">(THB)</span></th>
   <th class="no-print"></th>
 </tr></thead>`;
+function attr(v){
+  return String(v ?? '')
+    .replace(/&/g,'&amp;')
+    .replace(/"/g,'&quot;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;');
+}
+
 function projRow(item,num){
   // Set header row
   if(item.isSetHeader){
@@ -1384,7 +1392,7 @@ function onItemSearch(){
       const metaHtml=c.isSet
         ?`<span style="color:#6d28d9;font-weight:700;">🗂 Set ${c.members?.length||0} รายการ</span>`
         :`<span>${bdg(c.currency)} ฿${fmt(c.unitPrice)}/หน่วย</span>${c.model?`<span>Model: ${c.model}</span>`:''}`;
-      return `<div class="search-item" data-catalog-id="${escAttr(c.id)}" onclick="selectCatalogItem(this.dataset.catalogId)" style="display:flex;align-items:center;gap:8px;">
+      return `<div class="search-item js-select-catalog" data-catalog-id="${attr(c.id)}" style="display:flex;align-items:center;gap:8px;">
         ${imgHtml}
         <div style="flex:1;min-width:0;">
           <div class="search-item-name">${c.name}</div>
@@ -1573,7 +1581,7 @@ function onSetMemberSearch(){
     )
   ).slice(0,6);
   dd.innerHTML = results.length
-    ? results.map(c=>`<div class="search-item" data-catalog-id="${escAttr(c.id)}" onclick="addSetMember(this.dataset.catalogId)" style="display:flex;align-items:center;gap:8px;">
+    ? results.map(c=>`<div class="search-item js-set-member-add" data-catalog-id="${attr(c.id)}" style="display:flex;align-items:center;gap:8px;">
         ${(c.imageUrl||c.image) ? `<img src="${c.imageUrl||c.image}" class="search-item-img">` : '<div class="cat-img-placeholder" style="width:32px;height:32px;font-size:14px;">📦</div>'}
         <div>
           <div class="search-item-name">${c.name}</div>
@@ -1672,7 +1680,7 @@ function renderCatalog(){
       <td>${typeCell(c)}</td>
       <td class="r">${priceCell(c)}</td>
       <td class="no-print" style="white-space:nowrap;">
-        ${isAdmin?`<button class="btn btn-sm" data-catalog-id="${escAttr(c.id)}" onclick="openCatalogModal(this.dataset.catalogId)" style="margin-right:3px;">✏</button><button class="btn btn-sm btn-danger" data-catalog-id="${escAttr(c.id)}" onclick="deleteCatalogItem(this.dataset.catalogId)">✕</button>`:''}
+        ${isAdmin?`<button type="button" class="btn btn-sm js-admin-edit" data-catalog-id="${attr(c.id)}" style="margin-right:3px;">✏ แก้ไข</button><button type="button" class="btn btn-sm btn-danger js-admin-delete" data-catalog-id="${attr(c.id)}">✕ ลบ</button>`:''}
       </td>
     </tr>`).join('')
     +'</tbody></table>';
@@ -2022,9 +2030,40 @@ function exportExcel(){
 
 
 // ═══ HELPERS ═══
-function escAttr(v){return String(v??'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function closeModal(id){document.getElementById(id).classList.remove('open');}
 document.addEventListener('click',e=>{
+  const selectedItem=e.target.closest('.js-select-catalog');
+  if(selectedItem){
+    e.preventDefault();
+    e.stopPropagation();
+    selectCatalogItem(selectedItem.dataset.catalogId);
+    return;
+  }
+
+  const setItem=e.target.closest('.js-set-member-add');
+  if(setItem){
+    e.preventDefault();
+    e.stopPropagation();
+    addSetMember(setItem.dataset.catalogId);
+    return;
+  }
+
+  const editBtn=e.target.closest('.js-admin-edit');
+  if(editBtn){
+    e.preventDefault();
+    e.stopPropagation();
+    openCatalogModal(editBtn.dataset.catalogId);
+    return;
+  }
+
+  const deleteBtn=e.target.closest('.js-admin-delete');
+  if(deleteBtn){
+    e.preventDefault();
+    e.stopPropagation();
+    deleteCatalogItem(deleteBtn.dataset.catalogId);
+    return;
+  }
+
   if(!e.target.closest('.search-wrap')){
     document.getElementById('search-dropdown')?.classList.remove('open');
     document.getElementById('c-set-dropdown')?.classList.remove('open');
