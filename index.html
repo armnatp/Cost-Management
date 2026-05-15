@@ -676,6 +676,7 @@ const DEFAULT={
 
 let S=JSON.parse(JSON.stringify(DEFAULT));
 let PROJECTS=[];
+let GLOBAL_CATALOG=[]; // ✅ คลังสินค้ากลางจาก Admin / Apps Script ใช้ร่วมกันทุกโปรเจค
 
 // ═══ STORAGE ═══
 // Current draft is still kept locally for autosave, but the project list is loaded/saved to Google Sheet via Apps Script.
@@ -687,6 +688,60 @@ async function api(action, payload={}){
   const data = await res.json();
   if(!data.success) throw new Error(data.error || 'Apps Script error');
   return data;
+}
+
+function catalogSource(){
+  return Array.isArray(GLOBAL_CATALOG) ? GLOBAL_CATALOG : [];
+}
+function findCatalogItem(id){
+  return catalogSource().find(c=>String(c.id)===String(id));
+}
+async function loadGlobalCatalog(){
+  try{
+    const result = await api('list_catalog');
+    GLOBAL_CATALOG = result.items || [];
+    localStorage.setItem('geo_global_catalog_v1', JSON.stringify(GLOBAL_CATALOG));
+  }catch(e){
+    console.warn('โหลด Global Catalog จาก Cloud ไม่ได้', e);
+    try{
+      const cd=localStorage.getItem('geo_global_catalog_v1');
+      GLOBAL_CATALOG = cd ? JSON.parse(cd) : [];
+    }catch(_){ GLOBAL_CATALOG=[]; }
+    toast('โหลดคลังกลางไม่ได้ — แสดงข้อมูล cache ชั่วคราว');
+  }
+}
+function normalizeCatalogItemForProject(c){
+  return {
+    id:Date.now()+Math.floor(Math.random()*100000),
+    catalogId:c.id,
+    name:c.name||c.description||'',
+    model:c.model||c.partNo||'',
+    currency:c.currency||'THB',
+    unitPrice:Number(c.unitPrice||0),
+    qty:1,
+    discount:Number(c.discount||0),
+    category:(c.category==='local'||c.currency==='THB')?'local':'foreign',
+    image:c.imageUrl||c.image||null
+  };
+}
+function normalizeCatalogItemForSpare(c){
+  return {
+    id:Date.now()+Math.floor(Math.random()*100000),
+    catalogId:c.id,
+    partNo:c.partNo||c.model||c.code||'',
+    description:c.description||c.name||'',
+    currency:c.currency||'THB',
+    unitPrice:Number(c.unitPrice||0),
+    supplierDiscount:Number(c.supplierDiscount||c.discount||0),
+    qty:1,
+    allocationMode:'auto',
+    manualAllocationUnit:0,
+    manualAllocationLine:0,
+    markup:c.markup,
+    commission:c.commission,
+    customerDiscount:c.customerDiscount,
+    image:c.imageUrl||c.image||null
+  };
 }
 
 function normalizeState(){
@@ -725,6 +780,9 @@ async function load(){
     }catch(_){ PROJECTS=[]; }
     toast('โหลด Cloud ไม่ได้ — แสดงข้อมูลจากเครื่องนี้ชั่วคราว');
   }
+
+  // ✅ Load Global Admin Catalog from Apps Script. This catalog is shared by all projects/team members.
+  await loadGlobalCatalog();
 }
 
 function save(){
@@ -1263,7 +1321,7 @@ function openAddItemModal(){
 function openEditItemModal(id){
   const it=S.items.find(i=>i.id===id); if(!it) return;
   editingProjectId=id;
-  selectedCatalogItem=S.catalog.find(c=>c.id===it.catalogId)||{id:null,name:it.name,model:it.model,currency:it.currency,unitPrice:it.unitPrice};
+  selectedCatalogItem=findCatalogItem(it.catalogId)||{id:null,name:it.name,model:it.model,currency:it.currency,unitPrice:it.unitPrice};
   document.getElementById('item-modal-title').textContent='แก้ไขรายการ';
   document.getElementById('item-save-btn').textContent='บันทึกการแก้ไข';
   document.getElementById('item-search').value=it.name;
@@ -1278,16 +1336,16 @@ function onItemSearch(){
   const q=document.getElementById('item-search').value.trim().toLowerCase();
   const dd=document.getElementById('search-dropdown');
   if(q.length<1){dd.classList.remove('open');return;}
-  const results=S.catalog.filter(c=>c.name.toLowerCase().includes(q)||(c.model&&c.model.toLowerCase().includes(q))).slice(0,8);
+  const results=catalogSource().filter(c=>(c.name||'').toLowerCase().includes(q)||((c.model||c.partNo||'').toLowerCase().includes(q))).slice(0,8);
   dd.innerHTML=results.length
     ?results.map(c=>{
-      const imgHtml=c.image
-        ?`<img src="${c.image}" class="search-item-img">`
+      const imgHtml=(c.imageUrl||c.image)
+        ?`<img src="${c.imageUrl||c.image}" class="search-item-img">`
         :`<div class="cat-img-placeholder" style="width:36px;height:36px;font-size:15px;">${c.isSet?'🗂':'📦'}</div>`;
       const metaHtml=c.isSet
         ?`<span style="color:#6d28d9;font-weight:700;">🗂 Set ${c.members?.length||0} รายการ</span>`
         :`<span>${bdg(c.currency)} ฿${fmt(c.unitPrice)}/หน่วย</span>${c.model?`<span>Model: ${c.model}</span>`:''}`;
-      return `<div class="search-item" onclick="selectCatalogItem(${c.id})" style="display:flex;align-items:center;gap:8px;">
+      return `<div class="search-item" onclick="selectCatalogItem(${JSON.stringify(c.id)})" style="display:flex;align-items:center;gap:8px;">
         ${imgHtml}
         <div style="flex:1;min-width:0;">
           <div class="search-item-name">${c.name}</div>
@@ -1299,7 +1357,7 @@ function onItemSearch(){
   dd.classList.add('open');
 }
 function selectCatalogItem(id){
-  const c=S.catalog.find(x=>x.id===id); if(!c) return;
+  const c=findCatalogItem(id); if(!c) return;
   selectedCatalogItem=c;
   document.getElementById('item-search').value=c.name;
   document.getElementById('search-dropdown').classList.remove('open');
@@ -1308,8 +1366,8 @@ function selectCatalogItem(id){
   if(!c.isSet) document.getElementById('item-qty').focus();
 }
 function showSelectedProduct(c){
-  const imgHtml=c.image
-    ?`<img src="${c.image}" style="width:44px;height:44px;border-radius:8px;object-fit:cover;flex-shrink:0;border:1px solid var(--border);">`
+  const imgHtml=(c.imageUrl||c.image)
+    ?`<img src="${c.imageUrl||c.image}" style="width:44px;height:44px;border-radius:8px;object-fit:cover;flex-shrink:0;border:1px solid var(--border);">`
     :'';
   const metaHtml=c.isSet
     ?`<span style="color:#6d28d9;font-weight:700;">🗂 Set ${c.members?.length||0} รายการ</span><span>ราคาตามรายการย่อย</span>`
@@ -1332,10 +1390,10 @@ function showSelectedProduct(c){
   const prevEl=document.getElementById('set-items-preview');
   if(c.isSet && c.members?.length){
     const subHtml=c.members.map(m=>{
-      const sub=S.catalog.find(x=>x.id===m.catalogId);
+      const sub=findCatalogItem(m.catalogId);
       if(!sub) return '';
       return `<div style="display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid var(--border);">
-        ${sub.image?`<img src="${sub.image}" style="width:24px;height:24px;border-radius:4px;object-fit:cover;">`:'<span style="font-size:14px;">📦</span>'}
+        ${(sub.imageUrl||sub.image)?`<img src="${sub.imageUrl||sub.image}" style="width:24px;height:24px;border-radius:4px;object-fit:cover;">`:'<span style="font-size:14px;">📦</span>'}
         <span style="flex:1;font-size:12px;">${sub.name}</span>
         <span style="font-size:11px;color:var(--text3);">×${m.qty}</span>
         <span style="font-size:11px;font-family:'IBM Plex Mono',monospace;">${bdg(sub.currency)} ${fmt(sub.unitPrice*m.qty)}</span>
@@ -1379,18 +1437,18 @@ function saveProjectItem(){
     S.items.push({
       id:Date.now(), catalogId:c.id, name:c.name, model:'',
       currency:'THB', unitPrice:0, qty:1, discount:0, category:cat,
-      isSetHeader:true, setId, image:c.image||null
+      isSetHeader:true, setId, image:c.imageUrl||c.image||null
     });
     // เพิ่ม sub-items
     (c.members||[]).forEach((m,i)=>{
-      const sub=S.catalog.find(x=>x.id===m.catalogId);
+      const sub=findCatalogItem(m.catalogId);
       if(!sub) return;
       S.items.push({
         id:Date.now()+i+1, catalogId:sub.id,
         name:sub.name, model:sub.model||'',
         currency:sub.currency, unitPrice:sub.unitPrice,
         qty:m.qty, discount:disc, category:cat,
-        isSetChild:true, setId, image:sub.image||null
+        isSetChild:true, setId, image:sub.imageUrl||sub.image||null
       });
     });
     toast('เพิ่ม Set "'+c.name+'" แล้ว ✓');
@@ -1400,12 +1458,12 @@ function saveProjectItem(){
       it.catalogId=c.id;it.name=c.name;it.model=c.model;
       it.currency=c.currency;it.unitPrice=c.unitPrice;
       it.qty=qty;it.discount=disc;it.category=cat;
-      it.image=c.image||null;
+      it.image=c.imageUrl||c.image||null;
       toast('แก้ไขรายการแล้ว ✓');
     } else {
       S.items.push({id:Date.now(),catalogId:c.id,name:c.name,model:c.model||'',
         currency:c.currency,unitPrice:c.unitPrice,qty,discount:disc,
-        category:cat,image:c.image||null});
+        category:cat,image:c.imageUrl||c.image||null});
       toast('เพิ่มรายการแล้ว ✓');
     }
   }
@@ -1442,7 +1500,7 @@ function onCatalogImgSelect(input){
     const base64=e.target.result;
     try{
       const res=await fetch(APPS_SCRIPT_URL,{method:'POST',body:JSON.stringify({
-        action:'upload_image', base64, mimeType:file.type, name:file.name
+        action:'upload_catalog_image', base64, mimeType:file.type, name:file.name
       })});
       const result=await res.json();
       if(result.success){
@@ -1469,13 +1527,15 @@ function onSetMemberSearch(){
   const q = document.getElementById('c-set-search').value.trim().toLowerCase();
   const dd = document.getElementById('c-set-dropdown');
   if(q.length < 1){ dd.classList.remove('open'); return; }
-  const results = S.catalog.filter(c =>
-    !c.isSet &&
-    c.name.toLowerCase().includes(q) || (c.model&&c.model.toLowerCase().includes(q))
+  const results = catalogSource().filter(c =>
+    !c.isSet && (
+      (c.name||'').toLowerCase().includes(q) ||
+      ((c.model||c.partNo||'').toLowerCase().includes(q))
+    )
   ).slice(0,6);
   dd.innerHTML = results.length
-    ? results.map(c=>`<div class="search-item" onclick="addSetMember(${c.id})" style="display:flex;align-items:center;gap:8px;">
-        ${c.image ? `<img src="${c.image}" class="search-item-img">` : '<div class="cat-img-placeholder" style="width:32px;height:32px;font-size:14px;">📦</div>'}
+    ? results.map(c=>`<div class="search-item" onclick="addSetMember(${JSON.stringify(c.id)})" style="display:flex;align-items:center;gap:8px;">
+        ${(c.imageUrl||c.image) ? `<img src="${c.imageUrl||c.image}" class="search-item-img">` : '<div class="cat-img-placeholder" style="width:32px;height:32px;font-size:14px;">📦</div>'}
         <div>
           <div class="search-item-name">${c.name}</div>
           <div class="search-item-meta"><span>${bdg(c.currency)} ${fmt(c.unitPrice)}</span>${c.model?`<span>${c.model}</span>`:''}</div>
@@ -1502,10 +1562,10 @@ function renderSetMembers(){
     updateSetPreview(); return;
   }
   el.innerHTML = setMembers.map((m,i)=>{
-    const c = S.catalog.find(x=>x.id===m.catalogId);
+    const c = findCatalogItem(m.catalogId);
     if(!c) return '';
     return `<div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--surface2);border-radius:8px;">
-      ${c.image?`<img src="${c.image}" class="search-item-img">`:'<div class="cat-img-placeholder" style="width:32px;height:32px;font-size:13px;">📦</div>'}
+      ${(c.imageUrl||c.image)?`<img src="${c.imageUrl||c.image}" class="search-item-img">`:'<div class="cat-img-placeholder" style="width:32px;height:32px;font-size:13px;">📦</div>'}
       <div style="flex:1;min-width:0;">
         <div style="font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${c.name}</div>
         <div style="font-size:11px;color:var(--text3);">${bdg(c.currency)} ${fmt(c.unitPrice)}/หน่วย</div>
@@ -1525,7 +1585,7 @@ function updateSetPreview(){
   const el = document.getElementById('c-set-preview');
   if(!setMembers.length){ el.style.display='none'; return; }
   const total = setMembers.reduce((s,m)=>{
-    const c=S.catalog.find(x=>x.id===m.catalogId);
+    const c=findCatalogItem(m.catalogId);
     return s + (c ? c.unitPrice*fx(c.currency)*m.qty : 0);
   },0);
   el.style.display='block';
@@ -1534,11 +1594,11 @@ function updateSetPreview(){
 
 function renderCatalog(){
   const q=(document.getElementById('catalog-search')?.value||'').toLowerCase();
-  const list=q?S.catalog.filter(c=>c.name.toLowerCase().includes(q)||(c.model&&c.model.toLowerCase().includes(q))):S.catalog;
-  document.getElementById('catalog-count').textContent=S.catalog.length;
+  const list=q?catalogSource().filter(c=>(c.name||'').toLowerCase().includes(q)||((c.model||c.partNo||'').toLowerCase().includes(q))):catalogSource();
+  document.getElementById('catalog-count').textContent=catalogSource().length;
 
-  const imgCell = c => c.image
-    ? `<img src="${c.image}" class="cat-img">`
+  const imgCell = c => (c.imageUrl||c.image)
+    ? `<img src="${c.imageUrl||c.image}" class="cat-img">`
     : `<div class="cat-img-placeholder">📦</div>`;
 
   const typeCell = c => c.isSet
@@ -1562,7 +1622,7 @@ function renderCatalog(){
       <td>${typeCell(c)}</td>
       <td class="r">${priceCell(c)}</td>
       <td class="no-print" style="white-space:nowrap;">
-        ${isAdmin?`<button class="btn btn-sm" onclick="openCatalogModal(${c.id})" style="margin-right:3px;">✏</button><button class="btn btn-sm btn-danger" onclick="deleteCatalogItem(${c.id})">✕</button>`:''}
+        ${isAdmin?`<button class="btn btn-sm" onclick="openCatalogModal(${JSON.stringify(c.id)})" style="margin-right:3px;">✏</button><button class="btn btn-sm btn-danger" onclick="deleteCatalogItem(${JSON.stringify(c.id)})">✕</button>`:''}
       </td>
     </tr>`).join('')
     +'</tbody></table>';
@@ -1572,7 +1632,7 @@ function openCatalogModal(id){
   editingCatalogId=id||null;
   catalogImgData=null;
   setMembers=[];
-  const c=id?S.catalog.find(x=>x.id===id):null;
+  const c=id?findCatalogItem(id):null;
   document.getElementById('catalog-modal-title').textContent=c?'แก้ไขสินค้า/Set':'เพิ่มสินค้าใหม่';
   document.getElementById('c-name').value=c?.name||'';
   document.getElementById('c-model').value=c?.model||'';
@@ -1580,10 +1640,10 @@ function openCatalogModal(id){
 
   // รูปภาพ
   const prev=document.getElementById('c-img-preview');
-  if(c?.image){
-    catalogImgData=c.image;
+  if(c?.imageUrl||c?.image){
+    catalogImgData=c.imageUrl||c.image;
     prev.innerHTML=''; prev.style.padding='0';
-    const img=document.createElement('img'); img.src=c.image; img.className='cat-img';
+    const img=document.createElement('img'); img.src=catalogImgData; img.className='cat-img';
     prev.appendChild(img);
   } else {
     prev.innerHTML='🖼️'; prev.style.padding='';
@@ -1615,49 +1675,95 @@ function updateCatalogPreview(){
   el.textContent=fmt(price)+' '+cur+' = ฿'+fmt(price*fx(cur))+' THB (ก่อน Discount และ VAT)';
 }
 
-function saveCatalogItem(){
+async function saveCatalogItem(){
   const name=document.getElementById('c-name').value.trim();
   if(!name){toast('กรุณาใส่ชื่อสินค้า');return;}
 
-  if(catalogTabMode==='set'){
-    if(setMembers.length<2){toast('Set ต้องมีสินค้าอย่างน้อย 2 รายการ');return;}
-    const entry={id:editingCatalogId||Date.now(),name,model:'',currency:'THB',unitPrice:0,
-      image:catalogImgData||null, isSet:true, members:[...setMembers]};
-    if(editingCatalogId){
-      const idx=S.catalog.findIndex(c=>c.id===editingCatalogId);
-      S.catalog[idx]={...S.catalog[idx],...entry};
-      toast('แก้ไข Set แล้ว ✓');
+  try{
+    let entry;
+
+    if(catalogTabMode==='set'){
+      if(setMembers.length<2){toast('Set ต้องมีสินค้าอย่างน้อย 2 รายการ');return;}
+      entry={
+        id:editingCatalogId||undefined,
+        type:'set',
+        category:'set',
+        name,
+        model:'',
+        partNo:'',
+        currency:'THB',
+        unitPrice:0,
+        imageUrl:catalogImgData||'',
+        isSet:true,
+        members:[...setMembers]
+      };
     } else {
-      S.catalog.push(entry);
-      toast('เพิ่ม Set ใหม่แล้ว ✓');
+      const model=document.getElementById('c-model').value.trim();
+      const currency=document.getElementById('c-currency').value;
+      const unitPrice=parseFloat(document.getElementById('c-price').value)||0;
+      if(!unitPrice){toast('กรุณาใส่ราคาต่อหน่วย');return;}
+      entry={
+        id:editingCatalogId||undefined,
+        type:S.project.calculationType==='spare_parts'?'spare_part':'equipment',
+        category:currency==='THB'?'local':'foreign',
+        name,
+        description:name,
+        model,
+        partNo:model,
+        currency,
+        unitPrice,
+        imageUrl:catalogImgData||'',
+        isSet:false
+      };
     }
-  } else {
-    const model=document.getElementById('c-model').value.trim();
-    const currency=document.getElementById('c-currency').value;
-    const unitPrice=parseFloat(document.getElementById('c-price').value)||0;
-    if(!unitPrice){toast('กรุณาใส่ราคาต่อหน่วย');return;}
-    if(editingCatalogId){
-      const it=S.catalog.find(c=>c.id===editingCatalogId);
-      it.name=name;it.model=model;it.currency=currency;it.unitPrice=unitPrice;
-      it.image=catalogImgData!==null?catalogImgData:it.image;
-      S.items.filter(i=>i.catalogId===editingCatalogId).forEach(i=>{
-        i.name=name;i.model=model;i.currency=currency;i.unitPrice=unitPrice;
-      });
-      toast('แก้ไขสินค้าในคลังแล้ว ✓');
-    } else {
-      S.catalog.push({id:Date.now(),name,model,currency,unitPrice,
-        image:catalogImgData||null,isSet:false});
-      toast('เพิ่มสินค้าในคลังแล้ว ✓');
-    }
+
+    const result=await api('save_catalog_item',{item:entry});
+    const saved=result.item;
+    const idx=GLOBAL_CATALOG.findIndex(c=>String(c.id)===String(saved.id));
+    if(idx>-1) GLOBAL_CATALOG[idx]=saved; else GLOBAL_CATALOG.push(saved);
+    localStorage.setItem('geo_global_catalog_v1',JSON.stringify(GLOBAL_CATALOG));
+
+    // update current project snapshot if this item is already used in equipment items
+    S.items.filter(i=>String(i.catalogId)===String(saved.id)).forEach(i=>{
+      i.name=saved.name||saved.description||i.name;
+      i.model=saved.model||saved.partNo||i.model;
+      i.currency=saved.currency||i.currency;
+      i.unitPrice=Number(saved.unitPrice||i.unitPrice||0);
+      i.image=saved.imageUrl||saved.image||i.image||null;
+    });
+    S.sparePartItems.filter(i=>String(i.catalogId)===String(saved.id)).forEach(i=>{
+      i.partNo=saved.partNo||saved.model||i.partNo;
+      i.description=saved.description||saved.name||i.description;
+      i.currency=saved.currency||i.currency;
+      i.unitPrice=Number(saved.unitPrice||i.unitPrice||0);
+      i.image=saved.imageUrl||saved.image||i.image||null;
+    });
+
+    save(); closeModal('catalog-modal'); renderCatalog(); renderProjectTabs(); renderDash();
+    toast(editingCatalogId?'แก้ไขสินค้าในคลังกลางแล้ว ✓':'เพิ่มสินค้าในคลังกลางแล้ว ✓');
+  }catch(e){
+    console.error(e);
+    toast('บันทึกคลังกลางไม่สำเร็จ: '+e.message);
   }
-  save(); closeModal('catalog-modal'); renderCatalog();
 }
 
-function deleteCatalogItem(id){
-  if(S.items.some(i=>i.catalogId===id)){toast('ไม่สามารถลบได้ มีรายการในโครงการที่ใช้สินค้านี้อยู่');return;}
-  if(!confirm('ลบสินค้านี้ออกจากคลัง?')) return;
-  S.catalog=S.catalog.filter(c=>c.id!==id); save(); renderCatalog(); toast('ลบแล้ว');
+async function deleteCatalogItem(id){
+  if(S.items.some(i=>String(i.catalogId)===String(id)) || S.sparePartItems.some(i=>String(i.catalogId)===String(id))){
+    toast('ไม่สามารถลบได้ มีรายการในโปรเจคปัจจุบันที่ใช้สินค้านี้อยู่');
+    return;
+  }
+  if(!confirm('ลบสินค้านี้ออกจากคลังกลาง?')) return;
+  try{
+    await api('delete_catalog_item',{id});
+    GLOBAL_CATALOG=GLOBAL_CATALOG.filter(c=>String(c.id)!==String(id));
+    localStorage.setItem('geo_global_catalog_v1',JSON.stringify(GLOBAL_CATALOG));
+    renderCatalog(); toast('ลบจากคลังกลางแล้ว');
+  }catch(e){
+    console.error(e);
+    toast('ลบจากคลังกลางไม่สำเร็จ: '+e.message);
+  }
 }
+
 
 // ═══ SETTINGS ═══
 function loadSettings(){
@@ -1697,7 +1803,7 @@ function addCurrency(){
   S.currencies[code]=rate;save();renderFxTable();document.getElementById('new-rate').value='';toast('เพิ่ม '+code+' แล้ว ✓');
 }
 function removeCurrency(code){
-  if(S.items.some(i=>i.currency===code)||S.catalog.some(c=>c.currency===code)){toast('ไม่สามารถลบ '+code+' เพราะมีสินค้าที่ใช้สกุลเงินนี้');return;}
+  if(S.items.some(i=>i.currency===code)||catalogSource().some(c=>c.currency===code)){toast('ไม่สามารถลบ '+code+' เพราะมีสินค้าที่ใช้สกุลเงินนี้');return;}
   delete S.currencies[code];save();renderFxTable();toast('ลบ '+code+' แล้ว');
 }
 
