@@ -164,6 +164,20 @@ table tr.grand-row td{background:var(--surface2);font-weight:700;font-size:12px;
 /* ── Search item with image ── */
 .search-item-img{width:36px;height:36px;border-radius:6px;object-fit:cover;flex-shrink:0;}
 
+/* ── Calculation type / Spare Parts ── */
+.calc-type-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1rem;}
+.calc-type-card{border:1.5px solid var(--border);border-radius:14px;padding:12px 14px;cursor:pointer;background:var(--surface);transition:all .16s;}
+.calc-type-card:hover{border-color:var(--blue);box-shadow:0 4px 14px rgba(26,86,219,.08);}
+.calc-type-card.active{border-color:var(--blue);background:var(--blue-bg);}
+.calc-type-title{font-size:13px;font-weight:700;color:var(--text);}
+.calc-type-desc{font-size:11px;color:var(--text3);margin-top:2px;}
+.calc-type-card.disabled{opacity:.55;cursor:not-allowed;}
+.spare-summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1rem;}
+.spare-mini{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 14px;}
+.spare-mini-label{font-size:10px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.05em;}
+.spare-mini-value{font-size:18px;font-weight:700;font-family:'IBM Plex Mono',monospace;margin-top:4px;}
+@media(max-width:900px){.calc-type-grid,.spare-summary-grid{grid-template-columns:1fr;}}
+
 </style>
 </head>
 <body>
@@ -193,6 +207,10 @@ table tr.grand-row td{background:var(--surface2);font-weight:700;font-size:12px;
   <div class="nav-item" id="nav-project" onclick="goPage('project')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="2"/></svg>
     รายการโครงการ
+  </div>
+  <div class="nav-item" id="nav-spare" onclick="goPage('spare')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7h-9"/><path d="M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/></svg>
+    ราคาขายอะไหล่
   </div>
   <div class="nav-item" id="nav-admin" style="display:none;" onclick="goPage('admin')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
@@ -303,6 +321,69 @@ table tr.grand-row td{background:var(--surface2);font-weight:700;font-size:12px;
   </div>
 </div>
 
+<!-- SPARE PART PRICING -->
+<div id="page-spare" class="page">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:10px;" class="no-print">
+    <div>
+      <div style="font-size:15px;font-weight:700;">ตารางคำนวณราคาขายอะไหล่</div>
+      <div style="font-size:12px;color:var(--text3);margin-top:2px;">รองรับ Breakdown ราคาขายต่อชิ้น · Auto Allocation + Manual Override</div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button class="btn" onclick="addSparePartItem()">+ เพิ่มอะไหล่</button>
+      <button class="btn btn-primary" onclick="exportExcel()">⬇ Export Excel</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-hd">เลือกประเภทการคำนวณ</div>
+    <div class="calc-type-grid">
+      <div class="calc-type-card" id="calc-card-equipment" onclick="setCalculationType('equipment')">
+        <div class="calc-type-title">ต้นทุนเครื่องมือ</div>
+        <div class="calc-type-desc">Project Cost / Equipment Cost เดิม</div>
+      </div>
+      <div class="calc-type-card" id="calc-card-spare" onclick="setCalculationType('spare_parts')">
+        <div class="calc-type-title">ราคาขายอะไหล่</div>
+        <div class="calc-type-desc">Spare Part Pricing + Unit Breakdown</div>
+      </div>
+      <div class="calc-type-card disabled" onclick="toast('โหมดงานสำรวจยังอยู่ระหว่างสรุปสูตร')">
+        <div class="calc-type-title">งานสำรวจ</div>
+        <div class="calc-type-desc">Survey Service Cost · Coming Soon</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="spare-summary-grid">
+    <div class="spare-mini"><div class="spare-mini-label">Base Cost</div><div class="spare-mini-value" id="sp-base-cost">—</div></div>
+    <div class="spare-mini"><div class="spare-mini-label">Landed Cost</div><div class="spare-mini-value" id="sp-landed-cost">—</div></div>
+    <div class="spare-mini"><div class="spare-mini-label">Final Selling</div><div class="spare-mini-value" id="sp-final-selling">—</div></div>
+    <div class="spare-mini"><div class="spare-mini-label">Gross Margin</div><div class="spare-mini-value" id="sp-margin">—</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-hd">Assumptions</div>
+    <div class="g3">
+      <div class="field"><label>Airfreight / Freight (THB)</label><input type="number" id="sp-freight" min="0" oninput="saveSpareAssumptions()"></div>
+      <div class="field"><label>Insurance (THB)</label><input type="number" id="sp-insurance" min="0" oninput="saveSpareAssumptions()"></div>
+      <div class="field"><label>Handling / Operation Cost (THB)</label><input type="number" id="sp-handling" min="0" oninput="saveSpareAssumptions()"></div>
+    </div>
+    <div class="g3" style="margin-top:12px;">
+      <div class="field"><label>Default Markup (%)</label><input type="number" id="sp-markup" min="0" step="0.1" oninput="saveSpareAssumptions()"></div>
+      <div class="field"><label>Default Commission (%)</label><input type="number" id="sp-commission" min="0" step="0.1" oninput="saveSpareAssumptions()"></div>
+      <div class="field"><label>Customer Discount (%)</label><input type="number" id="sp-customer-discount" min="0" step="0.1" oninput="saveSpareAssumptions()"></div>
+    </div>
+    <div class="g3" style="margin-top:12px;">
+      <div class="field"><label>VAT (%)</label><input type="number" id="sp-vat" min="0" step="0.1" oninput="saveSpareAssumptions()"></div>
+      <div class="field"><label>Total Additional Cost</label><input type="text" id="sp-total-add" readonly></div>
+      <div class="field"><label>Allocation Method</label><input type="text" value="Auto by cost proportion + Manual Override" readonly></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-hd">รายการอะไหล่และ Breakdown ราคาขายต่อชิ้น</div>
+    <div class="tbl-wrap" id="spare-table"></div>
+  </div>
+</div>
+
 <!-- ADMIN -->
 <div id="page-admin" class="page">
   <div id="admin-access-check"></div>
@@ -324,6 +405,22 @@ table tr.grand-row td{background:var(--surface2);font-weight:700;font-size:12px;
   <div style="font-size:15px;font-weight:700;margin-bottom:1rem;">ตั้งค่าโครงการ</div>
   <div class="card" style="max-width:600px;">
     <div class="card-hd">ข้อมูลโครงการ</div>
+    <div style="margin-bottom:14px;">
+      <div class="calc-type-grid">
+        <div class="calc-type-card" id="settings-calc-equipment" onclick="setCalculationType('equipment')">
+          <div class="calc-type-title">ต้นทุนเครื่องมือ</div>
+          <div class="calc-type-desc">ใช้งานตารางโครงการเดิม</div>
+        </div>
+        <div class="calc-type-card" id="settings-calc-spare" onclick="setCalculationType('spare_parts')">
+          <div class="calc-type-title">ราคาขายอะไหล่</div>
+          <div class="calc-type-desc">เปิดโหมด Spare Part Pricing</div>
+        </div>
+        <div class="calc-type-card disabled" onclick="toast('โหมดงานสำรวจยังอยู่ระหว่างสรุปสูตร')">
+          <div class="calc-type-title">งานสำรวจ</div>
+          <div class="calc-type-desc">Coming Soon</div>
+        </div>
+      </div>
+    </div>
     <div style="display:flex;flex-direction:column;gap:12px;">
       <div class="field"><label>ชื่อโครงการ</label><input type="text" id="s-name" placeholder="ชื่อโครงการ"></div>
       <div class="g2">
@@ -544,9 +641,11 @@ let pieChart=null, barChart=null;
 const APPS_SCRIPT_URL="https://script.google.com/macros/s/AKfycbxkJQrKrQxeG7jiORDcrX2Dk-4-Y01u6tYh9Cv8fnKC5S-NfrPVawJdAh3PqlMOO-6k-Q/exec";
 
 const DEFAULT={
-  project:{name:"",client:"",model:"",budget:0,commission:10,vat:7,author:"",status:"draft"},
+  project:{name:"",client:"",model:"",budget:0,commission:10,vat:7,author:"",status:"draft",calculationType:"equipment"},
   currencies:{THB:1,USD:33.5,EUR:37.2,JPY:0.23,GBP:43.5},
   attachments:[],
+  sparePartAssumptions:{freight:0,insurance:0,handling:0,markup:30,commission:0,customerDiscount:0,vat:7},
+  sparePartItems:[],
   catalog:[
     {id:101,name:"Terraloc Pro 2, 24 ch seismograph unit",model:"21-33720024",currency:"USD",unitPrice:29500},
     {id:102,name:"Seismic cable with 24 tko, 5m spacing, 15m lead in",model:"CUSTOMIZED",currency:"USD",unitPrice:5000},
@@ -591,9 +690,16 @@ async function api(action, payload={}){
 }
 
 function normalizeState(){
-  if(!S.attachments) S.attachments=[];
+  if(!S.project) S.project=JSON.parse(JSON.stringify(DEFAULT.project));
   if(!S.project.author) S.project.author='';
   if(!S.project.status) S.project.status='draft';
+  if(!S.project.calculationType) S.project.calculationType='equipment';
+  if(!S.attachments) S.attachments=[];
+  if(!S.items) S.items=[];
+  if(!S.sparePartAssumptions) S.sparePartAssumptions=JSON.parse(JSON.stringify(DEFAULT.sparePartAssumptions));
+  S.sparePartAssumptions={...JSON.parse(JSON.stringify(DEFAULT.sparePartAssumptions)),...S.sparePartAssumptions};
+  if(S.sparePartAssumptions.vat==null) S.sparePartAssumptions.vat=S.project.vat||7;
+  if(!S.sparePartItems) S.sparePartItems=[];
 }
 
 async function load(){
@@ -638,34 +744,106 @@ function saveProjects(){
 const fx=cur=>S.currencies[cur]||1;
 const itemCostPerUnit=i=>i.isSetHeader?0:i.unitPrice*(1-i.discount/100)*(1+S.project.vat/100)*fx(i.currency);
 const itemCost=i=>itemCostPerUnit(i)*i.qty;
-function totals(){
-  const goods=S.items.reduce((s,i)=>s+itemCost(i),0);
-  const b=S.project.budget;
-  const comm=b*S.project.commission/100;
-  // VAT = งบ × VAT% / (100 + VAT%)  เช่น 7% → งบ × 7/107
-  const vat=b*S.project.vat/(100+S.project.vat);
+function calcEquipmentTotals(){
+  const goods=S.items.reduce((sum,i)=>sum+itemCost(i),0);
+  const b=Number(S.project.budget||0);
+  const comm=b*Number(S.project.commission||0)/100;
+  const vat=b*Number(S.project.vat||0)/(100+Number(S.project.vat||0));
   const total=goods+comm+vat;
   const profit=b-total;
-  return{goods,comm,vat,total,profit,margin:b>0?profit/b*100:0,budget:b};
+  return{mode:'equipment',goods,comm,vat,total,profit,margin:b>0?profit/b*100:0,budget:b};
+}
+
+function spareAdditionalCost(){
+  const a=S.sparePartAssumptions||{};
+  return Number(a.freight||0)+Number(a.insurance||0)+Number(a.handling||0);
+}
+function spareBaseCostUnit(i){
+  return Number(i.unitPrice||0)*(1-Number(i.supplierDiscount||0)/100)*fx(i.currency||'THB');
+}
+function spareLineBaseCost(i){return spareBaseCostUnit(i)*Number(i.qty||1);}
+function spareComputedRows(){
+  const items=S.sparePartItems||[];
+  const a=S.sparePartAssumptions||{};
+  const baseTotal=items.reduce((sum,i)=>sum+spareLineBaseCost(i),0);
+  const addTotal=spareAdditionalCost();
+  return items.map(i=>{
+    const qty=Number(i.qty||1);
+    const baseUnit=spareBaseCostUnit(i);
+    const baseLine=baseUnit*qty;
+    const autoAllocUnit=baseTotal>0?(addTotal*(baseLine/baseTotal))/qty:0;
+    const mode=i.allocationMode||'auto';
+    const finalAllocUnit=mode==='manual_unit'?Number(i.manualAllocationUnit||0):(mode==='manual_line'?Number(i.manualAllocationLine||0)/qty:autoAllocUnit);
+    const landedUnit=baseUnit+finalAllocUnit;
+    const markup=(i.markup!=null?Number(i.markup):Number(a.markup||0));
+    const commission=(i.commission!=null?Number(i.commission):Number(a.commission||0));
+    const customerDiscount=(i.customerDiscount!=null?Number(i.customerDiscount):Number(a.customerDiscount||0));
+    const vatRate=Number(a.vat!=null?a.vat:(S.project.vat||7));
+    const sellBeforeVatUnit=landedUnit*(1+markup/100)*(1+commission/100);
+    const sellAfterDiscountUnit=sellBeforeVatUnit*(1-customerDiscount/100);
+    const finalSellUnit=sellAfterDiscountUnit*(1+vatRate/100);
+    const finalSellTotal=finalSellUnit*qty;
+    const profitBeforeVatUnit=sellAfterDiscountUnit-landedUnit;
+    const profitBeforeVatTotal=profitBeforeVatUnit*qty;
+    const margin=sellAfterDiscountUnit>0?profitBeforeVatUnit/sellAfterDiscountUnit*100:0;
+    return {...i,qty,baseUnit,baseLine,autoAllocUnit,finalAllocUnit,landedUnit,markup,commission,customerDiscount,vatRate,sellBeforeVatUnit,sellAfterDiscountUnit,finalSellUnit,finalSellTotal,profitBeforeVatUnit,profitBeforeVatTotal,margin};
+  });
+}
+function spareTotals(){
+  const rows=spareComputedRows();
+  const baseCost=rows.reduce((s,r)=>s+r.baseLine,0);
+  const addCost=spareAdditionalCost();
+  const landedCost=rows.reduce((s,r)=>s+r.landedUnit*r.qty,0);
+  const sellingBeforeVat=rows.reduce((s,r)=>s+r.sellAfterDiscountUnit*r.qty,0);
+  const finalSelling=rows.reduce((s,r)=>s+r.finalSellTotal,0);
+  const profit=sellingBeforeVat-landedCost;
+  const vat=finalSelling-sellingBeforeVat;
+  const margin=sellingBeforeVat>0?profit/sellingBeforeVat*100:0;
+  return{mode:'spare_parts',goods:baseCost,comm:addCost,vat,total:landedCost,profit,margin,budget:finalSelling,baseCost,addCost,landedCost,sellingBeforeVat,finalSelling,rows};
+}
+function totals(){
+  return (S.project.calculationType==='spare_parts')?spareTotals():calcEquipmentTotals();
 }
 function calcFromData(data){
+  const mode=(data.project&&data.project.calculationType)||'equipment';
+  if(mode==='spare_parts'){
+    const currencies=data.currencies||{};
+    const a=data.sparePartAssumptions||{};
+    const items=data.sparePartItems||[];
+    const rfx=cur=>currencies[cur]||1;
+    const addTotal=Number(a.freight||0)+Number(a.insurance||0)+Number(a.handling||0);
+    const baseUnit=i=>Number(i.unitPrice||0)*(1-Number(i.supplierDiscount||0)/100)*rfx(i.currency||'THB');
+    const baseTotal=items.reduce((s,i)=>s+baseUnit(i)*Number(i.qty||1),0);
+    let landed=0, sellingBeforeVat=0, finalSelling=0;
+    items.forEach(i=>{
+      const qty=Number(i.qty||1);
+      const bu=baseUnit(i);
+      const bl=bu*qty;
+      const auto=baseTotal>0?(addTotal*(bl/baseTotal))/qty:0;
+      const alloc=(i.allocationMode==='manual_unit')?Number(i.manualAllocationUnit||0):(i.allocationMode==='manual_line'?Number(i.manualAllocationLine||0)/qty:auto);
+      const lu=bu+alloc;
+      const markup=(i.markup!=null?Number(i.markup):Number(a.markup||0));
+      const commission=(i.commission!=null?Number(i.commission):Number(a.commission||0));
+      const discount=(i.customerDiscount!=null?Number(i.customerDiscount):Number(a.customerDiscount||0));
+      const vatRate=Number(a.vat!=null?a.vat:7);
+      const sellBefore=lu*(1+markup/100)*(1+commission/100)*(1-discount/100);
+      landed+=lu*qty;
+      sellingBeforeVat+=sellBefore*qty;
+      finalSelling+=sellBefore*(1+vatRate/100)*qty;
+    });
+    const profit=sellingBeforeVat-landed;
+    return{goods:baseTotal,comm:addTotal,vat:finalSelling-sellingBeforeVat,total:landed,profit,margin:sellingBeforeVat>0?profit/sellingBeforeVat*100:0,budget:finalSelling};
+  }
   const rfx = cur => (data.currencies || {})[cur] || 1;
   const vatRate = data.project.vat || 7;
 
   const goods = (data.items || []).reduce((s, i) => {
     if (i.isSetHeader) return s;
-
     const unitPrice = Number(i.unitPrice || 0);
     const discount = Number(i.discount || 0);
     const qty = Number(i.qty || 1);
     const currency = i.currency || 'THB';
-
-    const costPerUnit =
-      unitPrice *
-      (1 - discount / 100) *
-      (1 + vatRate / 100) *
-      rfx(currency);
-
+    const costPerUnit = unitPrice * (1 - discount / 100) * (1 + vatRate / 100) * rfx(currency);
     return s + costPerUnit * qty;
   }, 0);
 
@@ -674,16 +852,7 @@ function calcFromData(data){
   const vat = b * vatRate / (100 + vatRate);
   const total = goods + comm + vat;
   const profit = b - total;
-
-  return {
-    goods,
-    comm,
-    vat,
-    total,
-    profit,
-    margin: b > 0 ? profit / b * 100 : 0,
-    budget: b
-  };
+  return {goods,comm,vat,total,profit,margin: b > 0 ? profit / b * 100 : 0,budget: b};
 }
 const fmt=n=>Math.round(n).toLocaleString('th-TH');
 const pct=(a,b)=>b>0?(a/b*100).toFixed(1)+'%':'—';
@@ -733,6 +902,7 @@ function confirmNewProject(){
   const name=document.getElementById('np-name').value.trim();
   if(!name){toast('กรุณาใส่ชื่อโปรเจค');return;}
   S=JSON.parse(JSON.stringify(DEFAULT));
+  normalizeState();
   S.project.name=name;
   S.project.client=document.getElementById('np-client').value.trim();
   S.project.author=document.getElementById('np-author').value.trim();
@@ -775,8 +945,8 @@ function loadProject(id){
   const p=PROJECTS.find(x=>x.id===id);
   if(!p||!confirm('โหลดโปรเจค "'+p.name+'"? ข้อมูลปัจจุบันที่ยังไม่ได้บันทึกจะหายไป')) return;
   S=JSON.parse(JSON.stringify(p.data));
-  if(!S.attachments) S.attachments=[];
-  save(); goPage('dashboard'); toast('โหลดโปรเจค "'+p.name+'" แล้ว');
+  normalizeState();
+  save(); goPage('dashboard'); renderAll(); toast('โหลดโปรเจค "'+p.name+'" แล้ว');
 }
 async function deleteProject(id){
   const p=PROJECTS.find(x=>x.id===id);
@@ -843,7 +1013,7 @@ function renderDash(){
   const qf=document.getElementById('d-quickfill');
   if(qf) qf.style.display=hasName?'none':'flex';
   document.getElementById('d-proj-meta').innerHTML=
-    '<span>หน่วยงาน: '+(S.project.client||'—')+'</span><span>Commission: '+S.project.commission+'%</span><span>VAT: '+S.project.vat+'%</span>';
+    '<span>หน่วยงาน: '+(S.project.client||'—')+'</span><span>ประเภท: '+((S.project.calculationType==='spare_parts')?'ราคาขายอะไหล่':'ต้นทุนเครื่องมือ')+'</span><span>Commission: '+S.project.commission+'%</span><span>VAT: '+S.project.vat+'%</span>';
   const aEl=document.getElementById('d-author-row');
   if(aEl){
     const sm=statusMap[S.project.status||'draft']||statusMap.draft;
@@ -999,6 +1169,80 @@ function updateProjectItem(id,field,val){
 function deleteProjectItem(id){
   if(!confirm('ลบรายการนี้?')) return;
   S.items=S.items.filter(i=>i.id!==id); save(); renderProjectTabs(); renderDash(); toast('ลบแล้ว');
+}
+
+
+// ═══ SPARE PART PRICING ═══
+function renderSpareParts(){
+  if(!document.getElementById('spare-table')) return;
+  updateCalcCards();
+  const a=S.sparePartAssumptions||{};
+  const set=(id,val)=>{const el=document.getElementById(id); if(el) el.value=val;};
+  set('sp-freight',a.freight||0); set('sp-insurance',a.insurance||0); set('sp-handling',a.handling||0);
+  set('sp-markup',a.markup||0); set('sp-commission',a.commission||0); set('sp-customer-discount',a.customerDiscount||0); set('sp-vat',a.vat!=null?a.vat:(S.project.vat||7));
+  const add=document.getElementById('sp-total-add'); if(add) add.value='฿'+fmt(spareAdditionalCost());
+  const t=spareTotals();
+  const put=(id,val)=>{const el=document.getElementById(id); if(el) el.textContent=val;};
+  put('sp-base-cost','฿'+fmt(t.baseCost)); put('sp-landed-cost','฿'+fmt(t.landedCost)); put('sp-final-selling','฿'+fmt(t.finalSelling)); put('sp-margin',t.margin.toFixed(1)+'%');
+  const rows=t.rows;
+  const head=`<thead><tr>
+    <th>#</th><th>Part No.</th><th>Description</th><th>Cur</th><th class="r">Supplier Unit</th><th class="r">Supp Disc%</th>
+    <th class="r">Qty</th><th class="r">Base/Unit THB</th><th class="r">Auto Alloc/Unit</th><th>Allocation Mode</th>
+    <th class="r">Manual/Unit</th><th class="r">Manual/Line</th><th class="r">Landed/Unit</th><th class="r">Markup%</th><th class="r">Comm%</th>
+    <th class="r">Cust Disc%</th><th class="r">Final Sell/Unit</th><th class="r">Total</th><th class="r">Margin</th><th></th>
+  </tr></thead>`;
+  const body=rows.length?rows.map((r,i)=>`<tr>
+    <td class="dim">${i+1}</td>
+    <td><input class="inline-num" style="width:110px;text-align:left;font-family:'Sarabun',sans-serif;" value="${r.partNo||r.model||''}" onchange="updateSpareItem(${r.id},'partNo',this.value)"></td>
+    <td><input class="inline-num" style="width:240px;text-align:left;font-family:'Sarabun',sans-serif;" value="${r.description||r.name||''}" onchange="updateSpareItem(${r.id},'description',this.value)"></td>
+    <td><select onchange="updateSpareItem(${r.id},'currency',this.value)" style="padding:4px 6px;border:1px solid var(--border-md);border-radius:6px;">${Object.keys(S.currencies||{THB:1}).map(c=>`<option value="${c}" ${c===(r.currency||'THB')?'selected':''}>${c}</option>`).join('')}</select></td>
+    <td class="r"><input class="inline-num" type="number" min="0" step="0.01" value="${r.unitPrice||0}" onchange="updateSpareItem(${r.id},'unitPrice',+this.value)"></td>
+    <td class="r"><input class="inline-num" type="number" min="0" step="0.1" value="${r.supplierDiscount||0}" onchange="updateSpareItem(${r.id},'supplierDiscount',+this.value)"></td>
+    <td class="r"><input class="inline-num" type="number" min="1" value="${r.qty||1}" onchange="updateSpareItem(${r.id},'qty',+this.value)"></td>
+    <td class="r">${fmt(r.baseUnit)}</td><td class="r">${fmt(r.autoAllocUnit)}</td>
+    <td><select onchange="updateSpareItem(${r.id},'allocationMode',this.value)" style="padding:4px 6px;border:1px solid var(--border-md);border-radius:6px;">
+      <option value="auto" ${r.allocationMode==='auto'||!r.allocationMode?'selected':''}>Auto</option>
+      <option value="manual_unit" ${r.allocationMode==='manual_unit'?'selected':''}>Manual / Unit</option>
+      <option value="manual_line" ${r.allocationMode==='manual_line'?'selected':''}>Manual / Line</option>
+    </select></td>
+    <td class="r"><input class="inline-num" type="number" min="0" step="0.01" value="${r.manualAllocationUnit||0}" onchange="updateSpareItem(${r.id},'manualAllocationUnit',+this.value)"></td>
+    <td class="r"><input class="inline-num" type="number" min="0" step="0.01" value="${r.manualAllocationLine||0}" onchange="updateSpareItem(${r.id},'manualAllocationLine',+this.value)"></td>
+    <td class="r"><strong>${fmt(r.landedUnit)}</strong></td>
+    <td class="r"><input class="inline-num" type="number" min="0" step="0.1" value="${r.markup}" onchange="updateSpareItem(${r.id},'markup',+this.value)"></td>
+    <td class="r"><input class="inline-num" type="number" min="0" step="0.1" value="${r.commission}" onchange="updateSpareItem(${r.id},'commission',+this.value)"></td>
+    <td class="r"><input class="inline-num" type="number" min="0" step="0.1" value="${r.customerDiscount}" onchange="updateSpareItem(${r.id},'customerDiscount',+this.value)"></td>
+    <td class="r" style="color:var(--green);font-weight:700;">${fmt(r.finalSellUnit)}</td>
+    <td class="r"><strong>${fmt(r.finalSellTotal)}</strong></td>
+    <td class="r">${r.margin.toFixed(1)}%</td>
+    <td><button class="btn btn-sm btn-danger" onclick="deleteSpareItem(${r.id})">✕</button></td>
+  </tr>`).join(''):`<tr><td colspan="20" style="text-align:center;color:var(--text3);padding:24px;">ยังไม่มีรายการอะไหล่ · กด “เพิ่มอะไหล่” เพื่อเริ่มคำนวณ</td></tr>`;
+  document.getElementById('spare-table').innerHTML='<table>'+head+'<tbody>'+body+'</tbody></table>';
+}
+function saveSpareAssumptions(){
+  S.sparePartAssumptions={
+    freight:+(document.getElementById('sp-freight')?.value||0),
+    insurance:+(document.getElementById('sp-insurance')?.value||0),
+    handling:+(document.getElementById('sp-handling')?.value||0),
+    markup:+(document.getElementById('sp-markup')?.value||0),
+    commission:+(document.getElementById('sp-commission')?.value||0),
+    customerDiscount:+(document.getElementById('sp-customer-discount')?.value||0),
+    vat:+(document.getElementById('sp-vat')?.value||0)
+  };
+  save(); renderSpareParts(); renderDash();
+}
+function addSparePartItem(){
+  S.project.calculationType='spare_parts';
+  S.sparePartItems.push({id:Date.now(),partNo:'',description:'',currency:'USD',unitPrice:0,supplierDiscount:0,qty:1,allocationMode:'auto',manualAllocationUnit:0,manualAllocationLine:0});
+  save(); renderSpareParts(); renderDash(); toast('เพิ่มรายการอะไหล่แล้ว');
+}
+function updateSpareItem(id,field,val){
+  const it=S.sparePartItems.find(x=>x.id===id); if(!it) return;
+  it[field]=val; save(); renderSpareParts(); renderDash();
+}
+function deleteSpareItem(id){
+  if(!confirm('ลบอะไหล่รายการนี้?')) return;
+  S.sparePartItems=S.sparePartItems.filter(x=>x.id!==id);
+  save(); renderSpareParts(); renderDash(); toast('ลบแล้ว');
 }
 
 // ═══ ITEM MODAL ═══
@@ -1540,10 +1784,17 @@ function exportExcel(){
   const t=totals();
   const payload={
     action:'export_excel',
+    calculationType:S.project.calculationType||'equipment',
     S: S,
+    spareParts:{
+      assumptions:S.sparePartAssumptions||{},
+      items:S.sparePartItems||[]
+    },
     totals:{
       goods:t.goods, comm:t.comm, vat:t.vat,
-      total:t.total, profit:t.profit, margin:t.margin, budget:t.budget
+      total:t.total, profit:t.profit, margin:t.margin, budget:t.budget,
+      baseCost:t.baseCost, addCost:t.addCost, landedCost:t.landedCost,
+      sellingBeforeVat:t.sellingBeforeVat, finalSelling:t.finalSelling
     }
   };
   toast('กำลังสร้าง Excel... รอสักครู่ ⏳');
@@ -1560,7 +1811,7 @@ function exportExcel(){
         const url=URL.createObjectURL(blob);
         const a=document.createElement('a');
         a.href=url;
-        a.download=`GeoCost_${(S.project.name||'project').replace(/[^\u0E00-\u0E7Fa-zA-Z0-9]/g,'_').slice(0,30)}_${new Date().toISOString().split('T')[0]}.xlsx`;
+        a.download=`${(S.project.calculationType==='spare_parts'?'SpareParts':'GeoCost')}_${(S.project.name||'project').replace(/[^\u0E00-\u0E7Fa-zA-Z0-9]/g,'_').slice(0,30)}_${new Date().toISOString().split('T')[0]}.xlsx`;
         a.click();
         URL.revokeObjectURL(url);
         toast('ดาวน์โหลด Excel สำเร็จ ✓');
@@ -1588,7 +1839,7 @@ function toast(msg){const el=document.getElementById('toast');el.textContent=msg
 // ═══ INIT ═══
 document.addEventListener('DOMContentLoaded',async()=>{
   await load();
-  renderProjList();
+  renderAll();
   goPage('projects');
   ['item-qty','item-disc'].forEach(id=>document.getElementById(id)?.addEventListener('input',updateItemPreview));
   document.getElementById('c-currency')?.addEventListener('change',updateCatalogPreview);
