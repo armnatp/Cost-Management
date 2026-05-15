@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Geo Cost Management</title>
+<title>Geo Cost Management — Global Catalog Fixed</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
@@ -640,7 +640,7 @@ table tr.grand-row td{background:var(--surface2);font-weight:700;font-size:12px;
     </div>
     <div class="modal-ft" style="gap:10px;">
       <button class="btn" onclick="closeModal('catalog-modal')" style="flex:1;justify-content:center;">ยกเลิก</button>
-      <button class="btn btn-primary" onclick="saveCatalogItem()" style="flex:2;justify-content:center;">💾 บันทึก</button>
+      <button type="button" class="btn btn-primary" onclick="event.preventDefault(); saveCatalogItem();" style="flex:2;justify-content:center;">💾 บันทึก Catalog กลาง</button>
     </div>
   </div>
 </div>
@@ -1733,85 +1733,102 @@ function updateCatalogPreview(){
 async function saveCatalogItem(){
   const name=document.getElementById('c-name').value.trim();
   const description=document.getElementById('c-description')?.value.trim()||'';
-  if(!name){toast('กรุณาใส่ชื่อสินค้า');return;}
+
+  if(!name){
+    toast('กรุณาใส่ชื่อสินค้า');
+    return;
+  }
 
   try{
+    const wasEditing=!!editingCatalogId;
     let entry;
 
     if(catalogTabMode==='set'){
       const setPrice=parseFloat(document.getElementById('c-set-price')?.value)||0;
       const setCurrency=document.getElementById('c-set-currency')?.value||'THB';
       const setSpecs=document.getElementById('c-set-specs')?.value.trim()||'';
+
       entry={
         id:editingCatalogId||undefined,
         type:'set',
         category:'set',
-        name,
-        description,
+        name:name,
+        description:description,
         specifications:setSpecs,
+        specs:setSpecs,
         packageItems:setSpecs,
         model:'',
         partNo:'',
         currency:setCurrency,
         unitPrice:setPrice,
         imageUrl:catalogImgData||'',
+        image:catalogImgData||'',
         isSet:true,
         members:[...setMembers]
       };
-    } else {
+    }else{
       const model=document.getElementById('c-model').value.trim();
       const currency=document.getElementById('c-currency').value;
       const unitPrice=parseFloat(document.getElementById('c-price').value)||0;
       const specs=document.getElementById('c-specs')?.value.trim()||'';
-      if(!unitPrice){toast('กรุณาใส่ราคาต่อหน่วย');return;}
+
+      if(!unitPrice){
+        toast('กรุณาใส่ราคาต่อหน่วย');
+        return;
+      }
+
       entry={
         id:editingCatalogId||undefined,
         type:S.project.calculationType==='spare_parts'?'spare_part':'equipment',
         category:currency==='THB'?'local':'foreign',
-        name,
+        name:name,
         description:description||name,
         specifications:specs,
-        model,
+        specs:specs,
+        packageItems:'',
+        model:model,
         partNo:model,
-        currency,
-        unitPrice,
+        currency:currency,
+        unitPrice:unitPrice,
         imageUrl:catalogImgData||'',
+        image:catalogImgData||'',
         isSet:false
       };
     }
 
+    // ✅ บันทึกเข้าฐาน Catalog กลางเท่านั้น ไม่บันทึกเป็นโปรเจค
     const result=await api('save_catalog_item',{item:entry});
-    const saved=result.item;
+    const saved=result.item||entry;
+
     const idx=GLOBAL_CATALOG.findIndex(c=>String(c.id)===String(saved.id));
-    if(idx>-1) GLOBAL_CATALOG[idx]=saved; else GLOBAL_CATALOG.push(saved);
+    if(idx>-1){
+      GLOBAL_CATALOG[idx]=saved;
+    }else{
+      GLOBAL_CATALOG.push(saved);
+    }
+
     localStorage.setItem('geo_global_catalog_v1',JSON.stringify(GLOBAL_CATALOG));
 
-    // update current project snapshot if this item is already used in equipment items
-    S.items.filter(i=>String(i.catalogId)===String(saved.id)).forEach(i=>{
-      i.name=saved.name||saved.description||i.name;
-      i.model=saved.model||saved.partNo||i.model;
-      i.currency=saved.currency||i.currency;
-      i.unitPrice=Number(saved.unitPrice||i.unitPrice||0);
-      i.image=saved.imageUrl||saved.image||i.image||null;
-      i.description=saved.description||i.description||'';
-      i.specifications=saved.specifications||saved.specs||i.specifications||'';
-      i.packageItems=saved.packageItems||i.packageItems||'';
-    });
-    S.sparePartItems.filter(i=>String(i.catalogId)===String(saved.id)).forEach(i=>{
-      i.partNo=saved.partNo||saved.model||i.partNo;
-      i.description=saved.description||saved.name||i.description;
-      i.currency=saved.currency||i.currency;
-      i.unitPrice=Number(saved.unitPrice||i.unitPrice||0);
-      i.image=saved.imageUrl||saved.image||i.image||null;
-      i.specifications=saved.specifications||saved.specs||i.specifications||'';
-      i.packageItems=saved.packageItems||i.packageItems||'';
-    });
+    closeModal('catalog-modal');
+    editingCatalogId=null;
+    catalogImgData=null;
+    selectedCatalogItem=null;
+    setMembers=[];
 
-    save(); closeModal('catalog-modal'); renderCatalog(); renderProjectTabs(); renderDash();
-    toast(editingCatalogId?'แก้ไขสินค้าในคลังกลางแล้ว ✓':'เพิ่มสินค้าในคลังกลางแล้ว ✓');
+    // ✅ Refresh เฉพาะหน้า Admin Catalog กลาง
+    await loadGlobalCatalog();
+    renderCatalog();
+
+    // ✅ บังคับให้อยู่หน้า Admin ต่อ ไม่เด้งไป Project
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+    document.getElementById('page-admin')?.classList.add('active');
+    document.getElementById('nav-admin')?.classList.add('active');
+
+    toast(wasEditing?'แก้ไขสินค้าใน Catalog กลางแล้ว ✓':'บันทึกสินค้าเข้า Catalog กลางแล้ว ✓');
   }catch(e){
     console.error(e);
-    toast('บันทึกคลังกลางไม่สำเร็จ: '+e.message);
+    toast('บันทึก Catalog กลางไม่สำเร็จ: '+e.message);
   }
 }
 
