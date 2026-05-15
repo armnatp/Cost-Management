@@ -337,7 +337,8 @@ table tr.grand-row td{background:var(--surface2);font-weight:700;font-size:12px;
       <div style="font-size:12px;color:var(--text3);margin-top:2px;">รองรับ Breakdown ราคาขายต่อชิ้น · Auto Allocation + Manual Override</div>
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;">
-      <button class="btn" onclick="addSparePartItem()">+ เพิ่มอะไหล่</button>
+      <button class="btn" onclick="openAddSpareFromCatalogModal()">+ เลือกอะไหล่จาก Catalog</button>
+      <button class="btn" onclick="addSparePartItem()">+ เพิ่มแถวว่าง</button>
       <button class="btn btn-primary" onclick="exportExcel()">⬇ Export Excel</button>
     </div>
   </div>
@@ -650,7 +651,7 @@ table tr.grand-row td{background:var(--surface2);font-weight:700;font-size:12px;
 
 <script>
 // ═══ STATE ═══
-let isAdmin=false, editingCatalogId=null, editingProjectId=null, selectedCatalogItem=null;
+let isAdmin=false, editingCatalogId=null, editingProjectId=null, selectedCatalogItem=null, spareSelectMode=false;
 let pieChart=null, barChart=null;
 
 const APPS_SCRIPT_URL="https://script.google.com/macros/s/AKfycbxkJQrKrQxeG7jiORDcrX2Dk-4-Y01u6tYh9Cv8fnKC5S-NfrPVawJdAh3PqlMOO-6k-Q/exec";
@@ -862,41 +863,44 @@ function spareLineBaseCost(i){return spareBaseCostUnit(i)*Number(i.qty||1);}
 function spareComputedRows(){
   const items=S.sparePartItems||[];
   const a=S.sparePartAssumptions||{};
-  const baseTotal=items.reduce((sum,i)=>sum+spareLineBaseCost(i),0);
-  const addTotal=spareAdditionalCost();
+  const markupDefault=Number(a.markup||0);
+  const commissionDefault=Number(a.commission||0);
+  const customerDiscountDefault=Number(a.customerDiscount||0);
+  const vatRate=Number(a.vat!=null?a.vat:(S.project.vat||7));
   return items.map(i=>{
     const qty=Number(i.qty||1);
-    const baseUnit=spareBaseCostUnit(i);
-    const baseLine=baseUnit*qty;
-    const autoAllocUnit=baseTotal>0?(addTotal*(baseLine/baseTotal))/qty:0;
-    const mode=i.allocationMode||'auto';
-    const finalAllocUnit=mode==='manual_unit'?Number(i.manualAllocationUnit||0):(mode==='manual_line'?Number(i.manualAllocationLine||0)/qty:autoAllocUnit);
-    const landedUnit=baseUnit+finalAllocUnit;
-    const markup=(i.markup!=null?Number(i.markup):Number(a.markup||0));
-    const commission=(i.commission!=null?Number(i.commission):Number(a.commission||0));
-    const customerDiscount=(i.customerDiscount!=null?Number(i.customerDiscount):Number(a.customerDiscount||0));
-    const vatRate=Number(a.vat!=null?a.vat:(S.project.vat||7));
-    const sellBeforeVatUnit=landedUnit*(1+markup/100)*(1+commission/100);
-    const sellAfterDiscountUnit=sellBeforeVatUnit*(1-customerDiscount/100);
-    const finalSellUnit=sellAfterDiscountUnit*(1+vatRate/100);
-    const finalSellTotal=finalSellUnit*qty;
-    const profitBeforeVatUnit=sellAfterDiscountUnit-landedUnit;
-    const profitBeforeVatTotal=profitBeforeVatUnit*qty;
-    const margin=sellAfterDiscountUnit>0?profitBeforeVatUnit/sellAfterDiscountUnit*100:0;
-    return {...i,qty,baseUnit,baseLine,autoAllocUnit,finalAllocUnit,landedUnit,markup,commission,customerDiscount,vatRate,sellBeforeVatUnit,sellAfterDiscountUnit,finalSellUnit,finalSellTotal,profitBeforeVatUnit,profitBeforeVatTotal,margin};
+    const supplierUnit=Number(i.unitPrice||0);
+    const supplierDiscount=Number(i.supplierDiscount||0);
+    const costUnitTHB=spareBaseCostUnit(i);
+    const costTotalTHB=costUnitTHB*qty;
+    const shippingLine=Number(i.shipping||i.shippingLine||0);
+    const markup=(i.markup!=null?Number(i.markup):markupDefault);
+    const commission=(i.commission!=null?Number(i.commission):commissionDefault);
+    const customerDiscount=(i.customerDiscount!=null?Number(i.customerDiscount):customerDiscountDefault);
+    const sellBeforeVat=(costTotalTHB+shippingLine)*(1+markup/100)*(1+commission/100);
+    const customerDiscountAmount=sellBeforeVat*(customerDiscount/100);
+    const finalWithVat=(sellBeforeVat-customerDiscountAmount)*(1+vatRate/100);
+    const quoteUnitPrice=qty>0?finalWithVat/qty:0;
+    const netRevenueBeforeVat=sellBeforeVat-customerDiscountAmount;
+    const profit=netRevenueBeforeVat-costTotalTHB-shippingLine;
+    const margin=netRevenueBeforeVat>0?profit/netRevenueBeforeVat*100:0;
+    return {...i,qty,supplierUnit,supplierDiscount,costUnitTHB,costTotalTHB,shippingLine,markup,commission,customerDiscount,vatRate,sellBeforeVat,customerDiscountAmount,finalWithVat,quoteUnitPrice,netRevenueBeforeVat,profit,margin,
+      baseUnit:costUnitTHB,baseLine:costTotalTHB,autoAllocUnit:0,finalAllocUnit:shippingLine/Math.max(qty,1),landedUnit:costUnitTHB+(shippingLine/Math.max(qty,1)),sellAfterDiscountUnit:qty>0?netRevenueBeforeVat/qty:0,finalSellUnit:quoteUnitPrice,finalSellTotal:finalWithVat};
   });
 }
 function spareTotals(){
   const rows=spareComputedRows();
-  const baseCost=rows.reduce((s,r)=>s+r.baseLine,0);
-  const addCost=spareAdditionalCost();
-  const landedCost=rows.reduce((s,r)=>s+r.landedUnit*r.qty,0);
-  const sellingBeforeVat=rows.reduce((s,r)=>s+r.sellAfterDiscountUnit*r.qty,0);
-  const finalSelling=rows.reduce((s,r)=>s+r.finalSellTotal,0);
-  const profit=sellingBeforeVat-landedCost;
-  const vat=finalSelling-sellingBeforeVat;
-  const margin=sellingBeforeVat>0?profit/sellingBeforeVat*100:0;
-  return{mode:'spare_parts',goods:baseCost,comm:addCost,vat,total:landedCost,profit,margin,budget:finalSelling,baseCost,addCost,landedCost,sellingBeforeVat,finalSelling,rows};
+  const baseCost=rows.reduce((s,r)=>s+r.costTotalTHB,0);
+  const shipping=rows.reduce((s,r)=>s+r.shippingLine,0);
+  const sellingBeforeVat=rows.reduce((s,r)=>s+r.sellBeforeVat,0);
+  const discount=rows.reduce((s,r)=>s+r.customerDiscountAmount,0);
+  const netBeforeVat=sellingBeforeVat-discount;
+  const finalSelling=rows.reduce((s,r)=>s+r.finalWithVat,0);
+  const vat=finalSelling-netBeforeVat;
+  const profit=netBeforeVat-baseCost-shipping;
+  const margin=netBeforeVat>0?profit/netBeforeVat*100:0;
+  const usdCost=rows.reduce((s,r)=>s+Number(r.unitPrice||0)*(1-Number(r.supplierDiscount||0)/100)*Number(r.qty||1),0);
+  return{mode:'spare_parts',goods:baseCost,comm:shipping,vat,total:baseCost+shipping,profit,margin,budget:finalSelling,baseCost,shipping,addCost:shipping,landedCost:baseCost+shipping,sellingBeforeVat,discount,netBeforeVat,finalSelling,usdCost,rows};
 }
 function totals(){
   return (S.project.calculationType==='spare_parts')?spareTotals():calcEquipmentTotals();
@@ -1285,44 +1289,53 @@ function renderSpareParts(){
   const set=(id,val)=>{const el=document.getElementById(id); if(el) el.value=val;};
   set('sp-freight',a.freight||0); set('sp-insurance',a.insurance||0); set('sp-handling',a.handling||0);
   set('sp-markup',a.markup||0); set('sp-commission',a.commission||0); set('sp-customer-discount',a.customerDiscount||0); set('sp-vat',a.vat!=null?a.vat:(S.project.vat||7));
-  const add=document.getElementById('sp-total-add'); if(add) add.value='฿'+fmt(spareAdditionalCost());
+  const add=document.getElementById('sp-total-add'); if(add) add.value='ใช้ค่าจัดส่งรายบรรทัดในตาราง';
   const t=spareTotals();
   const put=(id,val)=>{const el=document.getElementById(id); if(el) el.textContent=val;};
-  put('sp-base-cost','฿'+fmt(t.baseCost)); put('sp-landed-cost','฿'+fmt(t.landedCost)); put('sp-final-selling','฿'+fmt(t.finalSelling)); put('sp-margin',t.margin.toFixed(1)+'%');
+  put('sp-base-cost','฿'+fmt(t.baseCost)); put('sp-landed-cost','฿'+fmt(t.baseCost+t.shipping)); put('sp-final-selling','฿'+fmt(t.finalSelling)); put('sp-margin',t.margin.toFixed(1)+'%');
   const rows=t.rows;
+  const currencyOptions=(cur)=>Object.keys(S.currencies||{THB:1,USD:1}).map(c=>`<option value="${c}" ${c===(cur||'THB')?'selected':''}>${c}</option>`).join('');
   const head=`<thead><tr>
-    <th>#</th><th>Part No.</th><th>Description</th><th>Cur</th><th class="r">Supplier Unit</th><th class="r">Supp Disc%</th>
-    <th class="r">Qty</th><th class="r">Base/Unit THB</th><th class="r">Auto Alloc/Unit</th><th>Allocation Mode</th>
-    <th class="r">Manual/Unit</th><th class="r">Manual/Line</th><th class="r">Landed/Unit</th><th class="r">Markup%</th><th class="r">Comm%</th>
-    <th class="r">Cust Disc%</th><th class="r">Final Sell/Unit</th><th class="r">Total</th><th class="r">Margin</th><th></th>
+    <th>#</th><th>รหัสอะไหล่</th><th>ชื่อสินค้า</th><th>Cur</th><th class="r">Unit Price</th><th class="r">ส่วนลดซัพฯ %</th>
+    <th class="r">ต้นทุน/ชิ้น THB</th><th class="r">จำนวน</th><th class="r">ต้นทุนรวม THB</th><th class="r">ค่าจัดส่ง</th>
+    <th class="r">Markup %</th><th class="r">Comm. %</th><th class="r">ราคาขายก่อน VAT</th><th class="r">ส่วนลดลูกค้า</th>
+    <th class="r">ราคาสุดท้าย + VAT</th><th class="r">ราคาต่อชิ้น</th><th class="r">Margin</th><th></th>
   </tr></thead>`;
   const body=rows.length?rows.map((r,i)=>`<tr>
     <td class="dim">${i+1}</td>
-    <td><input class="inline-num" style="width:110px;text-align:left;font-family:'Sarabun',sans-serif;" value="${r.partNo||r.model||''}" onchange="updateSpareItem(${r.id},'partNo',this.value)"></td>
-    <td><input class="inline-num" style="width:240px;text-align:left;font-family:'Sarabun',sans-serif;" value="${r.description||r.name||''}" onchange="updateSpareItem(${r.id},'description',this.value)"></td>
-    <td><select onchange="updateSpareItem(${r.id},'currency',this.value)" style="padding:4px 6px;border:1px solid var(--border-md);border-radius:6px;">${Object.keys(S.currencies||{THB:1}).map(c=>`<option value="${c}" ${c===(r.currency||'THB')?'selected':''}>${c}</option>`).join('')}</select></td>
+    <td><input class="inline-num" style="width:120px;text-align:left;font-family:'Sarabun',sans-serif;" value="${esc(r.partNo||r.model||'')}" onchange="updateSpareItem(${r.id},'partNo',this.value)"></td>
+    <td><input class="inline-num" style="width:280px;text-align:left;font-family:'Sarabun',sans-serif;" value="${esc(r.description||r.name||'')}" onchange="updateSpareItem(${r.id},'description',this.value)"></td>
+    <td><select onchange="updateSpareItem(${r.id},'currency',this.value)" style="padding:4px 6px;border:1px solid var(--border-md);border-radius:6px;">${currencyOptions(r.currency)}</select></td>
     <td class="r"><input class="inline-num" type="number" min="0" step="0.01" value="${r.unitPrice||0}" onchange="updateSpareItem(${r.id},'unitPrice',+this.value)"></td>
-    <td class="r"><input class="inline-num" type="number" min="0" step="0.1" value="${r.supplierDiscount||0}" onchange="updateSpareItem(${r.id},'supplierDiscount',+this.value)"></td>
-    <td class="r"><input class="inline-num" type="number" min="1" value="${r.qty||1}" onchange="updateSpareItem(${r.id},'qty',+this.value)"></td>
-    <td class="r">${fmt(r.baseUnit)}</td><td class="r">${fmt(r.autoAllocUnit)}</td>
-    <td><select onchange="updateSpareItem(${r.id},'allocationMode',this.value)" style="padding:4px 6px;border:1px solid var(--border-md);border-radius:6px;">
-      <option value="auto" ${r.allocationMode==='auto'||!r.allocationMode?'selected':''}>Auto</option>
-      <option value="manual_unit" ${r.allocationMode==='manual_unit'?'selected':''}>Manual / Unit</option>
-      <option value="manual_line" ${r.allocationMode==='manual_line'?'selected':''}>Manual / Line</option>
-    </select></td>
-    <td class="r"><input class="inline-num" type="number" min="0" step="0.01" value="${r.manualAllocationUnit||0}" onchange="updateSpareItem(${r.id},'manualAllocationUnit',+this.value)"></td>
-    <td class="r"><input class="inline-num" type="number" min="0" step="0.01" value="${r.manualAllocationLine||0}" onchange="updateSpareItem(${r.id},'manualAllocationLine',+this.value)"></td>
-    <td class="r"><strong>${fmt(r.landedUnit)}</strong></td>
-    <td class="r"><input class="inline-num" type="number" min="0" step="0.1" value="${r.markup}" onchange="updateSpareItem(${r.id},'markup',+this.value)"></td>
-    <td class="r"><input class="inline-num" type="number" min="0" step="0.1" value="${r.commission}" onchange="updateSpareItem(${r.id},'commission',+this.value)"></td>
-    <td class="r"><input class="inline-num" type="number" min="0" step="0.1" value="${r.customerDiscount}" onchange="updateSpareItem(${r.id},'customerDiscount',+this.value)"></td>
-    <td class="r" style="color:var(--green);font-weight:700;">${fmt(r.finalSellUnit)}</td>
-    <td class="r"><strong>${fmt(r.finalSellTotal)}</strong></td>
+    <td class="r"><input class="inline-num" type="number" step="0.1" value="${r.supplierDiscount||0}" onchange="updateSpareItem(${r.id},'supplierDiscount',+this.value)"></td>
+    <td class="r" style="color:var(--amber);font-weight:700;">${fmt(r.costUnitTHB)}</td>
+    <td class="r"><input class="inline-num" type="number" min="0" value="${r.qty||1}" onchange="updateSpareItem(${r.id},'qty',+this.value)"></td>
+    <td class="r"><strong>${fmt(r.costTotalTHB)}</strong></td>
+    <td class="r"><input class="inline-num" type="number" min="0" step="0.01" value="${r.shipping||r.shippingLine||0}" onchange="updateSpareItem(${r.id},'shipping',+this.value)"></td>
+    <td class="r"><input class="inline-num" type="number" step="0.1" value="${r.markup}" onchange="updateSpareItem(${r.id},'markup',+this.value)"></td>
+    <td class="r"><input class="inline-num" type="number" step="0.1" value="${r.commission}" onchange="updateSpareItem(${r.id},'commission',+this.value)"></td>
+    <td class="r">${fmt(r.sellBeforeVat)}</td>
+    <td class="r">${fmt(r.customerDiscountAmount)}</td>
+    <td class="r" style="color:var(--green);font-weight:700;">${fmt(r.finalWithVat)}</td>
+    <td class="r"><strong>${fmt(r.quoteUnitPrice)}</strong></td>
     <td class="r">${r.margin.toFixed(1)}%</td>
     <td><button class="btn btn-sm btn-danger" onclick="deleteSpareItem(${r.id})">✕</button></td>
-  </tr>`).join(''):`<tr><td colspan="20" style="text-align:center;color:var(--text3);padding:24px;">ยังไม่มีรายการอะไหล่ · กด “เพิ่มอะไหล่” เพื่อเริ่มคำนวณ</td></tr>`;
-  document.getElementById('spare-table').innerHTML='<table>'+head+'<tbody>'+body+'</tbody></table>';
+  </tr>`).join(''):`<tr><td colspan="18" style="text-align:center;color:var(--text3);padding:28px;line-height:1.9;">
+    ยังไม่มีรายการอะไหล่<br>
+    <button class="btn btn-primary" onclick="openAddSpareFromCatalogModal()" style="margin-top:8px;">+ เลือกจาก Catalog</button>
+    <button class="btn" onclick="addSparePartItem()" style="margin-top:8px;">+ เพิ่มแถวว่าง</button>
+  </td></tr>`;
+  const summary=`<div style="margin-top:14px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
+    <div class="spare-mini"><div class="spare-mini-label">ต้นทุนรวมทั้งหมด (THB)</div><div class="spare-mini-value">฿${fmt(t.baseCost+t.shipping)}</div></div>
+    <div class="spare-mini"><div class="spare-mini-label">ราคาขายรวมก่อน VAT</div><div class="spare-mini-value">฿${fmt(t.sellingBeforeVat)}</div></div>
+    <div class="spare-mini"><div class="spare-mini-label">ส่วนลดลูกค้า</div><div class="spare-mini-value">฿${fmt(t.discount)}</div></div>
+    <div class="spare-mini"><div class="spare-mini-label">VAT</div><div class="spare-mini-value">฿${fmt(t.vat)}</div></div>
+    <div class="spare-mini"><div class="spare-mini-label">ราคาเสนอขาย Final รวม VAT</div><div class="spare-mini-value" style="color:var(--green);">฿${fmt(t.finalSelling)}</div></div>
+    <div class="spare-mini"><div class="spare-mini-label">กำไรสุทธิ์ / Margin</div><div class="spare-mini-value">฿${fmt(t.profit)} · ${t.margin.toFixed(1)}%</div></div>
+  </div>`;
+  document.getElementById('spare-table').innerHTML='<table>'+head+'<tbody>'+body+'</tbody></table>'+summary;
 }
+
 function saveSpareAssumptions(){
   S.sparePartAssumptions={
     freight:+(document.getElementById('sp-freight')?.value||0),
@@ -1335,23 +1348,40 @@ function saveSpareAssumptions(){
   };
   save(); renderSpareParts(); renderDash();
 }
+function openAddSpareFromCatalogModal(){
+  spareSelectMode=true;
+  editingProjectId=null;
+  selectedCatalogItem=null;
+  document.getElementById('item-modal-title').textContent='เลือกอะไหล่จาก Catalog';
+  document.getElementById('item-save-btn').textContent='เพิ่มในตารางอะไหล่';
+  document.getElementById('item-search').value='';
+  document.getElementById('item-qty').value=1;
+  document.getElementById('item-disc').value=0;
+  document.getElementById('item-cat').value='foreign';
+  document.getElementById('selected-product-info').style.display='none';
+  document.getElementById('item-preview').style.display='none';
+  document.getElementById('search-dropdown').classList.remove('open');
+  document.getElementById('item-modal').classList.add('open');
+  setTimeout(()=>document.getElementById('item-search').focus(),100);
+}
 function addSparePartItem(){
   S.project.calculationType='spare_parts';
-  S.sparePartItems.push({id:Date.now(),partNo:'',description:'',currency:'USD',unitPrice:0,supplierDiscount:0,qty:1,allocationMode:'auto',manualAllocationUnit:0,manualAllocationLine:0});
-  save(); renderSpareParts(); renderDash(); toast('เพิ่มรายการอะไหล่แล้ว');
+  S.sparePartItems.push({id:Date.now(),partNo:'',description:'',currency:'USD',unitPrice:0,supplierDiscount:0,qty:1,shipping:0,markup:S.sparePartAssumptions.markup||30,commission:S.sparePartAssumptions.commission||0,customerDiscount:S.sparePartAssumptions.customerDiscount||0,allocationMode:'auto',manualAllocationUnit:0,manualAllocationLine:0});
+  save(); renderSpareParts(); renderDash(); toast('เพิ่มแถวอะไหล่แล้ว');
 }
 function updateSpareItem(id,field,val){
-  const it=S.sparePartItems.find(x=>x.id===id); if(!it) return;
+  const it=S.sparePartItems.find(x=>String(x.id)===String(id)); if(!it) return;
   it[field]=val; save(); renderSpareParts(); renderDash();
 }
 function deleteSpareItem(id){
   if(!confirm('ลบอะไหล่รายการนี้?')) return;
-  S.sparePartItems=S.sparePartItems.filter(x=>x.id!==id);
+  S.sparePartItems=S.sparePartItems.filter(x=>String(x.id)!==String(id));
   save(); renderSpareParts(); renderDash(); toast('ลบแล้ว');
 }
 
 // ═══ ITEM MODAL ═══
 function openAddItemModal(){
+  spareSelectMode=false;
   editingProjectId=null; selectedCatalogItem=null;
   document.getElementById('item-modal-title').textContent='เพิ่มรายการในโครงการ';
   document.getElementById('item-save-btn').textContent='เพิ่มในโครงการ';
@@ -1464,7 +1494,7 @@ function updateItemPreview(){
   const costTHB=costPerUnit*qty;
   const el=document.getElementById('item-preview');
   el.style.display='block';
-  el.innerHTML='ราคา/หน่วย: '+fmt(c.unitPrice)+' '+c.currency+' → Dealer: '+fmt(dealer)+' '+c.currency+'<br>ต้นทุน/หน่วย: ฿'+fmt(costPerUnit)+' &nbsp;|&nbsp; ต้นทุนรวม: <strong>฿'+fmt(costTHB)+'</strong>';
+  el.innerHTML=(spareSelectMode?'จะเพิ่มเข้า <strong>ตารางคำนวณราคาขายอะไหล่</strong><br>':'')+'ราคา/หน่วย: '+fmt(c.unitPrice)+' '+c.currency+' → หลังส่วนลด: '+fmt(dealer)+' '+c.currency+'<br>ต้นทุน/หน่วย: ฿'+fmt(costPerUnit)+' &nbsp;|&nbsp; ต้นทุนรวม: <strong>฿'+fmt(costTHB)+'</strong>';
 }
 function saveProjectItem(){
   if(!selectedCatalogItem){toast('กรุณาเลือกสินค้าก่อน');return;}
@@ -1472,6 +1502,30 @@ function saveProjectItem(){
   const disc=parseFloat(document.getElementById('item-disc').value)||0;
   const cat=document.getElementById('item-cat').value;
   const c=selectedCatalogItem;
+
+  if(spareSelectMode){
+    const item={
+      id:Date.now(),
+      catalogId:c.id,
+      partNo:c.partNo||c.model||c.code||'',
+      description:c.description||c.name||'',
+      currency:c.currency||'THB',
+      unitPrice:Number(c.unitPrice||0),
+      supplierDiscount:disc,
+      qty:qty,
+      shipping:0,
+      markup:S.sparePartAssumptions.markup||30,
+      commission:S.sparePartAssumptions.commission||0,
+      customerDiscount:S.sparePartAssumptions.customerDiscount||0,
+      allocationMode:'auto',
+      image:c.imageUrl||c.image||null
+    };
+    S.project.calculationType='spare_parts';
+    S.sparePartItems.push(item);
+    spareSelectMode=false;
+    save(); closeModal('item-modal'); renderSpareParts(); renderDash(); toast('เพิ่มอะไหล่ในตารางคำนวณแล้ว ✓');
+    return;
+  }
 
   if(c.isSet){
     // เพิ่ม Set → expand เป็น sub-items ทุกตัว
